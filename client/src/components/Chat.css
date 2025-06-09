@@ -1,0 +1,115 @@
+.chat-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(ellipse at center, rgba(65, 105, 225, 0.1) 0%, rgba(26, 31, 58, 0.2) 50%, transparent 100%);
+}
+
+.messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: linear-gradient(to bottom, #1a1f3a, #252946);
+  border: 2px solid #4169e1;
+  border-radius: 12px;
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(65, 105, 225, 0.2);
+}
+
+.message-chat,
+.message-system,
+.message-error {
+  margin: 8px 0;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid;
+  background: linear-gradient(to right, rgba(26, 31, 58, 0.8), rgba(37, 41, 70, 0.6));
+  backdrop-filter: blur(2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.message-chat {
+  border-left-color: #4169e1;
+  color: #e8e3d3;
+}
+
+.message-system {
+  border-left-color: #daa520;
+  color: #b8b3a3;
+  font-style: italic;
+  background: linear-gradient(to right, rgba(218, 165, 32, 0.1), rgba(37, 41, 70, 0.6));
+}
+
+.message-error {
+  border-left-color: #dc143c;
+  background: linear-gradient(to right, rgba(220, 20, 60, 0.2), rgba(37, 41, 70, 0.6));
+  color: #ffb3b3;
+}
+
+.username {
+  color: #daa520;
+  font-weight: bold;
+  font-family: 'Cinzel', serif;
+  margin-right: 8px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.input-form {
+  display: flex;
+  gap: 10px;
+}
+
+.input-form input {
+  flex-grow: 1;
+  padding: 12px 16px;
+  /* Global input styles will apply */
+}
+
+.input-form button {
+  padding: 12px 24px;
+  /* Global button styles will apply */
+}
+
+.input-form button:hover {
+  /* Global button hover styles will apply */
+}
+
+.join-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.join-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 350px;
+  padding: 32px;
+  background: linear-gradient(135deg, #1a1f3a 0%, #252946 100%);
+  border: 3px solid #4169e1;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.join-container input {
+  padding: 16px;
+  font-size: 16px;
+  /* Global input styles will apply */
+}
+
+.join-container button {
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  /* Global button styles will apply */
+}
+
+.join-container button:hover {
+  /* Global button hover styles will apply */
+} 
