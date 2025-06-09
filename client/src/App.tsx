@@ -9,7 +9,8 @@ function App() {
   const [isJoined, setIsJoined] = useState(false);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3001');
+    const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:3001';
+    const newSocket = io(serverUrl);
     setSocket(newSocket);
     return () => {
       newSocket.close();
