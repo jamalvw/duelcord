@@ -1,29 +1,30 @@
 package com.oopsjpeg.enigma.util;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.util.JSON;
 import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.storage.Player;
 import org.bson.Document;
 
 import java.util.function.Consumer;
 
-public class MongoManager extends MongoClient
+public class MongoManager
 {
+    private final MongoClient client;
     private final String database;
 
     public MongoManager(String host, String database)
     {
-        super(host);
+        client = MongoClients.create(host);
         this.database = database;
     }
 
     public MongoCollection<Document> getPlayers()
     {
-        return getDatabase(database).getCollection("players");
+        return client.getDatabase(database).getCollection("players");
     }
 
     public void loadPlayers()
@@ -38,7 +39,7 @@ public class MongoManager extends MongoClient
 
     public void loadPlayer(Document d)
     {
-        Enigma.getInstance().getPlayers().put(d.getLong("_id"), Enigma.GSON.fromJson(JSON.serialize(d), Player.class));
+        //Enigma.getInstance().getPlayers().put(d.getLong("_id"), Enigma.GSON.fromJson(JSON.serialize(d), Player.class));
     }
 
     public void savePlayer(Player p)
