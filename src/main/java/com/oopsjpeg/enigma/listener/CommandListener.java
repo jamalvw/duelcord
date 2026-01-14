@@ -70,7 +70,6 @@ public class CommandListener implements Listener
             {
                 String[] split = cmdChunk.split(" ");
                 String alias = split[0].replaceFirst(pat, "");
-                System.out.println(alias);
                 String[] args = Arrays.copyOfRange(split, 1, split.length);
                 Command command = Command.get(commands, author, alias);
 
