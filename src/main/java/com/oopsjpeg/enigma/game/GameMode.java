@@ -7,8 +7,8 @@ import java.util.List;
 
 public enum GameMode
 {
-    DUEL("Duel", 2, true),
-    CHAOS("Chaos", 3, false)
+    DUEL("Duel", 2, true, false),
+    CHAOS("Chaos", 3, false, true)
             {
                 @Override
                 public int handleGold(int gold)
@@ -37,12 +37,14 @@ public enum GameMode
     private final String name;
     private final int size;
     private final boolean ranked;
+    private final boolean distortionsEnabled;
 
-    GameMode(String name, int size, boolean ranked)
+    GameMode(String name, int size, boolean ranked, boolean distortionsEnabled)
     {
         this.name = name;
         this.size = size;
         this.ranked = ranked;
+        this.distortionsEnabled = distortionsEnabled;
     }
 
     public static GameMode fromName(String name)
@@ -76,5 +78,9 @@ public enum GameMode
     public boolean isRanked()
     {
         return this.ranked;
+    }
+
+    public boolean isDistortionsEnabled() {
+        return distortionsEnabled;
     }
 }

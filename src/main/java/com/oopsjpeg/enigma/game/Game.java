@@ -128,31 +128,31 @@ public class Game
 
             turnCount++;
 
-            if (turnCount >= 6 && distortions.size() < 1)
-            {
-                Distortion distortion = Util.pickRandom(getUnusedDistortions());
-                output.add("# First Distortion");
-                output.add(Emote.DISTORTION + "**" + distortion.getName() + "** - " + distortion.getDescription());
-                distortions.add(distortion);
-                distortion.start(this);
-            }
+            // Apply distortions if enabled
+            if (mode.isDistortionsEnabled()) {
+                if (turnCount >= 6 && distortions.isEmpty()) {
+                    Distortion distortion = Util.pickRandom(getUnusedDistortions());
+                    output.add("# First Distortion");
+                    output.add(Emote.DISTORTION + "**" + distortion.getName() + "** - " + distortion.getDescription());
+                    distortions.add(distortion);
+                    distortion.start(this);
+                }
 
-            if (turnCount >= 17 && distortions.size() < 2)
-            {
-                Distortion distortion = Util.pickRandom(getUnusedDistortions());
-                output.add("# Second Distortion");
-                output.add(Emote.DISTORTION + "**" + distortion.getName() + "** - " + distortion.getDescription());
-                distortions.add(distortion);
-                distortion.start(this);
-            }
+                if (turnCount >= 17 && distortions.size() < 2) {
+                    Distortion distortion = Util.pickRandom(getUnusedDistortions());
+                    output.add("# Second Distortion");
+                    output.add(Emote.DISTORTION + "**" + distortion.getName() + "** - " + distortion.getDescription());
+                    distortions.add(distortion);
+                    distortion.start(this);
+                }
 
-            if (turnCount >= 28 && distortions.size() < 3)
-            {
-                Distortion distortion = Util.pickRandom(getUnusedDistortions());
-                output.add("# Final Distortion");
-                output.add(Emote.DISTORTION + "**" + distortion.getName() + "** - " + distortion.getDescription());
-                distortions.add(distortion);
-                distortion.start(this);
+                if (turnCount >= 28 && distortions.size() < 3) {
+                    Distortion distortion = Util.pickRandom(getUnusedDistortions());
+                    output.add("# Final Distortion");
+                    output.add(Emote.DISTORTION + "**" + distortion.getName() + "** - " + distortion.getDescription());
+                    distortions.add(distortion);
+                    distortion.start(this);
+                }
             }
 
             output.add("### " + member.getMention() + "'s Turn");
