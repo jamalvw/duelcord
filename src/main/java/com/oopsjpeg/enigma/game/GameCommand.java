@@ -93,7 +93,7 @@ public enum GameCommand implements Command
                         if (game.getGameState() == GameState.PICKING)
                             Util.sendFailure(channel, "You cannot end your turn until the game has started.");
                         else
-                            channel.createMessage(game.nextTurn()).withEmbeds(game.getCurrentMember().getStatus()).subscribe();
+                            channel.createMessage(game.nextTurn()).subscribe();
                     }
                 }
             },
