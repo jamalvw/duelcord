@@ -9,12 +9,12 @@ public abstract class Buff implements GameObject
     private final String name;
     private final boolean debuff;
     private final GameMember source;
-    private final float power;
 
     private int totalTurns;
     private int currentTurns;
     private boolean shouldRemove = false;
     private boolean isSilent = false;
+    private float power;
 
     public Buff(String name, boolean debuff, GameMember source, int totalTurns, float power)
     {
@@ -54,6 +54,10 @@ public abstract class Buff implements GameObject
     public float getPower()
     {
         return power;
+    }
+
+    public void setPower(float power) {
+        this.power = power;
     }
 
     public boolean hasPower()
