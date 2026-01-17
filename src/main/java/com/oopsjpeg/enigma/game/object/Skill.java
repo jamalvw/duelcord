@@ -2,25 +2,64 @@ package com.oopsjpeg.enigma.game.object;
 
 import com.oopsjpeg.enigma.Command;
 import com.oopsjpeg.enigma.Enigma;
-import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.Game;
+import com.oopsjpeg.enigma.game.GameAction;
+import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.buff.SilencedDebuff;
+import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.util.Cooldown;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 
+import static com.oopsjpeg.enigma.game.StatType.COOLDOWN_REDUCTION;
+
 public abstract class Skill implements Command
 {
     private final Unit unit;
-    private final int baseCooldown;
-    private final int energyCost;
+    private final Cooldown cooldown;
+    private final int cost;
 
-    public Skill(Unit unit, int baseCooldown, int energyCost)
+    public Skill(Unit unit, int cost)
+    {
+        this(unit, cost, 0);
+    }
+
+    public Skill(Unit unit, int cost, int cooldown)
     {
         this.unit = unit;
-        this.baseCooldown = baseCooldown;
-        this.energyCost = energyCost;
+        this.cost = cost;
+        this.cooldown = cooldown > 0 ? new Cooldown(cooldown) : null;
     }
+
+    public Unit getUnit()
+    {
+        return unit;
+    }
+
+    public Cooldown getCooldown() {
+        return cooldown;
+    }
+
+    public boolean hasCooldown()
+    {
+        return cooldown != null;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public boolean hasCost() {
+        return cost > 0;
+    }
+
+    public String getStatus(GameMember member)
+    {
+        return getName() + ": " + (!hasCooldown() ? "Ready" : (cooldown.isDone() ? "Ready" : "in " + cooldown.getCurrent() + " turn" + (cooldown.getCurrent() > 1 ? "s" : "")));
+    }
+
+    public abstract GameAction act(GameMember actor);
 
     @Override
     public void execute(Message message, String[] args)
@@ -28,8 +67,6 @@ public abstract class Skill implements Command
         MessageChannel channel = message.getChannel().block();
         GameMember actor = Enigma.getGameMemberFromMessage(message);
         Game game = actor.getGame();
-        GameMemberVars vars = actor.getVars();
-        Cooldown cooldown = getCooldown(vars);
 
         if (!channel.equals(game.getChannel()) || !actor.equals(game.getCurrentMember()))
             return;
@@ -48,63 +85,13 @@ public abstract class Skill implements Command
             return;
         }
 
-        if (hasEnergyCost() && actor.getEnergy() < getEnergyCost())
+        if (hasCost() && actor.getEnergy() < getCost())
         {
-            Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + energyCost + "** energy. You have **" + actor.getEnergy() + "**.");
+            Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + cost + "** energy. You have **" + actor.getEnergy() + "**.");
             return;
         }
 
-        actor.act(act(game, actor));
-        cooldown.start(actor.getStats().getInt(Stats.COOLDOWN_REDUCTION));
-        setCooldown(vars, cooldown);
-    }
-
-    public String getStatus(GameMember member)
-    {
-        Cooldown cooldown = getCooldown(member.getVars());
-        return getName() + ": " + (cooldown.isDone() ? "Ready" : "in " + cooldown.getCurrent() + " turn" + (cooldown.getCurrent() > 1 ? "s" : ""));
-    }
-
-    public abstract GameAction act(Game game, GameMember actor);
-
-    public Unit getUnit()
-    {
-        return unit;
-    }
-
-    public String getCooldownVar()
-    {
-        return getName() + "_cooldown";
-    }
-
-    public Cooldown getCooldown(GameMemberVars vars)
-    {
-        if (!vars.has(unit, getCooldownVar()))
-            setCooldown(vars, new Cooldown(baseCooldown));
-        return vars.get(unit, getCooldownVar(), Cooldown.class);
-    }
-
-    public void setCooldown(GameMemberVars vars, Cooldown cooldown)
-    {
-        vars.put(unit, getCooldownVar(), cooldown);
-    }
-
-    public boolean hasCooldown()
-    {
-        return baseCooldown > 0;
-    }
-
-    public int getBaseCooldown()
-    {
-        return baseCooldown;
-    }
-
-    public int getEnergyCost()
-    {
-        return energyCost;
-    }
-
-    public boolean hasEnergyCost() {
-        return energyCost > 0;
+        actor.act(act(actor));
+        cooldown.start(actor.getStats().getInt(COOLDOWN_REDUCTION));
     }
 }

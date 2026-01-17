@@ -8,7 +8,7 @@ import java.util.List;
 public enum GameMode
 {
     DUEL("Duel", 2, true, false),
-    CHAOS("Chaos", 3, false, true)
+    CHAOS("Chaos", 2, false, true)
             {
                 @Override
                 public int handleGold(int gold)

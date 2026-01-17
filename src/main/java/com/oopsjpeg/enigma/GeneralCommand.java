@@ -5,7 +5,7 @@ import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.GameMode;
 import com.oopsjpeg.enigma.game.Tree;
 import com.oopsjpeg.enigma.game.object.Item;
-import com.oopsjpeg.enigma.game.object.Unit;
+import com.oopsjpeg.enigma.game.unit.UnitType;
 import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.component.ActionRow;
@@ -39,7 +39,7 @@ public enum GeneralCommand implements Command
                     } else if (args[0].equalsIgnoreCase("units"))
                     {
                         // Create a list of select menu options for units
-                        List<SelectMenu.Option> options = Arrays.stream(Unit.values())
+                        List<SelectMenu.Option> options = Arrays.stream(UnitType.values())
                                 .map(unit -> SelectMenu.Option.of(unit.getName(), unit.name()))
                                 .collect(Collectors.toList());
 
@@ -102,7 +102,7 @@ public enum GeneralCommand implements Command
                         Util.sendFailure(channel, "You have left the queue.");
                     } else
                     {
-                        GameMode mode = args.length > 0 ? GameMode.fromName(args[0]) : GameMode.DUEL;
+                        GameMode mode = args.length > 0 ? GameMode.fromName(args[0]) : GameMode.CHAOS;
                         if (mode == null)
                             Util.sendFailure(channel, "Invalid game mode.");
                         else
@@ -129,12 +129,12 @@ public enum GeneralCommand implements Command
                         e.setAuthor(author.getUsername() + " (" + Math.round(player.getRankedPoints()) + " RP)", null, author.getAvatarUrl());
                         e.setDescription("**" + player.getWins() + "**W **" + player.getLosses() + "**L (**" + Util.percent(player.getWinRate()) + "** WR)"
                                 + "\nGems: **" + player.getGems() + "**");
-                        if (!player.getUnitDatas().isEmpty())
-                            e.addField("Top Units", player.getUnitDatas().stream()
-                                    .sorted(Comparator.comparingInt(Player.UnitData::getPoints).reversed())
-                                    .limit(3)
-                                    .map(data -> data.getUnitName() + " (" + data.getPoints() + " pts)")
-                                    .collect(Collectors.joining("\n")), true);
+                        //if (!player.getUnitDatas().isEmpty())
+                        //    e.addField("Top Units", player.getUnitDatas().stream()
+                        //                        .sorted(Comparator.comparingInt(Player.UnitData::getPoints).reversed())
+                        //                .limit(3)
+                        //                .map(data -> data.getUnitName() + " (" + data.getPoints() + " pts)")
+                        //                .collect(Collectors.joining("\n")), true);
                     }).subscribe();
                 }
             },
@@ -223,13 +223,13 @@ public enum GeneralCommand implements Command
                 @Override
                 public void execute(Message message, String[] args)
                 {
-                    Unit unit = Unit.fromName(String.join(" ", args));
+                    UnitType unit = UnitType.fromName(String.join(" ", args));
 
                     if (unit == null) return;
 
                     MessageChannel channel = message.getChannel().block();
                     channel.createMessage(MessageCreateSpec.builder()
-                            .addEmbed(unit.format())
+                            .addEmbed(unit.create().embed())
                             .build()).subscribe();
                 }
             };

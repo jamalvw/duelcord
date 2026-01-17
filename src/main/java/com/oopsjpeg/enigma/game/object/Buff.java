@@ -27,7 +27,6 @@ public abstract class Buff implements GameObject
         currentTurns = totalTurns;
     }
 
-    @Override
     public String getName()
     {
         return name;

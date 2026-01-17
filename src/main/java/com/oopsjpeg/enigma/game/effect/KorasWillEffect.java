@@ -4,7 +4,7 @@ import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Effect;
 
-import static com.oopsjpeg.enigma.game.Stats.SKILL_POWER;
+import static com.oopsjpeg.enigma.game.StatType.SKILL_POWER;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class KorasWillEffect extends Effect

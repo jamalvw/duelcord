@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.oopsjpeg.enigma.game.Stats.*;
+import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public enum Item implements GameObject
@@ -392,7 +392,6 @@ public enum Item implements GameObject
                 .findAny().orElse(null);
     }
 
-    @Override
     public String getName()
     {
         return name;

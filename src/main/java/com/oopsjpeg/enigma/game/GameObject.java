@@ -2,8 +2,6 @@ package com.oopsjpeg.enigma.game;
 
 public interface GameObject
 {
-    String getName();
-
     default String getStatus(GameMember member)
     {
         return null;

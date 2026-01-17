@@ -3,7 +3,7 @@ package com.oopsjpeg.enigma.game;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.game.object.Item;
-import com.oopsjpeg.enigma.game.object.Unit;
+import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Pity;
@@ -15,6 +15,7 @@ import discord4j.rest.util.Color;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.game.Stats.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
@@ -25,8 +26,6 @@ public class GameMember
     private Unit unit;
     private boolean alive = true;
     private boolean defensive = false;
-
-    private final GameMemberVars vars = new GameMemberVars();
 
     private final List<Item> items = new ArrayList<>();
     private final Map<Class<? extends Effect>, Effect> effects = new HashMap<>();
@@ -60,11 +59,6 @@ public class GameMember
     public String getMention()
     {
         return getUser().getMention();
-    }
-
-    public Player.UnitData getUnitData()
-    {
-        return getPlayer().getUnitData(unit.getName());
     }
 
     public float getRankedPoints()
@@ -644,11 +638,6 @@ public class GameMember
         this.stats = stats;
     }
 
-    public GameMemberVars getVars()
-    {
-        return vars;
-    }
-
     public EmbedCreateSpec getStatus()
     {
         EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
@@ -660,7 +649,6 @@ public class GameMember
         }
         else
         {
-            GameMemberVars vars = getVars();
             Stats stats = getStats();
 
             if (game.getCurrentMember().equals(this))

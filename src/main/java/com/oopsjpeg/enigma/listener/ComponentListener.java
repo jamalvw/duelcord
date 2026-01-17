@@ -1,7 +1,8 @@
 package com.oopsjpeg.enigma.listener;
 
 import com.oopsjpeg.enigma.Enigma;
-import com.oopsjpeg.enigma.game.object.Unit;
+import com.oopsjpeg.enigma.game.unit.Unit;
+import com.oopsjpeg.enigma.game.unit.UnitType;
 import com.oopsjpeg.enigma.util.Listener;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
@@ -28,15 +29,15 @@ public class ComponentListener implements Listener
         if (event.getCustomId().equals("unit_viewer"))
         {
             MessageChannel channel = event.getMessage().get().getChannel().block();
-            Unit unit = Unit.valueOf(event.getValues().get(0));
+            Unit unit = UnitType.valueOf(event.getValues().get(0)).create();
 
             // Create a temp button to view stats
-            Button statsBtn = Button.primary("unit_viewer-stats;" + unit.name(), "View Stats");
+            //Button statsBtn = Button.primary("unit_viewer-stats;" + unit.name(), "View Stats");
 
             event.reply(InteractionApplicationCommandCallbackSpec.builder()
                     .ephemeral(true)
-                    .addEmbed(unit.format())
-                    .addComponent(ActionRow.of(statsBtn))
+                    .addEmbed(unit.embed())
+                    //.addComponent(ActionRow.of(statsBtn))
                     .build()).subscribe();
         }
     }
@@ -47,15 +48,15 @@ public class ComponentListener implements Listener
         String id = idChunks[0];
 
         // Unit viewer for stats
-        if (id.equals("unit_viewer-stats"))
-        {
-            Unit unit = Unit.valueOf(idChunks[1]);
-
-            event.reply(InteractionApplicationCommandCallbackSpec.builder()
-                    .ephemeral(true)
-                    .addEmbed(unit.formatStats())
-                    .build()).subscribe();
-        }
+        //if (id.equals("unit_viewer-stats"))
+        //{
+        //    Unit unit = Unit.valueOf(idChunks[1]);
+//
+        //    event.reply(InteractionApplicationCommandCallbackSpec.builder()
+        //            .ephemeral(true)
+        //            .addEmbed(unit.formatStats())
+        //            .build()).subscribe();
+        //}
     }
 
     @Override

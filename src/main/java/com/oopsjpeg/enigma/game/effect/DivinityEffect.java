@@ -3,7 +3,7 @@ package com.oopsjpeg.enigma.game.effect;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Effect;
 
-import static com.oopsjpeg.enigma.game.Stats.SKILL_POWER;
+import static com.oopsjpeg.enigma.game.StatType.SKILL_POWER;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class DivinityEffect extends Effect

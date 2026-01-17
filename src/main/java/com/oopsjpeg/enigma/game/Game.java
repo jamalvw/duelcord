@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.oopsjpeg.enigma.game.GameState.*;
+import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.game.Stats.*;
 
 public class Game
@@ -155,7 +156,7 @@ public class Game
                 }
             }
 
-            output.add("### " + member.getMention() + "'s Turn");
+            output.add("### " + member.getMention() + "'s Turn - " + member.getGold() + " Gold");
             output.add("Open this channel's pinned messages to see your stats.");
 
             // On turn start
@@ -165,7 +166,7 @@ public class Game
                     .filter(Skill::hasCooldown)
                     .filter(skill ->
                     {
-                        Cooldown cooldown = skill.getCooldown(member.getVars());
+                        Cooldown cooldown = skill.getCooldown();
                         return cooldown.count() && cooldown.tryNotify();
                     })
                     .map(skill -> "**`>" + skill.getName() + "`**")

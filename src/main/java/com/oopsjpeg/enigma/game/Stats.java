@@ -5,23 +5,11 @@ import com.oopsjpeg.enigma.util.Util;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.oopsjpeg.enigma.game.StatType.*;
+
 public class Stats
 {
-    public static final String MAX_HEALTH = "max_health";
-    public static final String MAX_ENERGY = "max_energy";
-    public static final String ATTACK_POWER = "attack_power";
-    public static final String SKILL_POWER = "skill_power";
-    public static final String CRIT_CHANCE = "crit_chance";
-    public static final String CRIT_DAMAGE = "crit_damage";
-    public static final String LIFE_STEAL = "life_steal";
-    public static final String RESIST = "resist";
-    public static final String DODGE = "dodge";
-    public static final String COOLDOWN_REDUCTION = "cooldown_reduction";
-
-    public static final String GOLD_PER_TURN = "gold_per_turn";
-    public static final String HEALTH_PER_TURN = "health_per_turn";
-
-    private final Map<String, Float> values = new HashMap<>();
+    private final Map<StatType, Float> values = new HashMap<>();
 
     public Stats()
     {
@@ -40,9 +28,9 @@ public class Stats
         values.put(HEALTH_PER_TURN, 0.0f);
     }
 
-    public Stats put(String key, float value)
+    public Stats put(StatType type, float value)
     {
-        switch (key)
+        switch (type)
         {
             case MAX_HEALTH:
             case MAX_ENERGY:
@@ -59,41 +47,41 @@ public class Stats
                 value = Util.limit(value, 0, 0.8f);
                 break;
         }
-        values.put(key, value);
+        values.put(type, value);
         return this;
     }
 
-    public float get(String key)
+    public float get(StatType type)
     {
-        return values.getOrDefault(key, 0.0f);
+        return values.getOrDefault(type, 0.0f);
     }
 
-    public int getInt(String key)
+    public int getInt(StatType type)
     {
-        return (int) Math.ceil(get(key));
+        return (int) Math.ceil(get(type));
     }
 
-    public Stats add(String key, float value)
+    public Stats add(StatType type, float value)
     {
-        put(key, get(key) + value);
+        put(type, get(type) + value);
         return this;
     }
 
-    public Stats sub(String key, float value)
+    public Stats sub(StatType type, float value)
     {
-        put(key, get(key) - value);
+        put(type, get(type) - value);
         return this;
     }
 
-    public Stats mul(String key, float value)
+    public Stats mul(StatType type, float value)
     {
-        put(key, get(key) * value);
+        put(type, get(type) * value);
         return this;
     }
 
-    public Stats div(String key, float value)
+    public Stats div(StatType type, float value)
     {
-        put(key, get(key) / value);
+        put(type, get(type) / value);
         return this;
     }
 

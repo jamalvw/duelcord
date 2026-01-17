@@ -5,7 +5,7 @@ import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.util.Emote;
 
-import static com.oopsjpeg.enigma.game.Stats.MAX_ENERGY;
+import static com.oopsjpeg.enigma.game.StatType.MAX_ENERGY;
 
 public class AwakenedFaithBuff extends Buff
 {

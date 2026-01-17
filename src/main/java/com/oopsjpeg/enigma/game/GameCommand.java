@@ -7,7 +7,8 @@ import com.oopsjpeg.enigma.game.action.BuyAction;
 import com.oopsjpeg.enigma.game.action.SellAction;
 import com.oopsjpeg.enigma.game.action.UseAction;
 import com.oopsjpeg.enigma.game.object.Item;
-import com.oopsjpeg.enigma.game.object.Unit;
+import com.oopsjpeg.enigma.game.unit.Unit;
+import com.oopsjpeg.enigma.game.unit.UnitType;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.entity.Message;
@@ -15,7 +16,6 @@ import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public enum GameCommand implements Command
@@ -93,7 +93,7 @@ public enum GameCommand implements Command
                         if (game.getGameState() == GameState.PICKING)
                             Util.sendFailure(channel, "You cannot end your turn until the game has started.");
                         else
-                            channel.createMessage(game.nextTurn()).subscribe();
+                            channel.createMessage(game.nextTurn()).withEmbeds(game.getCurrentMember().getStatus()).subscribe();
                     }
                 }
             },
@@ -131,13 +131,14 @@ public enum GameCommand implements Command
                         else
                         {
                             String name = String.join(" ", args).toLowerCase();
-                            Unit unit = name.equals("random")
-                                    ? Util.pickRandom(Unit.values())
-                                    : Unit.fromName(name);
-                            if (unit == null)
+                            UnitType type = name.equals("random")
+                                    ? Util.pickRandom(UnitType.values())
+                                    : UnitType.fromName(name);
+                            if (type == null)
                                 Util.sendFailure(channel, "Invalid unit.");
                             else
                             {
+                                Unit unit = type.create();
                                 member.setUnit(unit);
                                 final List<String> output = new ArrayList<>();
                                 output.add(Emote.YES + "**" + author.getUsername() + "** will play as **" + unit.getName() + "**!");

@@ -207,7 +207,7 @@ public class Enigma
             // Winner
             winner.getPlayer().win(losers.get(0).getRankedPoints());
             winner.getPlayer().addGems(Util.nextInt(25, 40));
-            winner.getPlayer().getUnitData(winner.getUnit().getName()).addPoints(Util.nextInt(160, 200));
+            //winner.getPlayer().getUnitData(winner.getUnit().getName()).addPoints(Util.nextInt(160, 200));
             //mongo.savePlayer(winner.getPlayer());
 
             // Losers
@@ -215,7 +215,7 @@ public class Enigma
             {
                 loser.getPlayer().lose(winner.getRankedPoints());
                 loser.getPlayer().addGems(Util.nextInt(10, 20));
-                loser.getPlayer().getUnitData(loser.getUnit().getName()).addPoints(Util.nextInt(80, 100));
+                //loser.getPlayer().getUnitData(loser.getUnit().getName()).addPoints(Util.nextInt(80, 100));
                 //mongo.savePlayer(loser.getPlayer());
             }
 
@@ -224,12 +224,12 @@ public class Enigma
             LocalDateTime now = LocalDateTime.now();
             logEmbed.color(Color.YELLOW);
             logEmbed.author("Victory by " + winner.getUsername() + " on " + game.getMode().getName(), null, winner.getUser().getAvatarUrl());
-            logEmbed.description("Playing as **" + winner.getUnit().getName() + "** (" + winner.getUnitData().getPoints() + " pts)"
-                    + "\n**" + winner.getPlayer().getWins() + "** wins and **" + winner.getPlayer().getLosses() + "** losses."
-                    + "\n**" + game.getTurnCount() + "** turns and **" + game.getActions().size() + "** actions."
-                    + "\nOpponent(s): " + game.getDead().stream()
-                    .map(loser -> loser.getUsername() + " (" + loser.getUnit().getName() + ")")
-                    .collect(Collectors.joining(", ")));
+            //logEmbed.description("Playing as **" + winner.getUnit().getName() + "** (" + winner.getUnitData().getPoints() + " pts)"
+            //        + "\n**" + winner.getPlayer().getWins() + "** wins and **" + winner.getPlayer().getLosses() + "** losses."
+            //        + "\n**" + game.getTurnCount() + "** turns and **" + game.getActions().size() + "** actions."
+            //        + "\nOpponent(s): " + game.getDead().stream()
+            //        .map(loser -> loser.getUsername() + " (" + loser.getUnit().getName() + ")")
+            //        .collect(Collectors.joining(", ")));
             logEmbed.footer(now.getYear() + "/" + now.getMonthValue() + "/" + now.getDayOfMonth(), null);
 
             getMatchLogChannel().createMessage(logEmbed.build()).subscribe();

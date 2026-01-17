@@ -6,8 +6,8 @@ import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.util.Stacker;
 
-import static com.oopsjpeg.enigma.game.Stats.COOLDOWN_REDUCTION;
-import static com.oopsjpeg.enigma.game.Stats.MAX_HEALTH;
+import static com.oopsjpeg.enigma.game.StatType.COOLDOWN_REDUCTION;
+import static com.oopsjpeg.enigma.game.StatType.MAX_HEALTH;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class MagicalMasteryEffect extends Effect

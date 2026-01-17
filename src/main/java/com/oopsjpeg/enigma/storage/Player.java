@@ -3,7 +3,6 @@ package com.oopsjpeg.enigma.storage;
 import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.game.GameMode;
-import com.oopsjpeg.enigma.game.object.Unit;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.PermissionOverwrite;
@@ -27,7 +26,6 @@ public class Player
     private int wins;
     private int losses;
     private int rp;
-    private List<UnitData> unitDatas;
 
     public Player(long id)
     {
@@ -144,25 +142,6 @@ public class Player
         return getTotalGames() > 0 ? (float) wins / getTotalGames() : 0;
     }
 
-    public List<UnitData> getUnitDatas()
-    {
-        if (unitDatas == null)
-            unitDatas = new ArrayList<>();
-        return unitDatas;
-    }
-
-    public UnitData getUnitData(String unitName)
-    {
-        return getUnitDatas().stream()
-                .filter(ud -> ud.unitName.equalsIgnoreCase(unitName))
-                .findAny().orElseGet(() ->
-                {
-                    UnitData data = new UnitData(unitName);
-                    getUnitDatas().add(data);
-                    return data;
-                });
-    }
-
     public int getRankedPoints()
     {
         if (rp == 0)
@@ -269,46 +248,5 @@ public class Player
     public void setLosses(int losses)
     {
         this.losses = losses;
-    }
-
-    public static class UnitData
-    {
-        private String unitName;
-        private int points;
-
-        public UnitData(String unitName)
-        {
-            this.unitName = unitName;
-        }
-
-        public Unit getUnit()
-        {
-            return Unit.fromName(unitName);
-        }
-
-        public String getUnitName()
-        {
-            return unitName;
-        }
-
-        public void setUnitName(String unitName)
-        {
-            this.unitName = unitName;
-        }
-
-        public int getPoints()
-        {
-            return points;
-        }
-
-        public void setPoints(int points)
-        {
-            this.points = Math.max(0, points);
-        }
-
-        public void addPoints(int points)
-        {
-            setPoints(getPoints() + points);
-        }
     }
 }

@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.game.Stats.*;
 
 public class Util

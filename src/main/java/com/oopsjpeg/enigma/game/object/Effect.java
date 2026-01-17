@@ -17,7 +17,6 @@ public abstract class Effect implements GameObject
         this.stats = stats;
     }
 
-    @Override
     public String getName()
     {
         return name;

@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.oopsjpeg.enigma.game.Stats.ATTACK_POWER;
-import static com.oopsjpeg.enigma.game.Stats.SKILL_POWER;
+import static com.oopsjpeg.enigma.game.StatType.ATTACK_POWER;
+import static com.oopsjpeg.enigma.game.StatType.SKILL_POWER;
 import static com.oopsjpeg.enigma.game.object.Item.ALCHEMISTS_ELIXIR;
 import static com.oopsjpeg.enigma.util.Util.percent;
 import static com.oopsjpeg.enigma.util.Util.pickRandom;
