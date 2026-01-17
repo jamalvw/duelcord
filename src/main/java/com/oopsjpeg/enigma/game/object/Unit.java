@@ -5,6 +5,7 @@ import com.oopsjpeg.enigma.game.buff.BleedingDebuff;
 import com.oopsjpeg.enigma.game.buff.CrippledDebuff;
 import com.oopsjpeg.enigma.util.Cooldown;
 import com.oopsjpeg.enigma.util.Emote;
+import com.oopsjpeg.enigma.util.Stacker;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
@@ -426,6 +427,314 @@ public enum Unit implements GameObject
                         return new Stats()
                                 .put(DODGE, getPower());
                     }
+                }
+            },
+    REAVER("Reaver", Color.BISMARK, new Stats()
+            .put(MAX_ENERGY, 125)
+            .put(MAX_HEALTH, 1000)
+            .put(ATTACK_POWER, 21)
+            .put(HEALTH_PER_TURN, 14))
+            {
+                private static final int STRIKE_COOLDOWN = 1;
+                private static final int WEB_COOLDOWN = 4;
+
+                private static final int MIMIC_HP = 45;
+                private static final float MIMIC_HP_SP_RATIO = 2.4f;
+
+                private static final int STRIKE_DAMAGE = 15;
+                private static final float STRIKE_DAMAGE_AP_RATIO = 0.6f;
+                private static final float STRIKE_DAMAGE_SP_RATIO = 0.4f;
+                private static final int STRIKE_SHADOWMELD_DAMAGE = 20;
+                private static final float STRIKE_SHADOWMELD_DAMAGE_SP_RATIO = 2.0f;
+
+                private static final int WEB_APREDUCE = 25;
+                private static final float WEB_SHADOWMELD_SPREDUCE = 0.3f;
+
+                private static final String VAR_SHADOWCHARGES = "shadowcharges";
+                private static final String VAR_STRIKE_COOLDOWN = "strike_cooldown";
+                private static final String VAR_WEB_COOLDOWN = "web_cooldown";
+
+                public Stacker getShadowCharges(GameMemberVars vars)
+                {
+                    if (!vars.has(this, VAR_SHADOWCHARGES))
+                        setShadowCharges(vars, new Stacker(3));
+                    return vars.get(this, VAR_SHADOWCHARGES, Stacker.class);
+                }
+
+                public void setShadowCharges(GameMemberVars vars, Stacker shadowCharges)
+                {
+                    vars.put(this, VAR_SHADOWCHARGES, shadowCharges);
+                }
+
+                public Cooldown getStrikeCooldown(GameMemberVars vars)
+                {
+                    if (!vars.has(this, VAR_STRIKE_COOLDOWN))
+                        setStrikeCooldown(vars, new Cooldown(STRIKE_COOLDOWN));
+                    return vars.get(this, VAR_STRIKE_COOLDOWN, Cooldown.class);
+                }
+
+                public void setStrikeCooldown(GameMemberVars vars, Cooldown strikeCooldown)
+                {
+                    vars.put(this, VAR_STRIKE_COOLDOWN, strikeCooldown);
+                }
+
+                public Cooldown getWebCooldown(GameMemberVars vars)
+                {
+                    if (!vars.has(this, VAR_WEB_COOLDOWN))
+                        setWebCooldown(vars, new Cooldown(WEB_COOLDOWN));
+                    return vars.get(this, VAR_WEB_COOLDOWN, Cooldown.class);
+                }
+
+                public void setWebCooldown(GameMemberVars vars, Cooldown webCooldown)
+                {
+                    vars.put(this, VAR_WEB_COOLDOWN, webCooldown);
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Each turn, gain a Shadow Charge. Upon reaching 3 Charges, become Shadowmeld for a turn, losing 50 Energy but replacing your skills with Mimic Summons.\n" +
+                            "\n" +
+                            "Mimics block damage and have " + MIMIC_HP + " + " + percent(MIMIC_HP_SP_RATIO) + " Spell Power health.";
+                }
+
+                @Override
+                public String getStatus(GameMember member) {
+                    GameMemberVars vars = member.getVars();
+                    Stacker charges = getShadowCharges(vars);
+                    if (!member.hasBuff(ShadowmeldBuff.class)) {
+                        return "Shadowmeld: " + charges.getCurrent() + " / " + charges.getMax();
+                    }
+                    return null;
+                }
+
+                @Override
+                public Skill[] getSkills() {
+                    return new Skill[]{new StrikeSkill(), new WebSkill()};
+                }
+
+                @Override
+                public String onTurnStart(GameMember member) {
+                    GameMemberVars vars = member.getVars();
+                    Stacker charges = getShadowCharges(vars);
+
+                    if (!member.hasBuff(ShadowmeldBuff.class) && charges.stack()) {
+                        charges.reset();
+                        return member.addBuff(new ShadowmeldBuff(member), Emote.WEB);
+                    }
+
+                    return null;
+                }
+
+                class StrikeSkill extends Skill {
+                    public StrikeSkill() {
+                        super(REAVER, 1, 25);
+                    }
+
+                    @Override
+                    public GameAction act(Game game, GameMember actor) {
+                        return new StrikeAction(game.getRandomTarget(actor));
+                    }
+
+                    @Override
+                    public String getName() {
+                        return "Strike";
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Deal " + STRIKE_DAMAGE + " + " + percent(STRIKE_DAMAGE_AP_RATIO) + " Attack Power + " +
+                                percent(STRIKE_DAMAGE_SP_RATIO) + " Skill Power. " +
+                                "If Shadowmeld is active, instead summon a Mimic that deals " + STRIKE_SHADOWMELD_DAMAGE
+                                + " + " + percent(STRIKE_SHADOWMELD_DAMAGE_SP_RATIO) + " Skill Power each turn while it persists.";
+                    }
+                }
+
+                class StrikeAction implements GameAction {
+                    private final GameMember target;
+
+                    public StrikeAction(GameMember target)
+                    {
+                        this.target = target;
+                    }
+
+                    @Override
+                    public String act(GameMember actor) {
+                        // Set cooldown
+                        GameMemberVars vars = actor.getVars();
+                        Cooldown cd = getStrikeCooldown(vars);
+                        cd.start(actor.getStats().getInt(COOLDOWN_REDUCTION));
+                        setStrikeCooldown(vars, cd);
+
+                        // Create damage event
+
+                        if (!actor.hasBuff(ShadowmeldBuff.class)) {
+                            // Normal strike
+                            DamageEvent event = new DamageEvent(actor, target);
+                            List<String> output = new ArrayList<>();
+                            Stats stats = actor.getStats();
+
+                            event.damage += STRIKE_DAMAGE;
+                            event.damage += stats.getInt(ATTACK_POWER) * STRIKE_DAMAGE_AP_RATIO;
+                            event.damage += stats.getInt(SKILL_POWER) * STRIKE_DAMAGE_SP_RATIO;
+
+                            output.add(target.damage(event, Emote.ATTACK, "Strike"));
+
+                            return Util.joinNonEmpty("\n", output);
+                        } else {
+                            // Summon strike mimic
+                            Stats stats = actor.getStats();
+                            float dmg = STRIKE_DAMAGE + (stats.get(ATTACK_POWER) * STRIKE_DAMAGE_AP_RATIO) + (stats.get(SKILL_POWER) * STRIKE_DAMAGE_SP_RATIO);
+                            return actor.addBuff(new StrikeMimicBuff(actor, dmg), Emote.SKILL);
+                        }
+                    }
+
+                    @Override
+                    public int getEnergy() {
+                        return 25;
+                    }
+                }
+
+                class WebSkill extends Skill {
+                    public WebSkill() {
+                        super(REAVER, 4, 25);
+                    }
+
+                    @Override
+                    public GameAction act(Game game, GameMember actor) {
+                        return new WebAction(game.getRandomTarget(actor));
+                    }
+
+                    @Override
+                    public String getName() {
+                        return "Web";
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Reduce the enemy’s Attack Power by " + WEB_APREDUCE + " for 1 turn. " +
+                                "If Shadowmeld is active, instead summon a Mimic that reduces the enemy’s Skill Power " +
+                                "by " + percent(WEB_SHADOWMELD_SPREDUCE) + " for 2 turns.";
+                    }
+                }
+
+                class WebAction implements GameAction {
+                    private final GameMember target;
+
+                    public WebAction(GameMember target) {
+                        this.target = target;
+                    }
+
+                    @Override
+                    public String act(GameMember actor) {
+                        // Start cooldown
+                        GameMemberVars vars = actor.getVars();
+                        Cooldown cd = getWebCooldown(vars);
+                        cd.start(actor.getStats().getInt(COOLDOWN_REDUCTION));
+                        setWebCooldown(vars, cd);
+
+                        if (!actor.hasBuff(ShadowmeldBuff.class)) {
+                            WebbedDebuff debuff = new WebbedDebuff(actor, 1, WEB_APREDUCE);
+                            return target.addBuff(debuff, Emote.WEB);
+                        } else {
+                            WebMimicBuff buff = new WebMimicBuff(actor, WEB_SHADOWMELD_SPREDUCE);
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    public int getEnergy() {
+                        return 25;
+                    }
+                }
+
+                class ShadowmeldBuff extends Buff {
+                    public ShadowmeldBuff(GameMember source) {
+                        super("Shadowmeld", false, source, 1, 0);
+                    }
+
+                    @Override
+                    public String getStatus(GameMember member) {
+                        return "Now shadowmeld";
+                    }
+
+                    @Override
+                    public String onTurnStart(GameMember member) {
+                        return Emote.SILENCE + "**" + member.getUsername() + "** is Shadowmeld this turn.";
+                    }
+                }
+
+                class WebbedDebuff extends Buff {
+                    public WebbedDebuff(GameMember source, int totalTurns, float power) {
+                        super("Webbed", true, source, totalTurns, power);
+                    }
+
+                    @Override
+                    public String getStatus(GameMember member) {
+                        return "Webbed: -" + getPower() + " AP (" + getCurrentTurns() + " turns left)";
+                    }
+
+                    @Override
+                    public String onTurnStart(GameMember member) {
+                        return Emote.WEB + "**" + member.getUsername() + "** has __" + formatPower() + "__ reduced Attack Power this turn.";
+                    }
+
+                    @Override
+                    public Stats getStats() {
+                        return new Stats().put(ATTACK_POWER, -getPower());
+                    }
+                }
+
+                abstract class MimicBuff extends Buff {
+                    float hp;
+
+                    public MimicBuff(String name, GameMember source, float power) {
+                        super(name, false, source, 99, power);
+                        hp = MIMIC_HP + (source.getStats().get(SKILL_POWER) * MIMIC_HP_SP_RATIO);
+                    }
+
+                    @Override
+                    public DamageEvent damageIn(DamageEvent event) {
+                        event.cancelled = true;
+
+                        hp -= event.damage + event.bonus;
+                        event.output.add("Mimic took damage");
+
+                        if (hp <= 0) remove();
+
+                        return event;
+                    }
+
+                    @Override
+                    public String getStatus(GameMember member) {
+                        return getName() + ": " + hp + " HP";
+                    }
+                }
+
+                class StrikeMimicBuff extends MimicBuff {
+                    public StrikeMimicBuff(GameMember source, float power) {
+                        super("Strike Mimic", source, power);
+                    }
+
+                    @Override
+                    public String onTurnStart(GameMember member) {
+                        Game game = member.getGame();
+                        GameMember target = game.getRandomTarget(member);
+                        DamageEvent event = new DamageEvent(member, target);
+
+                        event.damage += getPower();
+
+                        return target.damage(event, Emote.ATTACK, "Strike Mimic");
+                    }
+
+
+                }
+
+                class WebMimicBuff extends MimicBuff {
+                    public WebMimicBuff(GameMember source, float power) {
+                        super("Web Mimic", source, power);
+                    }
+
+
                 }
             },
     //BERSERKER("Berserker", Color.RED, new Stats()

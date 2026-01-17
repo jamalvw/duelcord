@@ -186,6 +186,8 @@ public class GameMember
                 stats.addAll(buff.getStats());
         }
 
+        stats.memberize();
+
         critPity.setChance(stats.get(CRIT_CHANCE));
 
         return Util.joinNonEmpty("\n", output);

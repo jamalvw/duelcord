@@ -40,25 +40,33 @@ public class Stats
         values.put(HEALTH_PER_TURN, 0.0f);
     }
 
+    public Stats memberize() {
+        for (String key : values.keySet()) {
+            switch (key)
+            {
+                case MAX_HEALTH:
+                case MAX_ENERGY:
+                case SKILL_POWER:
+                case GOLD_PER_TURN:
+                case HEALTH_PER_TURN:
+                    put(key, Math.max(0, get(key)));
+                    break;
+                case ATTACK_POWER:
+                    put(key, Math.max(1, get(key)));
+                    break;
+                case CRIT_CHANCE:
+                    put(key, Util.limit(get(key), 0, 1));
+                    break;
+                case RESIST:
+                    put(key, Util.limit(get(key), 0, 0.8f));
+                    break;
+            }
+        }
+        return this;
+    }
+
     public Stats put(String key, float value)
     {
-        switch (key)
-        {
-            case MAX_HEALTH:
-            case MAX_ENERGY:
-            case ATTACK_POWER:
-            case SKILL_POWER:
-            case GOLD_PER_TURN:
-            case HEALTH_PER_TURN:
-                value = Math.max(0, value);
-                break;
-            case CRIT_CHANCE:
-                value = Util.limit(value, 0, 1);
-                break;
-            case RESIST:
-                value = Util.limit(value, 0, 0.8f);
-                break;
-        }
         values.put(key, value);
         return this;
     }
