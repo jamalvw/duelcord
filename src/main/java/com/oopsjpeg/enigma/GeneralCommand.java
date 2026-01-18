@@ -102,7 +102,7 @@ public enum GeneralCommand implements Command
                         Util.sendFailure(channel, "You have left the queue.");
                     } else
                     {
-                        GameMode mode = args.length > 0 ? GameMode.fromName(args[0]) : GameMode.CHAOS;
+                        GameMode mode = args.length > 0 ? GameMode.fromName(args[0]) : GameMode.DUEL;
                         if (mode == null)
                             Util.sendFailure(channel, "Invalid game mode.");
                         else
