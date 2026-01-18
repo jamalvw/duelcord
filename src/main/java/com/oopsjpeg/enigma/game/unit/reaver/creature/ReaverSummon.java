@@ -26,8 +26,6 @@ public class ReaverSummon extends Summon {
         event.damage += event.actor.getStats().get(StatType.ATTACK_POWER) * 0.1f;
         event.damage += event.actor.getStats().get(StatType.SKILL_POWER) + 0.3f;
 
-        System.out.print("did this work");
-
         e.output.add(event.target.damage(event, ":space_invader: ", getName()));
 
         return e;
