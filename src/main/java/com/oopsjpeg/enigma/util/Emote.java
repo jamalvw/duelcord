@@ -23,6 +23,8 @@ public class Emote
     public static final String SILENCE = ":speech_balloon: ";
     public static final String WEAKEN = ":x_ray: ";
     public static final String WOUND = ":cupid: ";
+    public static final String ZAP = ":zap: ";
+    public static final String VOIDBURN = "<:firepurple:1462293157545902194> ";
 
     public static final String GUN = ":gun: ";
     public static final String KNIFE = ":knife: ";

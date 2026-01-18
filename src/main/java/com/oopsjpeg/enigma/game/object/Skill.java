@@ -56,7 +56,7 @@ public abstract class Skill implements Command
 
     public String getStatus(GameMember member)
     {
-        return getName() + ": " + (!hasCooldown() ? "Ready" : (cooldown.isDone() ? "Ready" : "in " + cooldown.getCurrent() + " turn" + (cooldown.getCurrent() > 1 ? "s" : "")));
+        return "**`>" + getName() + "`**: " + (!hasCooldown() ? "Ready" : (cooldown.isDone() ? "Ready" : "in " + cooldown.getCurrent() + " turn" + (cooldown.getCurrent() > 1 ? "s" : "")));
     }
 
     public abstract GameAction act(GameMember actor);

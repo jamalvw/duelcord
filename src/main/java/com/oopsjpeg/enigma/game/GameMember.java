@@ -3,6 +3,7 @@ package com.oopsjpeg.enigma.game;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.game.object.Item;
+import com.oopsjpeg.enigma.game.object.Summon;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Emote;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.game.Stats.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
+import static java.lang.Math.round;
 
 public class GameMember
 {
@@ -30,6 +32,7 @@ public class GameMember
     private final List<Item> items = new ArrayList<>();
     private final Map<Class<? extends Effect>, Effect> effects = new HashMap<>();
     private final List<Buff> buffs = new ArrayList<>();
+    private final List<Summon> summons = new ArrayList<>();
 
     private final Pity critPity = new Pity(0, 0.5f);
 
@@ -73,6 +76,7 @@ public class GameMember
         data.addAll(getItems());
         data.addAll(getEffects());
         data.addAll(getBuffs());
+        data.addAll(getSummons());
         return data;
     }
 
@@ -99,6 +103,11 @@ public class GameMember
     public boolean hasEffect(Effect effect)
     {
         return effects.containsKey(effect.getClass());
+    }
+
+    public Buff getBuff(Class<? extends Buff> buffType)
+    {
+        return getBuffs().stream().filter(buff -> buff.getClass().equals(buffType)).findAny().orElse(null);
     }
 
     public List<Buff> getBuffs()
@@ -136,6 +145,29 @@ public class GameMember
                 .filter(buff -> buff.getClass().equals(buffType))
                 .map(this::removeBuff).
                 collect(Collectors.toList()));
+    }
+
+    public List<Summon> getSummons() {
+        return new ArrayList<>(summons);
+    }
+
+    public String addSummon(Summon summon, String emote)
+    {
+        final List<String> output = new ArrayList<>();
+        summons.add(summon);
+        output.add(emote + "**" + getUsername() + "** summoned **" + summon.getName() + "** (" + round(summon.getHealth()) + " HP)!");
+        output.add(updateStats());
+        return Util.joinNonEmpty("\n", output);
+    }
+
+    public boolean hasBlockingSummon()
+    {
+        return summons.stream().anyMatch(Summon::isBlocker);
+    }
+
+    public Summon getBlockingSummon()
+    {
+        return summons.stream().filter(Summon::isBlocker).findFirst().orElse(null);
     }
 
     public boolean alreadyPickedUnit()
@@ -180,6 +212,15 @@ public class GameMember
                 stats.addAll(buff.getStats());
         }
 
+        for (Summon summon : getSummons())
+        {
+            if (summon.shouldRemove())
+            {
+                summons.remove(summon);
+                output.add(Emote.DEFEAT + "**" + getUsername() + "'s " + summon.getName() + "** has perished.");
+            }
+        }
+
         critPity.setChance(stats.get(CRIT_CHANCE));
 
         return Util.joinNonEmpty("\n", output);
@@ -212,9 +253,9 @@ public class GameMember
     {
         for (GameObject o : getData()) shieldAmount = o.onShield(shieldAmount);
 
-        giveShield(Math.round(shieldAmount));
+        giveShield(round(shieldAmount));
 
-        return Emote.SHIELD + "**" + getUsername() + "** shielded for **" + Math.round(shieldAmount)
+        return Emote.SHIELD + "**" + getUsername() + "** shielded for **" + round(shieldAmount)
                 + "**! [**" + getShield() + "**]";
     }
 
@@ -232,10 +273,10 @@ public class GameMember
     {
         for (GameObject o : getData()) healAmount = o.onHeal(healAmount);
 
-        giveHealth(Math.round(healAmount));
+        giveHealth(round(healAmount));
 
         if (message)
-            return Emote.HEAL + "**" + getUsername() + "** healed for **" + Math.round(healAmount) + "**! [**"
+            return Emote.HEAL + "**" + getUsername() + "** healed for **" + round(healAmount) + "**! [**"
                     + getHealth() + " / " + stats.getInt(MAX_HEALTH) + "**]"
                     + (source == null ? "" : " (" + source + ")");
 
@@ -325,7 +366,7 @@ public class GameMember
         event = crit(event);
 
         if (!event.cancelled)
-            event.actor.giveGold(game.getMode().handleGold(Math.round(Util.nextInt(20, 30) + (game.getTurnCount() * 0.5f))));
+            event.actor.giveGold(game.getMode().handleGold(round(Util.nextInt(20, 30) + (game.getTurnCount() * 0.5f))));
 
         return event;
     }
@@ -348,12 +389,21 @@ public class GameMember
         event = game.getMode().handleDamage(event);
 
         if (event.heal > 0)
-            event.output.add(event.actor.heal(Math.round(event.heal)));
+            event.output.add(event.actor.heal(round(event.heal)));
         if (event.shield > 0)
-            event.output.add(event.actor.shield(Math.round(event.shield)));
+            event.output.add(event.actor.shield(round(event.shield)));
 
         event.damage *= 1 - event.target.getResist();
         event.bonus *= 1 - event.target.getResist();
+
+        // Summon damaging
+        if (event.target.hasBlockingSummon())
+        {
+            Summon summon = event.target.getBlockingSummon();
+            summon.takeHealth(event.damage + event.bonus);
+            if (summon.getHealth() <= 0) summon.remove();
+            event.output.add(0, Util.damageText(event, event.actor.getUsername(), event.target.getUsername() + "'s " + summon.getName(), emote, source));
+        }
 
         // Shield damaging
         if (event.target.hasShield())
@@ -361,13 +411,13 @@ public class GameMember
             // Remove bonus damage first
             float shdBonus = Util.limit(event.bonus, 0, event.target.getShield());
             float shdDamage = 0;
-            event.target.takeShield(Math.round(shdBonus));
+            event.target.takeShield(round(shdBonus));
 
             // Remove main damage after
             if (event.target.hasShield())
             {
                 shdDamage = Util.limit(event.damage, 0, event.target.getShield());
-                event.target.takeShield(Math.round(shdDamage));
+                event.target.takeShield(round(shdDamage));
             }
 
             if (event.target.hasShield())
@@ -381,7 +431,7 @@ public class GameMember
 
         if (!event.target.hasShield() && event.total() > 0)
         {
-            event.target.takeHealth(Math.round(event.total()));
+            event.target.takeHealth(round(event.total()));
             event.output.add(0, Util.damageText(event, event.actor.getUsername(), event.target.getUsername(), emote, source));
             if (!event.target.hasHealth())
                 event.output.add(event.target.lose());
@@ -682,12 +732,19 @@ public class GameMember
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
+            // Summon statuses
+            List<String> summonStatuses = getSummons().stream()
+                    .map(summon -> summon.getStatus(this))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
             embed.author(getUnit().getName() + " (" + getUsername() + ")", null, getUser().getAvatarUrl());
 
             embed.description(String.join(" \n", coreStatuses) +
                     (unitStatus != null ? "\n\n" + unitStatus : "") +
                     (!skillStatuses.isEmpty() ? "\n\n" + String.join(" \n", skillStatuses) : "") +
                     (!buffStatuses.isEmpty() ? "\n\n" + String.join(" \n", buffStatuses) : "") +
+                    (!summonStatuses.isEmpty() ? "\n\n" + String.join(" \n", summonStatuses) : "") +
                     (!effectStatuses.isEmpty() ? "\n\n" + String.join(" \n", effectStatuses) : ""));
 
             embed.color(unit.getColor());

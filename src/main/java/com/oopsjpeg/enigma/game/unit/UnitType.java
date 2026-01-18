@@ -2,10 +2,12 @@ package com.oopsjpeg.enigma.game.unit;
 
 import com.oopsjpeg.enigma.game.unit.assassin.AssassinUnit;
 import com.oopsjpeg.enigma.game.unit.gunslinger.GunslingerUnit;
+import com.oopsjpeg.enigma.game.unit.reaver.ReaverUnit;
 
 public enum UnitType {
     ASSASSIN("Assassin"),
-    GUNSLINGER("Gunslinger");
+    GUNSLINGER("Gunslinger"),
+    REAVER("Reaver");
 
     public static UnitType fromName(String query)
     {
@@ -33,6 +35,7 @@ public enum UnitType {
         switch(this) {
             case ASSASSIN: return new AssassinUnit();
             case GUNSLINGER: return new GunslingerUnit();
+            case REAVER: return new ReaverUnit();
             default: throw new IllegalArgumentException();
         }
     }
