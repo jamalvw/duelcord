@@ -4,8 +4,8 @@ import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Buff;
 
 public class MarkedDebuff extends Buff {
-    public MarkedDebuff(GameMember source) {
-        super("Marked", true, source, 3, 0);
+    public MarkedDebuff(GameMember owner, GameMember source) {
+        super(owner, source, "Marked", true, 3, 0);
     }
 
     @Override

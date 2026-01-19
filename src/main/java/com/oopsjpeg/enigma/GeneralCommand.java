@@ -5,7 +5,8 @@ import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.GameMode;
 import com.oopsjpeg.enigma.game.Tree;
 import com.oopsjpeg.enigma.game.object.Item;
-import com.oopsjpeg.enigma.game.unit.UnitType;
+import com.oopsjpeg.enigma.game.object.Items;
+import com.oopsjpeg.enigma.game.unit.Units;
 import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.component.ActionRow;
@@ -39,7 +40,7 @@ public enum GeneralCommand implements Command
                     } else if (args[0].equalsIgnoreCase("units"))
                     {
                         // Create a list of select menu options for units
-                        List<SelectMenu.Option> options = Arrays.stream(UnitType.values())
+                        List<SelectMenu.Option> options = Arrays.stream(Units.values())
                                 .map(unit -> SelectMenu.Option.of(unit.getName(), unit.name()))
                                 .collect(Collectors.toList());
 
@@ -65,8 +66,9 @@ public enum GeneralCommand implements Command
                     embed.title("**" + tree.getName() + "**");
                     embed.color(tree.getColor());
 
-                    Arrays.stream(Item.values())
+                    Arrays.stream(Items.values())
                             .filter(item -> item.getTree() == tree)
+                            .map(item -> item.create(null))
                             .filter(Item::isBuyable)
                             .sorted(Comparator.comparingInt(Item::getCost))
                             .forEach(i ->
@@ -196,17 +198,18 @@ public enum GeneralCommand implements Command
                 @Override
                 public void execute(Message message, String[] args)
                 {
-                    Item item = Item.fromName(String.join(" ", args));
+                    GameMember member = Enigma.getGameMemberFromMessage(message);
+                    Items query = Items.fromName(String.join(" ", args));
 
-                    if (item == null) return;
+                    if (query == null) return;
 
+                    Item item = query.create(member);
                     int cost = item.getCost();
                     User author = message.getAuthor().get();
                     Player player = Enigma.getInstance().getPlayer(author);
 
                     if (player.isInGame())
                     {
-                        GameMember member = player.getGame().getMember(author);
                         Build build = item.build(member.getItems());
                         cost -= build.getReduction();
                     }
@@ -223,13 +226,13 @@ public enum GeneralCommand implements Command
                 @Override
                 public void execute(Message message, String[] args)
                 {
-                    UnitType unit = UnitType.fromName(String.join(" ", args));
+                    Units unit = Units.fromName(String.join(" ", args));
 
                     if (unit == null) return;
 
                     MessageChannel channel = message.getChannel().block();
                     channel.createMessage(MessageCreateSpec.builder()
-                            .addEmbed(unit.create().embed())
+                            .addEmbed(unit.create(null).embed())
                             .build()).subscribe();
                 }
             };

@@ -1,10 +1,10 @@
 package com.oopsjpeg.enigma.game;
 
-import com.oopsjpeg.enigma.game.object.Buff;
-import com.oopsjpeg.enigma.game.object.Effect;
-import com.oopsjpeg.enigma.game.object.Item;
-import com.oopsjpeg.enigma.game.object.Summon;
+import com.oopsjpeg.enigma.DamageHook;
+import com.oopsjpeg.enigma.Enigma;
+import com.oopsjpeg.enigma.game.object.*;
 import com.oopsjpeg.enigma.game.unit.Unit;
+import com.oopsjpeg.enigma.listener.CommandListener;
 import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Pity;
@@ -17,8 +17,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
-import static com.oopsjpeg.enigma.game.Stats.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
+import static java.lang.Math.max;
 import static java.lang.Math.round;
 
 public class GameMember
@@ -28,6 +28,8 @@ public class GameMember
     private Unit unit;
     private boolean alive = true;
     private boolean defensive = false;
+
+    CommandListener commands;
 
     private final List<Item> items = new ArrayList<>();
     private final Map<Class<? extends Effect>, Effect> effects = new HashMap<>();
@@ -83,6 +85,13 @@ public class GameMember
     public List<Item> getItems()
     {
         return items;
+    }
+
+    public Item getItem(String query) {
+        return items.stream()
+                .filter(i -> query.equalsIgnoreCase(i.getName()) || (query.length() >= 3
+                        && i.getName().toLowerCase().startsWith(query.toLowerCase())))
+                .findAny().orElse(null);
     }
 
     public List<Effect> getEffects()
@@ -170,6 +179,12 @@ public class GameMember
         return summons.stream().filter(Summon::isBlocker).findFirst().orElse(null);
     }
 
+    public List<DamageHook> getDamageHooks() {
+        return getData().stream()
+                .flatMap(o -> Arrays.stream(o.getDamageHooks()))
+                .collect(Collectors.toList());
+    }
+
     public boolean alreadyPickedUnit()
     {
         return getUnit() != null;
@@ -198,8 +213,9 @@ public class GameMember
                 }
         }
 
-        for (Effect effect : getEffects())
+        for (Effect effect : getEffects()) {
             stats.addAll(effect.getStats());
+        }
 
         for (Buff buff : getBuffs())
         {
@@ -228,13 +244,13 @@ public class GameMember
 
     public void act(GameAction action)
     {
-        if (getEnergy() < action.getEnergy())
-            Util.sendFailure(game.getChannel(), "That action costs **" + action.getEnergy() + "** Energy.");
+        if (getEnergy() < action.getCost())
+            Util.sendFailure(game.getChannel(), action.getName() + " costs **" + action.getCost() + "** Energy.");
         else
         {
             game.getActions().add(action);
 
-            takeEnergy(action.getEnergy());
+            takeEnergy(action.getCost());
 
             final List<String> output = new ArrayList<>();
             output.add(action.execute(this));
@@ -293,151 +309,6 @@ public class GameMember
             return Util.joinNonEmpty("\n", output);
         }
         return null;
-    }
-
-    public DamageEvent hit(DamageEvent event)
-    {
-        for (GameObject o : event.actor.getData()) event = o.hitOut(event);
-        for (GameObject o : event.target.getData()) event = o.hitIn(event);
-
-        // Dodge
-        if (event.target.stats.get(DODGE) > 0)
-        {
-            float dodgeRand = Util.RANDOM.nextFloat();
-            if (dodgeRand <= event.target.stats.get(DODGE))
-            {
-                event.output.add(Emote.DODGE + "**" + event.target.getUsername() + "** dodged the hit!");
-                event.cancelled = true;
-
-                for (GameObject o : event.actor.getData()) event = o.dodgeYou(event);
-                for (GameObject o : event.target.getData()) event = o.dodgeMe(event);
-
-                return event;
-            }
-        }
-
-        // Life steal healing
-        if (event.actor.stats.get(LIFE_STEAL) > 0)
-            event.heal += event.actor.stats.get(LIFE_STEAL) * event.damage;
-
-        return event;
-    }
-
-    public DamageEvent crit(DamageEvent event)
-    {
-        // Crit checks
-        if (event.crit || critPity.roll())
-        {
-            // Pseudo RNG crit bag
-            event.crit = true;
-
-            for (GameObject o : event.actor.getData()) event = o.critOut(event);
-            for (GameObject o : event.target.getData()) event = o.critIn(event);
-        }
-
-        // Critical strike bonus damage
-        if (event.crit)
-        {
-            event.critMul += .5f + stats.get(CRIT_DAMAGE);
-            event.damage += event.damage * event.critMul;
-        }
-
-        return event;
-    }
-
-    public DamageEvent skill(DamageEvent event)
-    {
-        event.isSkill = true;
-        for (GameObject o : event.actor.getData()) event = o.skillOut(event);
-        for (GameObject o : event.target.getData()) event = o.skillIn(event);
-        return event;
-    }
-
-    public DamageEvent attack(GameMember target)
-    {
-        DamageEvent event = new DamageEvent(this, target);
-        event.isAttack = true;
-        event.damage += stats.get(ATTACK_POWER);
-
-        for (GameObject o : event.actor.getData()) event = o.attackOut(event);
-        for (GameObject o : event.target.getData()) event = o.attackIn(event);
-
-        event = hit(event);
-        event = crit(event);
-
-        if (!event.cancelled)
-            event.actor.giveGold(game.getMode().handleGold(round(Util.nextInt(20, 30) + (game.getTurnCount() * 0.5f))));
-
-        return event;
-    }
-
-    public String damage(DamageEvent event, String emote)
-    {
-        return damage(event, emote, "");
-    }
-
-    public String damage(DamageEvent event, String emote, String source)
-    {
-        for (GameObject o : event.actor.getData()) event = o.damageOut(event);
-        for (GameObject o : event.target.getData()) event = o.damageIn(event);
-
-        event.output.add(event.actor.updateStats());
-        event.output.add(event.target.updateStats());
-
-        if (event.cancelled) return Util.joinNonEmpty("\n", event.output);
-
-        event = game.getMode().handleDamage(event);
-
-        if (event.heal > 0)
-            event.output.add(event.actor.heal(round(event.heal)));
-        if (event.shield > 0)
-            event.output.add(event.actor.shield(round(event.shield)));
-
-        event.damage *= 1 - event.target.getResist();
-        event.bonus *= 1 - event.target.getResist();
-
-        // Summon damaging
-        if (event.target.hasBlockingSummon())
-        {
-            Summon summon = event.target.getBlockingSummon();
-            summon.takeHealth(event.damage + event.bonus);
-            if (summon.getHealth() <= 0) summon.remove();
-            event.output.add(0, Util.damageText(event, event.actor.getUsername(), event.target.getUsername() + "'s " + summon.getName(), emote, source));
-        }
-
-        // Shield damaging
-        if (event.target.hasShield())
-        {
-            // Remove bonus damage first
-            float shdBonus = Util.limit(event.bonus, 0, event.target.getShield());
-            float shdDamage = 0;
-            event.target.takeShield(round(shdBonus));
-
-            // Remove main damage after
-            if (event.target.hasShield())
-            {
-                shdDamage = Util.limit(event.damage, 0, event.target.getShield());
-                event.target.takeShield(round(shdDamage));
-            }
-
-            if (event.target.hasShield())
-                event.output.add(0, Util.damageText(event, event.actor.getUsername(), event.target.getUsername() + "'s Shield", emote, source));
-            else
-                event.output.add(Emote.DEFEND + "**" + event.target.getUsername() + "'s Shield** was destroyed!");
-
-            event.bonus -= shdBonus;
-            event.damage -= shdDamage;
-        }
-
-        if (!event.target.hasShield() && event.total() > 0)
-        {
-            event.target.takeHealth(round(event.total()));
-            event.output.add(0, Util.damageText(event, event.actor.getUsername(), event.target.getUsername(), emote, source));
-            if (!event.target.hasHealth())
-                event.output.add(event.target.lose());
-        }
-
-        return Util.joinNonEmpty("\n", event.output);
     }
 
     public String win()
@@ -509,12 +380,14 @@ public class GameMember
 
         updateStats();
 
-        items.add(Item.POTION);
+        items.add(Items.POTION.create(this));
 
         setHealth(stats.getInt(MAX_HEALTH));
         setGold(game.getMode().handleGold(175 + (100 * game.getAlive().indexOf(this))));
 
-        game.getCommandListener().getCommands().addAll(Arrays.asList(unit.getSkills()));
+        commands = new CommandListener(Enigma.getInstance(), ">", unit.getSkills());
+        commands.setUserLimit(getUser());
+        Enigma.getInstance().addListener(commands);
 
         //if (unit instanceof Berserker)
         //    ((Berserker) unit).getRage().setCurrent(game.getAlive().indexOf(this));
@@ -626,7 +499,7 @@ public class GameMember
 
     public void setGold(int goldAmount)
     {
-        gold = Math.max(goldAmount, 0);
+        gold = max(goldAmount, 0);
     }
 
     public int giveGold(int goldAmount)
@@ -651,23 +524,23 @@ public class GameMember
         return targetGoldAmount - getGold();
     }
 
-    public int getShield()
+    public float getShield()
     {
         return shield;
     }
 
-    public void setShield(int shieldAmount)
+    public void setShield(float shieldAmount)
     {
-        shield = Math.max(shieldAmount, 0);
+        shield = round(max(shieldAmount, 0));
     }
 
-    public int giveShield(int shieldAmount)
+    public double giveShield(float shieldAmount)
     {
         setShield(getShield() + shieldAmount);
         return getShield();
     }
 
-    public int takeShield(int shieldAmount)
+    public double takeShield(float shieldAmount)
     {
         setShield(getShield() - shieldAmount);
         return getShield();
@@ -709,7 +582,7 @@ public class GameMember
             coreStatuses.add("- Health: " + percent(getHealthPercentage()) + " (" + getHealth() + "/" + stats.getInt(MAX_HEALTH) + ")");
             coreStatuses.add("- Gold: " + getGold());
             coreStatuses.add("- Energy: " + getEnergy());
-            coreStatuses.add("- Items: " + getItems());
+            coreStatuses.add("- Items: " + getItems().stream().map(Item::getName).collect(Collectors.toList()));
 
             // Unit status
             String unitStatus = getUnit().getStatus(this);

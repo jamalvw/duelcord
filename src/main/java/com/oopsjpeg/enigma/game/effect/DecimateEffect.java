@@ -1,5 +1,7 @@
 package com.oopsjpeg.enigma.game.effect;
 
+import com.oopsjpeg.enigma.DamageHook;
+import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.buff.CrippledDebuff;
@@ -14,21 +16,36 @@ public class DecimateEffect extends Effect
 {
     private final Stacker critCount;
 
-    public DecimateEffect(int critLimit, float power)
+    public DecimateEffect(GameMember owner, int critLimit, float power)
     {
-        super("Decimate", power, null);
+        super(owner, "Decimate", power, null);
         this.critCount = new Stacker(critLimit);
     }
 
     @Override
-    public DamageEvent critOut(DamageEvent event)
-    {
-        if (critCount.stack())
-        {
-            event.output.add(event.target.addBuff(new CrippledDebuff(event.actor, 1, getPower()), Emote.CRIPPLE));
-            critCount.reset();
-        }
-        return event;
+    public DamageHook[] getDamageHooks() {
+        return new DamageHook[] {
+                new DamageHook() {
+                    @Override
+                    public DamagePhase getPhase() {
+                        return DamagePhase.POST_DAMAGE;
+                    }
+
+                    @Override
+                    public void execute(DamageEvent event) {
+                        if (event.getAttacker() != getOwner()) return;
+                        if (!event.isGoingToCrit()) return;
+
+                        event.proposeEffect(() -> {
+                            if (critCount.stack())
+                            {
+                                event.getOutput().add(event.getVictim().addBuff(new CrippledDebuff(event.getVictim(), event.getAttacker(), 1, getPower()), Emote.CRIPPLE));
+                                critCount.reset();
+                            }
+                        });
+                    }
+                }
+        };
     }
 
     @Override

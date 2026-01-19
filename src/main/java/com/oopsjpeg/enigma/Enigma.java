@@ -138,8 +138,8 @@ public class Enigma
     {
         User user = message.getAuthor().get();
         Player player = Enigma.getInstance().getPlayer(user);
-        Game game = player.getGame();
-        return game.getMember(user);
+        if (!player.isInGame()) return null;
+        return player.getGame().getMember(user);
     }
 
     public Player getPlayer(User user)

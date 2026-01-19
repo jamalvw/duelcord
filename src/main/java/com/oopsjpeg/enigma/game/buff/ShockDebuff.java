@@ -5,14 +5,14 @@ import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.util.Emote;
 
 public class ShockDebuff extends Buff {
-    public ShockDebuff(GameMember source, int totalTurns, float power) {
-        super("Shocked", true, source, totalTurns, power);
+    public ShockDebuff(GameMember owner, GameMember source, int totalTurns, float power) {
+        super(owner, source, "Shocked", true, totalTurns, power);
     }
 
     @Override
     public String onTurnStart(GameMember member) {
         member.takeEnergy((int) getPower());
-        return Emote.ZAP + "**" + member.getUsername() + "** has " + formatPower() + " reduced energy this turn.";
+        return Emote.ZAP + "**" + member.getUsername() + "** has __" + formatPower() + "__ reduced energy this turn.";
     }
 
     @Override

@@ -2,13 +2,11 @@ package com.oopsjpeg.enigma.listener;
 
 import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.game.unit.Unit;
-import com.oopsjpeg.enigma.game.unit.UnitType;
+import com.oopsjpeg.enigma.game.unit.Units;
 import com.oopsjpeg.enigma.util.Listener;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
 import discord4j.core.event.domain.interaction.SelectMenuInteractionEvent;
-import discord4j.core.object.component.ActionRow;
-import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 
@@ -29,7 +27,7 @@ public class ComponentListener implements Listener
         if (event.getCustomId().equals("unit_viewer"))
         {
             MessageChannel channel = event.getMessage().get().getChannel().block();
-            Unit unit = UnitType.valueOf(event.getValues().get(0)).create();
+            Unit unit = Units.valueOf(event.getValues().get(0)).create(null);
 
             // Create a temp button to view stats
             //Button statsBtn = Button.primary("unit_viewer-stats;" + unit.name(), "View Stats");

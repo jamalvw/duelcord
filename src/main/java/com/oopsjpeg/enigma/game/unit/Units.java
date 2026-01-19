@@ -1,17 +1,18 @@
 package com.oopsjpeg.enigma.game.unit;
 
+import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.unit.assassin.AssassinUnit;
 import com.oopsjpeg.enigma.game.unit.gunslinger.GunslingerUnit;
 import com.oopsjpeg.enigma.game.unit.reaver.ReaverUnit;
 
-public enum UnitType {
+public enum Units {
     ASSASSIN("Assassin"),
     GUNSLINGER("Gunslinger"),
     REAVER("Reaver");
 
-    public static UnitType fromName(String query)
+    public static Units fromName(String query)
     {
-        for (UnitType unit : values())
+        for (Units unit : values())
         {
             String name = unit.getName().toLowerCase();
 
@@ -23,7 +24,7 @@ public enum UnitType {
 
     private final String name;
 
-    UnitType(String name) {
+    Units(String name) {
         this.name = name;
     }
 
@@ -31,11 +32,11 @@ public enum UnitType {
         return name;
     }
 
-    public Unit create() {
+    public Unit create(GameMember member) {
         switch(this) {
-            case ASSASSIN: return new AssassinUnit();
-            case GUNSLINGER: return new GunslingerUnit();
-            case REAVER: return new ReaverUnit();
+            case ASSASSIN: return new AssassinUnit(member);
+            case GUNSLINGER: return new GunslingerUnit(member);
+            case REAVER: return new ReaverUnit(member);
             default: throw new IllegalArgumentException();
         }
     }

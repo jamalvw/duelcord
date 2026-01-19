@@ -5,6 +5,7 @@ import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.game.GameAction;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.GameObject;
 import com.oopsjpeg.enigma.game.buff.SilencedDebuff;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.util.Cooldown;
@@ -14,7 +15,7 @@ import discord4j.core.object.entity.channel.MessageChannel;
 
 import static com.oopsjpeg.enigma.game.StatType.COOLDOWN_REDUCTION;
 
-public abstract class Skill implements Command
+public abstract class Skill implements Command, GameAction
 {
     private final Unit unit;
     private final Cooldown cooldown;
@@ -59,8 +60,6 @@ public abstract class Skill implements Command
         return "**`>" + getName() + "`**: " + (!hasCooldown() ? "Ready" : (cooldown.isDone() ? "Ready" : "in " + cooldown.getCurrent() + " turn" + (cooldown.getCurrent() > 1 ? "s" : "")));
     }
 
-    public abstract GameAction act(GameMember actor);
-
     @Override
     public void execute(Message message, String[] args)
     {
@@ -91,7 +90,9 @@ public abstract class Skill implements Command
             return;
         }
 
-        actor.act(act(actor));
+        actor.act(this);
+        for (GameObject o : actor.getData()) o.onSkillUsed(actor);
         cooldown.start(actor.getStats().getInt(COOLDOWN_REDUCTION));
+        actor.updateStats();
     }
 }

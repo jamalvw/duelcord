@@ -7,8 +7,9 @@ import com.oopsjpeg.enigma.game.action.BuyAction;
 import com.oopsjpeg.enigma.game.action.SellAction;
 import com.oopsjpeg.enigma.game.action.UseAction;
 import com.oopsjpeg.enigma.game.object.Item;
+import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.unit.Unit;
-import com.oopsjpeg.enigma.game.unit.UnitType;
+import com.oopsjpeg.enigma.game.unit.Units;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.entity.Message;
@@ -57,21 +58,23 @@ public enum GameCommand implements Command
                             Util.sendFailure(channel, "You cannot buy items until the game has started.");
                         else
                         {
-                            Item item = Item.fromName(String.join(" ", args));
-                            if (item == null)
+                            Items query = Items.fromName(String.join(" ", args));
+                            if (query == null)
                                 Util.sendFailure(channel, "Invalid item. Please try again.");
-                            else if (!item.isBuyable())
-                                Util.sendFailure(channel, "That item can't be bought.");
-                            else
-                            {
-                                Build build = item.build(member.getItems());
+                            else {
+                                Item item = query.create(member);
+                                if (!item.isBuyable())
+                                    Util.sendFailure(channel, "That item can't be bought.");
+                                else {
+                                    Build build = item.build(member.getItems());
 
-                                if (!member.hasGold(build.getCost()))
-                                    Util.sendFailure(channel, "You need **" + member.getGoldDifference(build.getCost()) + "** more gold for a(n) **" + item.getName() + "**.");
-                                else if (build.getPostData().size() >= 5)
-                                    Util.sendFailure(channel, "You do not have enough inventory space for a(n) **" + item.getName() + "**.");
-                                else
-                                    member.act(new BuyAction(build));
+                                    if (!member.hasGold(build.getCost()))
+                                        Util.sendFailure(channel, "You need **" + member.getGoldDifference(build.getCost()) + "** more gold for a(n) **" + item.getName() + "**.");
+                                    else if (build.getPostData().size() >= 5)
+                                        Util.sendFailure(channel, "You do not have enough inventory space for a(n) **" + item.getName() + "**.");
+                                    else
+                                        member.act(new BuyAction(build));
+                                }
                             }
                         }
                     }
@@ -131,14 +134,14 @@ public enum GameCommand implements Command
                         else
                         {
                             String name = String.join(" ", args).toLowerCase();
-                            UnitType type = name.equals("random")
-                                    ? Util.pickRandom(UnitType.values())
-                                    : UnitType.fromName(name);
+                            Units type = name.equals("random")
+                                    ? Util.pickRandom(Units.values())
+                                    : Units.fromName(name);
                             if (type == null)
                                 Util.sendFailure(channel, "Invalid unit.");
                             else
                             {
-                                Unit unit = type.create();
+                                Unit unit = type.create(member);
                                 member.setUnit(unit);
                                 final List<String> output = new ArrayList<>();
                                 output.add(Emote.YES + "**" + author.getUsername() + "** will play as **" + unit.getName() + "**!");
@@ -182,7 +185,7 @@ public enum GameCommand implements Command
                             Util.sendFailure(channel, "You cannot sell items until the game has started.");
                         else
                         {
-                            Item item = Item.fromName(String.join(" ", args));
+                            Item item = member.getItem(String.join(" ", args));
                             if (item == null)
                                 Util.sendFailure(channel, "Invalid item.");
                             else if (!member.getData().contains(item))
@@ -210,7 +213,7 @@ public enum GameCommand implements Command
                             Util.sendFailure(channel, "You cannot use items until the game has started.");
                         else
                         {
-                            Item item = Item.fromName(String.join(" ", args));
+                            Item item = member.getItem(String.join(" ", args));
                             if (item == null)
                                 Util.sendFailure(channel, "Invalid item.");
                             else if (!member.getData().contains(item))

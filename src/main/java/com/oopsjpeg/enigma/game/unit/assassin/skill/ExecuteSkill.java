@@ -1,20 +1,20 @@
 package com.oopsjpeg.enigma.game.unit.assassin.skill;
 
-import com.oopsjpeg.enigma.game.Game;
-import com.oopsjpeg.enigma.game.GameAction;
-import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
+import com.oopsjpeg.enigma.util.Emote;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 import static com.oopsjpeg.enigma.util.Util.percentRaw;
 
 public class ExecuteSkill extends Skill {
-    public static final int COST = 75;
-    public static final int COOLDOWN = 6;
+    public static final int COST = 75   ;
+    public static final int COOLDOWN = 5;
     public static final int DAMAGE_BASE = 40;
-    public static final float DAMAGE_MISSING_HP = .04f;
-    public static final float DAMAGE_PER_DEBUFF = .065f;
+    public static final float DAMAGE_MISSING_HP = .12f;
+    public static final float DAMAGE_PER_DEBUFF = .07f;
 
     public ExecuteSkill(Unit unit)
     {
@@ -35,8 +35,22 @@ public class ExecuteSkill extends Skill {
     }
 
     @Override
-    public GameAction act(GameMember actor)
+    public String act(GameMember actor)
     {
-        return new ExecuteAction(this, actor.getGame().getRandomTarget(actor));
+        GameMember target = actor.getGame().getRandomTarget(actor);
+
+        DamageEvent e = new DamageEvent(actor, target);
+
+        e.setEmote(Emote.KNIFE);
+        e.setSource("Execute");
+        e.setIsSkill(true);
+        e.addDamage(DAMAGE_BASE);
+        e.addDamage(DAMAGE_MISSING_HP * target.getMissingHealth());
+
+        target.getBuffs().stream()
+                .filter(Buff::isDebuff)
+                .forEach(debuff -> e.addDamage(DAMAGE_PER_DEBUFF * target.getMissingHealth()));
+
+        return Emote.SKILL + "**" + actor.getUsername() + "** used **Execute**!\n" + DamageManager.process(e);
     }
 }

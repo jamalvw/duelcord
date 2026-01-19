@@ -7,32 +7,7 @@ import java.util.List;
 
 public enum GameMode
 {
-    DUEL("Duel", 2, true, false),
-    CHAOS("Chaos", 2, false, true)
-            {
-                @Override
-                public int handleGold(int gold)
-                {
-                    return Math.round(gold * 1.5f);
-                }
-
-                @Override
-                public DamageEvent handleDamage(DamageEvent event)
-                {
-                    Game game = event.actor.getGame();
-                    if (game.getTurnCount() >= 7)
-                    {
-                        List<GameMember> members = new ArrayList<>(game.getMembers());
-                        members.sort(Comparator.comparing(GameMember::getHealth));
-                        if (members.get(0).equals(event.actor))
-                        {
-                            event.damage *= 1.5f;
-                            event.bonus *= 1.5f;
-                        }
-                    }
-                    return event;
-                }
-            };
+    DUEL("Duel", 2, true, false);
 
     private final String name;
     private final int size;

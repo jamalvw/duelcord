@@ -1,16 +1,18 @@
 package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.game.object.Item;
+import com.oopsjpeg.enigma.game.object.Items;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Build
 {
     private final Item item;
     private final int reduction;
-    private final ArrayList<Item> postData;
+    private final List<Item> postData;
 
-    public Build(Item item, int reduction, ArrayList<Item> postData)
+    public Build(Item item, int reduction, List<Item> postData)
     {
         this.item = item;
         this.reduction = reduction;
@@ -32,7 +34,7 @@ public class Build
         return this.reduction;
     }
 
-    public ArrayList<Item> getPostData()
+    public List<Item> getPostData()
     {
         return this.postData;
     }

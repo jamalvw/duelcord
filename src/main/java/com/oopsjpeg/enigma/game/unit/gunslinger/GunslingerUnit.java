@@ -1,5 +1,7 @@
 package com.oopsjpeg.enigma.game.unit.gunslinger;
 
+import com.oopsjpeg.enigma.DamageHook;
+import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
@@ -14,7 +16,9 @@ import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class GunslingerUnit implements Unit {
-    public static final float PASSIVE_AP_RATIO = .2f;
+    public static final float PASSIVE_SP_RATIO = .2f;
+
+    private final GameMember owner;
 
     private final BarrageSkill barrage = new BarrageSkill(this);
     private final RollSkill roll = new RollSkill(this);
@@ -22,6 +26,10 @@ public class GunslingerUnit implements Unit {
 
     private boolean attackedThisRound = false;
     private int barrageShotsFired = 0;
+
+    public GunslingerUnit(GameMember owner) {
+        this.owner = owner;
+    }
 
     public int getBarrageShotsFired() {
         return barrageShotsFired;
@@ -35,6 +43,11 @@ public class GunslingerUnit implements Unit {
     @Override
     public String getName() {
         return "Gunslinger";
+    }
+
+    @Override
+    public GameMember getOwner() {
+        return owner;
     }
 
     @Override
@@ -53,7 +66,7 @@ public class GunslingerUnit implements Unit {
 
     @Override
     public String getDescription() {
-        return "The first Attack per turn always Crits and deals __" + percent(PASSIVE_AP_RATIO) + " Attack Power__ bonus damage.";
+        return "The first Attack per turn always Crits and deals __" + percent(PASSIVE_SP_RATIO) + " Skill Power__ bonus damage.";
     }
 
     @Override
@@ -62,18 +75,27 @@ public class GunslingerUnit implements Unit {
     }
 
     @Override
-    public DamageEvent attackOut(DamageEvent event)
-    {
-        Stats stats = event.actor.getStats();
+    public DamageHook[] getDamageHooks() {
+        return new DamageHook[] {
+                new DamageHook() {
+                    @Override
+                    public DamagePhase getPhase() {
+                        return DamagePhase.PRE_CALCULATION;
+                    }
 
-        if (!attackedThisRound)
-        {
-            attackedThisRound = true;
-            event.crit = true;
-            event.bonus += stats.get(ATTACK_POWER) * PASSIVE_AP_RATIO;
-        }
+                    @Override
+                    public void execute(DamageEvent event) {
+                        if (getOwner() != event.getAttacker()) return;
+                        if (!event.isAttack()) return;
+                        if (attackedThisRound) return;
 
-        return event;
+                        Stats stats = owner.getStats();
+                        attackedThisRound = true;
+                        event.setIsGoingToCrit(true);
+                        event.addDamage(stats.get(SKILL_POWER) * PASSIVE_SP_RATIO);
+                    }
+                }
+        };
     }
 
     @Override

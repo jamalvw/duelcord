@@ -1,5 +1,7 @@
 package com.oopsjpeg.enigma.game.effect;
 
+import com.oopsjpeg.enigma.DamageHook;
+import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.buff.WeakenedDebuff;
@@ -13,21 +15,36 @@ public class WolfbiteEffect extends Effect
 {
     private final Stacker attackCount;
 
-    public WolfbiteEffect(int attackLimit, float power)
+    public WolfbiteEffect(GameMember owner, int attackLimit, float power)
     {
-        super("Wolfbite", power, null);
+        super(owner, "Wolfbite", power, null);
         this.attackCount = new Stacker(attackLimit);
     }
 
     @Override
-    public DamageEvent attackOut(DamageEvent event)
-    {
-        if (attackCount.stack())
-        {
-            event.output.add(event.target.addBuff(new WeakenedDebuff(event.actor, 1, getPower()), Emote.WEAKEN));
-            attackCount.reset();
-        }
-        return event;
+    public DamageHook[] getDamageHooks() {
+        return new DamageHook[] {
+                new DamageHook() {
+                    @Override
+                    public DamagePhase getPhase() {
+                        return DamagePhase.PRE_CALCULATION;
+                    }
+
+                    @Override
+                    public void execute(DamageEvent e) {
+                        if (e.getAttacker() != getOwner()) return;
+                        if (!e.isAttack()) return;
+
+                        e.proposeEffect(() -> {
+                            if (attackCount.stack())
+                            {
+                                e.getOutput().add(e.getVictim().addBuff(new WeakenedDebuff(e.getAttacker(), e.getVictim(), 1, getPower()), Emote.WEAKEN));
+                                attackCount.reset();
+                            }
+                        });
+                    }
+                }
+        };
     }
 
     @Override

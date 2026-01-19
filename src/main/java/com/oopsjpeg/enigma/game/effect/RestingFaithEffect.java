@@ -7,16 +7,16 @@ import com.oopsjpeg.enigma.util.Emote;
 
 public class RestingFaithEffect extends Effect
 {
-    public RestingFaithEffect(float power)
+    public RestingFaithEffect(GameMember owner, float power)
     {
-        super("Resting Faith", power, null);
+        super(owner, "Resting Faith", power, null);
     }
 
     @Override
     public String onDefend(GameMember member)
     {
         if (!member.hasBuff(AwakenedFaithBuff.class))
-            return member.addBuff(new AwakenedFaithBuff(member, getPower()), Emote.ENERGY);
+            return member.addBuff(new AwakenedFaithBuff(member, member, getPower()), Emote.ENERGY);
         return null;
     }
 

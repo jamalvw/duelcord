@@ -4,6 +4,7 @@ import com.oopsjpeg.enigma.game.Build;
 import com.oopsjpeg.enigma.game.GameAction;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Item;
+import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Util;
 
@@ -38,8 +39,12 @@ public class BuyAction implements GameAction
     }
 
     @Override
-    public int getEnergy()
-    {
+    public String getName() {
+        return "Buy";
+    }
+
+    @Override
+    public int getCost() {
         return 0;
     }
 }

@@ -2,6 +2,7 @@ package com.oopsjpeg.enigma.util;
 
 import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.storage.Player;
@@ -70,9 +71,9 @@ public class Util
         return Util.joinNonEmpty("\n", output);
     }
 
-    public static String formatEffects(Effect[] effects)
+    public static String formatEffects(List<Effect> effects)
     {
-        return Arrays.stream(effects)
+        return effects.stream()
                 .map(e -> "**" + e.getName() + "**: " + e.getDescription())
                 .collect(Collectors.joining("\n"));
     }
@@ -141,11 +142,12 @@ public class Util
 
     public static String damageText(DamageEvent event, String attacker, String victim, String emote, String source)
     {
-        Stats stats = event.target.getStats();
-        return emote + "**" + attacker + "** damaged **" + victim + "** by **" + Math.round(event.damage)
-                + "**" + (event.bonus > 0 ? " (+" + Math.round(event.bonus) + ")" : "") + "!" + (event.crit ? " **CRIT**!" : "")
-                + " [**" + (event.target.hasShield() ? event.target.getShield() : event.target.getHealth()
-                + " / " + stats.getInt(MAX_HEALTH)) + "**]"
+        GameMember victimM = event.getVictim();
+        Stats stats = event.getVictim().getStats();
+        return emote + "**" + attacker + "** damaged **" + victim + "** by **" + Math.round(event.getDamage()) + "**"
+                //+ (event.bonus > 0 ? " (+" + Math.round(event.bonus) + ")" : "")
+                + "!" + (event.isGoingToCrit() ? " **CRIT**!" : "")
+                + " [**" + (victimM.hasShield() ? victimM.getShield() : victimM.getHealth() + " / " + stats.getInt(MAX_HEALTH)) + "**]"
                 + (!source.isEmpty() ? " (" + source + ")" : "");
     }
 

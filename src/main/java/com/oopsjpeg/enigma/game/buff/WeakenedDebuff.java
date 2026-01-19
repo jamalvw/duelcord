@@ -1,5 +1,7 @@
 package com.oopsjpeg.enigma.game.buff;
 
+import com.oopsjpeg.enigma.DamageHook;
+import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Buff;
@@ -9,9 +11,28 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class WeakenedDebuff extends Buff
 {
-    public WeakenedDebuff(GameMember source, int totalTurns, float power)
+    public WeakenedDebuff(GameMember owner, GameMember source, int totalTurns, float power)
     {
-        super("Weakened", true, source, totalTurns, power);
+        super(owner, source, "Weakened", true, totalTurns, power);
+    }
+
+    @Override
+    public DamageHook[] getDamageHooks() {
+        return new DamageHook[] {
+                new DamageHook() {
+                    @Override
+                    public DamagePhase getPhase() {
+                        return DamagePhase.RESISTANCE;
+                    }
+
+                    @Override
+                    public void execute(DamageEvent event) {
+                        if (event.getAttacker() != getOwner()) return;
+
+                        event.multiplyDamage(1 - getPower());
+                    }
+                }
+        };
     }
 
     @Override
@@ -30,13 +51,5 @@ public class WeakenedDebuff extends Buff
     public String formatPower()
     {
         return percent(getPower());
-    }
-
-    @Override
-    public DamageEvent damageOut(DamageEvent event)
-    {
-        event.damage *= 1 - getPower();
-        event.bonus *= 1 - getPower();
-        return event;
     }
 }

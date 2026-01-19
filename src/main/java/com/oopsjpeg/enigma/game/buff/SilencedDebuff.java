@@ -6,9 +6,9 @@ import com.oopsjpeg.enigma.util.Emote;
 
 public class SilencedDebuff extends Buff
 {
-    public SilencedDebuff(GameMember source)
+    public SilencedDebuff(GameMember owner, GameMember source)
     {
-        super("Silenced", true, source, 1, 0);
+        super(owner, source, "Silenced", true, 1, 0);
     }
 
     @Override

@@ -1,7 +1,13 @@
 package com.oopsjpeg.enigma.game;
 
+import com.oopsjpeg.enigma.DamageHook;
+
 public interface GameObject
 {
+    default DamageHook[] getDamageHooks() {
+        return new DamageHook[0];
+    }
+
     default String getStatus(GameMember member)
     {
         return null;
@@ -22,6 +28,11 @@ public interface GameObject
         return null;
     }
 
+    default String onSkillUsed(GameMember member)
+    {
+        return null;
+    }
+
     default float onHeal(float healAmount)
     {
         return healAmount;
@@ -30,65 +41,5 @@ public interface GameObject
     default float onShield(float shieldAmount)
     {
         return shieldAmount;
-    }
-
-    default DamageEvent damageOut(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent damageIn(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent attackOut(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent attackIn(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent hitOut(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent hitIn(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent critOut(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent critIn(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent skillOut(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent skillIn(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent dodgeYou(DamageEvent event)
-    {
-        return event;
-    }
-
-    default DamageEvent dodgeMe(DamageEvent event)
-    {
-        return event;
     }
 }

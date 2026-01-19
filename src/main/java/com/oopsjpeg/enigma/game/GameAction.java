@@ -13,5 +13,7 @@ public interface GameAction
 
     String act(GameMember actor);
 
-    int getEnergy();
+    String getName();
+
+    int getCost();
 }

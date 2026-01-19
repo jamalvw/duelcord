@@ -1,10 +1,17 @@
 package com.oopsjpeg.enigma.game.unit.gunslinger.skill;
 
-import com.oopsjpeg.enigma.game.GameAction;
-import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.*;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
+import com.oopsjpeg.enigma.game.unit.gunslinger.GunslingerUnit;
+import com.oopsjpeg.enigma.util.Emote;
+import com.oopsjpeg.enigma.util.Util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.oopsjpeg.enigma.game.StatType.ATTACK_POWER;
+import static com.oopsjpeg.enigma.game.StatType.SKILL_POWER;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class BarrageSkill extends Skill {
@@ -20,8 +27,33 @@ public class BarrageSkill extends Skill {
     }
 
     @Override
-    public GameAction act(GameMember actor) {
-        return new BarrageAction(this, actor.getGame().getRandomTarget(actor));
+    public String act(GameMember actor) {
+        GameMember target = actor.getGame().getRandomTarget(actor);
+        Stats stats = actor.getStats();
+
+        List<String> output = new ArrayList<>();
+        for (int i = 0; i < SHOTS; i++) {
+            if (target.isAlive()) {
+                DamageEvent event = new DamageEvent(actor, target);
+                event.setEmote(Emote.GUN);
+                event.setSource("Barrage");
+                event.setIsSkill(true);
+                event.setIsAbleToCrit(true);
+                event.setIsOnHit(true);
+                event.setOnHitScale(.25f);
+                event.addDamage(stats.get(ATTACK_POWER) * AP_RATIO);
+                event.addDamage(stats.get(SKILL_POWER) * SP_RATIO);
+                event.proposeEffect(() -> {
+                    if (getUnit() instanceof GunslingerUnit)
+                        ((GunslingerUnit) getUnit()).barrageShot();
+                });
+                output.add(DamageManager.process(event));
+            }
+        }
+
+        output.add(0, Emote.SKILL + "**" + actor.getUsername() + "** used **Barrage**!");
+
+        return Util.joinNonEmpty("\n", output);
     }
 
     @Override

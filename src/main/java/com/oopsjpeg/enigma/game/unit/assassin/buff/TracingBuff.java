@@ -1,19 +1,53 @@
 package com.oopsjpeg.enigma.game.unit.assassin.buff;
 
+import com.oopsjpeg.enigma.DamageHook;
+import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.game.unit.assassin.AssassinUnit;
-import com.oopsjpeg.enigma.util.Cooldown;
 
 import static com.oopsjpeg.enigma.game.StatType.ATTACK_POWER;
 import static com.oopsjpeg.enigma.game.StatType.SKILL_POWER;
 import static com.oopsjpeg.enigma.game.unit.assassin.AssassinUnit.*;
 
 public class TracingBuff extends Buff {
-    public TracingBuff(GameMember source) {
-        super("Tracing", false, source, 1, 0);
+    public TracingBuff(GameMember owner, GameMember source) {
+        super(owner, source, "Tracing", false, 1, 0);
+    }
+
+    @Override
+    public DamageHook[] getDamageHooks() {
+        return new DamageHook[]{
+                new DamageHook() {
+                    @Override
+                    public DamagePhase getPhase() {
+                        return DamagePhase.PRE_CALCULATION;
+                    }
+
+                    @Override
+                    public void execute(DamageEvent e) {
+                        if (e.getAttacker() != getOwner()) return;
+
+                        Stats stats = e.getAttacker().getStats();
+                        e.addDamage(PASSIVE_DAMAGE_BASE);
+                        e.addDamage(stats.get(ATTACK_POWER) * PASSIVE_DAMAGE_AP_RATIO);
+                        e.addDamage(stats.get(SKILL_POWER) * PASSIVE_DAMAGE_SP_RATIO);
+
+                        e.proposeEffect(() -> {
+                            e.getAttacker().giveEnergy(PASSIVE_ENERGY_RESTORE);
+
+                            if (e.getAttacker().getUnit() instanceof AssassinUnit)
+                            {
+                                ((AssassinUnit) e.getAttacker().getUnit()).getSlash().getCooldown().reset();
+                            }
+
+                            remove(true);
+                        });
+                    }
+                }
+        };
     }
 
     @Override
@@ -25,25 +59,5 @@ public class TracingBuff extends Buff {
         return Math.round(PASSIVE_DAMAGE_BASE +
                 (stats.get(ATTACK_POWER) * PASSIVE_DAMAGE_AP_RATIO) +
                 (stats.get(SKILL_POWER) * PASSIVE_DAMAGE_SP_RATIO));
-    }
-
-    @Override
-    public DamageEvent attackOut(DamageEvent event) {
-        if (!event.cancelled) {
-            Stats stats = event.actor.getStats();
-            event.bonus += PASSIVE_DAMAGE_BASE;
-            event.bonus += stats.get(ATTACK_POWER) * PASSIVE_DAMAGE_AP_RATIO;
-            event.bonus += stats.get(SKILL_POWER) * PASSIVE_DAMAGE_SP_RATIO;
-            event.actor.giveEnergy(PASSIVE_ENERGY_RESTORE);
-
-            if (event.actor.getUnit() instanceof AssassinUnit)
-            {
-                ((AssassinUnit) event.actor.getUnit()).getSlash().getCooldown().reset();
-            }
-        }
-
-        remove(true);
-
-        return event;
     }
 }

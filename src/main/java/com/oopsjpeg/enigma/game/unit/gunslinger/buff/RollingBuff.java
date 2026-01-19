@@ -8,8 +8,8 @@ import static com.oopsjpeg.enigma.game.StatType.DODGE;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class RollingBuff extends Buff {
-    public RollingBuff(GameMember source, float power) {
-        super("Rolling", false, source, 2, power);
+    public RollingBuff(GameMember owner, GameMember source, float power) {
+        super(owner, source, "Rolling", false, 2, power);
     }
 
     @Override

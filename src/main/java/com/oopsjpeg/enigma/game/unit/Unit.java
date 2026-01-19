@@ -1,5 +1,7 @@
 package com.oopsjpeg.enigma.game.unit;
 
+import com.oopsjpeg.enigma.DamageHook;
+import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.GameObject;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Skill;
@@ -7,11 +9,12 @@ import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 
 public interface Unit extends GameObject {
-    public String getName();
-    public Color getColor();
-    public String getDescription();
-    public Stats getStats();
-    public Skill[] getSkills();
+    String getName();
+    GameMember getOwner();
+    Color getColor();
+    String getDescription();
+    Stats getStats();
+    Skill[] getSkills();
 
     default EmbedCreateSpec embed()
     {

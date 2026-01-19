@@ -14,6 +14,7 @@ public class Emote
     public static final String DEFEAT = ":skull_crossbones: ";
     public static final String VICTORY = ":trophy: ";
     public static final String WARN = ":warning: ";
+    public static final String SUMMON = ":space_invader: ";
 
     public static final String ENERGY = ":battery: ";
 

@@ -8,6 +8,7 @@ public abstract class Buff implements GameObject
 {
     private final String name;
     private final boolean debuff;
+    private final GameMember owner;
     private final GameMember source;
 
     private int totalTurns;
@@ -16,11 +17,12 @@ public abstract class Buff implements GameObject
     private boolean isSilent = false;
     private float power;
 
-    public Buff(String name, boolean debuff, GameMember source, int totalTurns, float power)
+    public Buff(GameMember owner, GameMember source, String name, boolean debuff, int totalTurns, float power)
     {
+        this.owner = owner;
+        this.source = source;
         this.name = name;
         this.debuff = debuff;
-        this.source = source;
         this.totalTurns = totalTurns;
         this.power = power;
 
@@ -41,9 +43,17 @@ public abstract class Buff implements GameObject
         return shouldRemove();
     }
 
+    public void reset() {
+        setCurrentTurns(getTotalTurns());
+    }
+
     public boolean isDebuff()
     {
         return debuff;
+    }
+
+    public GameMember getOwner() {
+        return owner;
     }
 
     public GameMember getSource()

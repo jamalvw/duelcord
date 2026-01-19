@@ -1,5 +1,7 @@
 package com.oopsjpeg.enigma.game.unit.reaver;
 
+import com.oopsjpeg.enigma.DamageHook;
+import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
@@ -17,29 +19,36 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 public class ReaverUnit implements Unit {
     public static final float PASSIVE_SP_RATIO = 0.15f;
 
+    private final GameMember owner;
+
     private int voidPower = 0;
 
     private final InfiniteSkill infinite = new InfiniteSkill(this);
     private final ShockSkill shock = new ShockSkill(this);
     private final SummonSkill summon = new SummonSkill(this);
 
+    public ReaverUnit(GameMember owner) {
+        this.owner = owner;
+    }
+
     public int getVoidPower() {
         return voidPower;
     }
 
     @Override
-    public DamageEvent attackOut(DamageEvent event) {
-        Stats stats = event.actor.getStats();
-        event.damage += PASSIVE_SP_RATIO * stats.get(SKILL_POWER);
-        return event;
+    public DamageHook[] getDamageHooks() {
+        return new DamageHook[]{
+                new PassiveDamageHook()
+        };
     }
 
-    public String skillUsed(GameMember actor) {
+    @Override
+    public String onSkillUsed(GameMember member) {
         if (voidPower < 2) {
             voidPower++;
 
             if (voidPower >= 2) {
-                return ":infinity: **" + actor.getUsername() + "** has reached **2** Void Power.";
+                return ":infinity: **" + member.getUsername() + "** has reached **2** Void Power.";
             }
         }
         return null;
@@ -56,13 +65,18 @@ public class ReaverUnit implements Unit {
     }
 
     @Override
+    public GameMember getOwner() {
+        return owner;
+    }
+
+    @Override
     public Color getColor() {
         return Color.BISMARK;
     }
 
     @Override
     public String getDescription() {
-        return "Attacks deal __" + percent(PASSIVE_SP_RATIO) + " Skill Power__ bonus damage. Using Skills grants up to 2 stacks of Void Power.";
+        return "Attacks deal __" + percent(PASSIVE_SP_RATIO) + " Skill Power__ bonus damage.\nUsing Skills grants up to 2 stacks of Void Power.";
     }
 
     @Override
@@ -77,5 +91,21 @@ public class ReaverUnit implements Unit {
     @Override
     public Skill[] getSkills() {
         return new Skill[]{infinite, shock, summon};
+    }
+
+    public class PassiveDamageHook implements DamageHook {
+        @Override
+        public DamagePhase getPhase() {
+            return DamagePhase.PRE_CALCULATION;
+        }
+
+        @Override
+        public void execute(DamageEvent event) {
+            if (event.getAttacker() != owner) return;
+            if (!event.isAttack()) return;
+
+            Stats stats = owner.getStats();
+            event.addDamage(stats.get(SKILL_POWER) * PASSIVE_SP_RATIO);
+        }
     }
 }

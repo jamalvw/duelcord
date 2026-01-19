@@ -20,6 +20,7 @@ public class CommandListener implements Listener
     private final String prefix;
     private final LinkedList<Command> commands;
     private TextChannel limit;
+    private User userLimit;
 
     public CommandListener(Enigma instance, String prefix, Command[] commands)
     {
@@ -60,6 +61,8 @@ public class CommandListener implements Listener
                 && !author.equals(client.getSelf().block())
                 && content.toLowerCase().startsWith(prefix.toLowerCase()))
         {
+            if (userLimit != null && !author.equals(userLimit)) return;
+
             String pat = Pattern.quote(prefix);
 
             // Split multiple commands into chunks
@@ -103,5 +106,13 @@ public class CommandListener implements Listener
     public void setLimit(TextChannel limit)
     {
         this.limit = limit;
+    }
+
+    public User getUserLimit() {
+        return userLimit;
+    }
+
+    public void setUserLimit(User userLimit) {
+        this.userLimit = userLimit;
     }
 }

@@ -10,14 +10,14 @@ public class DivinityEffect extends Effect
 {
     private final float spRatio;
 
-    public DivinityEffect(float power)
+    public DivinityEffect(GameMember owner, float power)
     {
-        this(power, 0);
+        this(owner, power, 0);
     }
 
-    public DivinityEffect(float power, float spRatio)
+    public DivinityEffect(GameMember owner, float power, float spRatio)
     {
-        super("Divinity", power, null);
+        super(owner, "Divinity", power, null);
         this.spRatio = spRatio;
     }
 

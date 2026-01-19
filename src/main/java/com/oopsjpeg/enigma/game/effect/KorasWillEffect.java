@@ -1,5 +1,7 @@
 package com.oopsjpeg.enigma.game.effect;
 
+import com.oopsjpeg.enigma.DamageHook;
+import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Effect;
@@ -11,14 +13,14 @@ public class KorasWillEffect extends Effect
 {
     private final float spRatio;
 
-    public KorasWillEffect(float power)
+    public KorasWillEffect(GameMember owner, float power)
     {
-        this(power, 0);
+        this(owner, power, 0);
     }
 
-    public KorasWillEffect(float power, float spRatio)
+    public KorasWillEffect(GameMember owner, float power, float spRatio)
     {
-        super("Kora's Will", power, null);
+        super(owner, "Kora's Will", power, null);
         this.spRatio = spRatio;
     }
 
@@ -28,10 +30,23 @@ public class KorasWillEffect extends Effect
     }
 
     @Override
-    public DamageEvent skillOut(DamageEvent event)
-    {
-        event.bonus += getTotalPower(event.actor.getStats().get(SKILL_POWER)) * event.onHitScale;
-        return event;
+    public DamageHook[] getDamageHooks() {
+        return new DamageHook[] {
+                new DamageHook() {
+                    @Override
+                    public DamagePhase getPhase() {
+                        return DamagePhase.PRE_CALCULATION;
+                    }
+
+                    @Override
+                    public void execute(DamageEvent event) {
+                        if (event.getAttacker() != getOwner()) return;
+                        if (!event.isSkill()) return;
+
+                        event.addDamage(getTotalPower(event.getAttacker().getStats().get(SKILL_POWER)));
+                    }
+                }
+        };
     }
 
     @Override

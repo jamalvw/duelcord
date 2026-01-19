@@ -1,9 +1,14 @@
 package com.oopsjpeg.enigma.game.unit.reaver.skill;
 
-import com.oopsjpeg.enigma.game.GameAction;
-import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.buff.ShockDebuff;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
+import com.oopsjpeg.enigma.util.Emote;
+import com.oopsjpeg.enigma.util.Util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
@@ -19,8 +24,20 @@ public class ShockSkill extends Skill {
     }
 
     @Override
-    public GameAction act(GameMember actor) {
-        return new ShockAction(this, actor.getGame().getRandomTarget(actor));
+    public String act(GameMember actor) {
+        GameMember target = actor.getGame().getRandomTarget(actor);
+        List<String> output = new ArrayList<>();
+
+        DamageEvent e = new DamageEvent(actor, target);
+        e.setEmote(Emote.ZAP);
+        e.setSource("Shock");
+        e.setIsSkill(true);
+        e.setDamage(DAMAGE + actor.getStats().get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
+        e.proposeEffect(() -> e.getOutput().add(target.addBuff(new ShockDebuff(target, actor, 1, 50), Emote.ZAP)));
+
+        output.add(DamageManager.process(e));
+
+        return Util.joinNonEmpty("\n", output);
     }
 
     @Override
@@ -30,6 +47,6 @@ public class ShockSkill extends Skill {
 
     @Override
     public String getDescription() {
-        return "Shock the enemy, dealing __" + DAMAGE + "__ + __" + percent(DAMAGE_SP_RATIO) + " Skill Power__ damage reducing their energy by 25 on their next turn.";
+        return "Shock the enemy, dealing __" + DAMAGE + "__ + __" + percent(DAMAGE_SP_RATIO) + " Skill Power__ damage reducing their energy by 50 on their next turn.";
     }
 }

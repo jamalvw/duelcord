@@ -4,12 +4,13 @@ import com.oopsjpeg.enigma.game.GameAction;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
+import com.oopsjpeg.enigma.game.unit.assassin.buff.MarkedDebuff;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class MarkSkill extends Skill {
     public static final int COST = 25;
-    public static final int COOLDOWN = 4;
+    public static final int COOLDOWN = 3;
     public static final float CRIPPLE = .35f;
 
     public MarkSkill(Unit unit)
@@ -30,8 +31,10 @@ public class MarkSkill extends Skill {
     }
 
     @Override
-    public GameAction act(GameMember actor)
+    public String act(GameMember actor)
     {
-        return new MarkAction(this, actor.getGame().getRandomTarget(actor));
+        GameMember target = actor.getGame().getRandomTarget(actor);
+        target.addBuff(new MarkedDebuff(target, actor), ":bangbang: ");
+        return ":bangbang: **" + actor.getUsername() + "** used **Mark** on **" + target.getUsername() + "**.";
     }
 }

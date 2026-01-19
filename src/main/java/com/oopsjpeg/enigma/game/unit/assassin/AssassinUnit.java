@@ -26,13 +26,19 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 public class AssassinUnit implements Unit {
     public static final int PASSIVE_DAMAGE_BASE = 10;
     public static final float PASSIVE_DAMAGE_AP_RATIO = .15f;
-    public static final float PASSIVE_DAMAGE_SP_RATIO = .6f;
+    public static final float PASSIVE_DAMAGE_SP_RATIO = 1.1f;
     public static final int PASSIVE_ENERGY_RESTORE = 25;
+
+    private final GameMember owner;
 
     private final SlashSkill slash = new SlashSkill(this);
     private final MarkSkill mark = new MarkSkill(this);
     private final ExecuteSkill execute = new ExecuteSkill(this);
     private final CloakSkill cloak = new CloakSkill(this);
+
+    public AssassinUnit(GameMember owner) {
+        this.owner = owner;
+    }
 
     public SlashSkill getSlash() {
         return slash;
@@ -56,6 +62,11 @@ public class AssassinUnit implements Unit {
     }
 
     @Override
+    public GameMember getOwner() {
+        return owner;
+    }
+
+    @Override
     public Color getColor() {
         return Color.SEA_GREEN;
     }
@@ -64,8 +75,8 @@ public class AssassinUnit implements Unit {
     public Stats getStats() {
         return new Stats()
                 .put(MAX_ENERGY, 100)
-                .put(MAX_HEALTH, 930)
-                .put(ATTACK_POWER, 14)
+                .put(MAX_HEALTH, 945)
+                .put(ATTACK_POWER, 16)
                 .put(HEALTH_PER_TURN, 15);
     }
 
@@ -94,7 +105,7 @@ public class AssassinUnit implements Unit {
         {
             if (enemy.hasBuff(MarkedDebuff.class)) {
                 enemy.removeBuffs(MarkedDebuff.class);
-                enemy.addBuff(new CrippledDebuff(member, 1, MarkSkill.CRIPPLE), Emote.CRIPPLE);
+                enemy.addBuff(new CrippledDebuff(enemy, member, 1, MarkSkill.CRIPPLE), Emote.CRIPPLE);
                 output.add(Emote.CRIPPLE + "**" + enemy.getUsername() + "** was marked by the assassin, suffering **Cripple** (" + percent(MarkSkill.CRIPPLE) + ").");
             }
         }
@@ -103,10 +114,9 @@ public class AssassinUnit implements Unit {
     }
 
     @Override
-    public DamageEvent skillOut(DamageEvent event)
-    {
-        if (!event.cancelled && !event.actor.hasBuff(TracingBuff.class))
-            event.actor.addBuff(new TracingBuff(event.actor), Emote.TRACE);
-        return event;
+    public String onSkillUsed(GameMember member) {
+        if (!member.hasBuff(TracingBuff.class))
+            return member.addBuff(new TracingBuff(member, member), Emote.TRACE);
+        return null;
     }
 }

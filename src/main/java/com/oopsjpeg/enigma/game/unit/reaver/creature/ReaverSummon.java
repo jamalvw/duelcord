@@ -1,33 +1,58 @@
 package com.oopsjpeg.enigma.game.unit.reaver.creature;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.StatType;
+import com.oopsjpeg.enigma.DamageHook;
+import com.oopsjpeg.enigma.DamagePhase;
+import com.oopsjpeg.enigma.game.*;
 import com.oopsjpeg.enigma.game.object.Summon;
 import com.oopsjpeg.enigma.util.Emote;
 
 public class ReaverSummon extends Summon {
-    public ReaverSummon(float health) {
-        super("Creature", health, false);
+    private final float damage;
+
+    public ReaverSummon(GameMember owner, float health, float damage) {
+        super("Creature", owner, health, false);
+        this.damage = damage;
     }
 
     @Override
-    public DamageEvent damageIn(DamageEvent event) {
-        float total = event.total() * 1 - event.target.getResist();
-        takeHealth(total);
-        if (getHealth() <= 0) remove();
-        return event;
-    }
+    public DamageHook[] getDamageHooks() {
+        return new DamageHook[]{
+                new DamageHook() {
+                    @Override
+                    public DamagePhase getPhase() {
+                        return DamagePhase.PRE_CALCULATION;
+                    }
 
-    @Override
-    public DamageEvent attackOut(DamageEvent e) {
-        DamageEvent event = new DamageEvent(e.actor, e.target);
+                    @Override
+                    public void execute(DamageEvent e) {
+                        if (e.getAttacker() != getOwner()) return;
+                        if (!e.isAttack()) return;
 
-        event.damage += event.actor.getStats().get(StatType.ATTACK_POWER) * 0.1f;
-        event.damage += event.actor.getStats().get(StatType.SKILL_POWER) + 0.3f;
+                        DamageEvent summonStrikeEvent = new DamageEvent(getOwner(), e.getVictim());
+                        summonStrikeEvent.setIsSkill(true);
+                        summonStrikeEvent.setEmote(Emote.SUMMON);
+                        summonStrikeEvent.setSource(getName());
+                        summonStrikeEvent.addDamage(damage);
 
-        e.output.add(event.target.damage(event, ":space_invader: ", getName()));
+                        e.proposeEffect(() -> e.getOutput().add(DamageManager.process(summonStrikeEvent)));
+                    }
+                },
+                new DamageHook() {
+                    @Override
+                    public DamagePhase getPhase() {
+                        return DamagePhase.SUMMONS;
+                    }
 
-        return e;
+                    @Override
+                    public void execute(DamageEvent event) {
+                        if (event.getVictim() != getOwner()) return;
+
+                        takeHealth(event.getDamage());
+                        if (getHealth() <= 0) {
+                            remove();
+                        }
+                    }
+                }
+        };
     }
 }

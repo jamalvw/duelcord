@@ -1,6 +1,7 @@
 package com.oopsjpeg.enigma.game.buff;
 
 import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.DamageManager;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.util.Emote;
@@ -9,9 +10,9 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class BleedingDebuff extends Buff
 {
-    public BleedingDebuff(GameMember source, int totalTurns, float power)
+    public BleedingDebuff(GameMember owner, GameMember source, int totalTurns, float power)
     {
-        super("Bleeding", true, source, totalTurns, power);
+        super(owner, source, "Bleeding", true, totalTurns, power);
     }
 
     @Override
@@ -23,8 +24,10 @@ public class BleedingDebuff extends Buff
     @Override
     public String onTurnStart(GameMember member)
     {
-        DamageEvent event = new DamageEvent(getSource(), member);
-        event.damage = getPower();
-        return member.damage(event, Emote.BLEED, "Bleeding");
+        DamageEvent e = new DamageEvent(getSource(), member);
+        e.setEmote(Emote.BLEED);
+        e.setSource("Bleed");
+        e.setDamage(getPower());
+        return DamageManager.process(e);
     }
 }

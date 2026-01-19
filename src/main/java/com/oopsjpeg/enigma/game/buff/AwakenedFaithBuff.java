@@ -9,9 +9,9 @@ import static com.oopsjpeg.enigma.game.StatType.MAX_ENERGY;
 
 public class AwakenedFaithBuff extends Buff
 {
-    public AwakenedFaithBuff(GameMember source, float power)
+    public AwakenedFaithBuff(GameMember owner, GameMember source, float power)
     {
-        super("Awakened Faith", false, source, 2, power);
+        super(owner, source, "Awakened Faith", false, 2, power);
     }
 
     @Override

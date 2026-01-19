@@ -8,9 +8,9 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class WoundedDebuff extends Buff
 {
-    public WoundedDebuff(GameMember source, int totalTurns, float power)
+    public WoundedDebuff(GameMember owner, GameMember source, int totalTurns, float power)
     {
-        super("Wounded", true, source, totalTurns, power);
+        super(owner, source, "Wounded", true, totalTurns, power);
     }
 
     @Override
