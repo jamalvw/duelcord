@@ -244,13 +244,13 @@ public class GameMember
 
     public void act(GameAction action)
     {
-        if (getEnergy() < action.getCost())
-            Util.sendFailure(game.getChannel(), action.getName() + " costs **" + action.getCost() + "** Energy.");
+        if (getEnergy() < action.getCost(this))
+            Util.sendFailure(game.getChannel(), action.getName() + " costs **" + action.getCost(this) + "** Energy.");
         else
         {
             game.getActions().add(action);
 
-            takeEnergy(action.getCost());
+            takeEnergy(action.getCost(this));
 
             final List<String> output = new ArrayList<>();
             output.add(action.execute(this));

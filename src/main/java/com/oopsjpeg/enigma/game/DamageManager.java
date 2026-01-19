@@ -46,6 +46,7 @@ public class DamageManager {
         pipeline.add(new ShieldHook());
         pipeline.add(new LifeStealHook());
         pipeline.add(new DodgeHook());
+        pipeline.add(new BlockHook());
 
         // Sort by priority
         pipeline.sort(Comparator.comparing(DamageHook::getPhase));

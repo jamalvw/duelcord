@@ -38,7 +38,7 @@ public class UseAction implements GameAction
     }
 
     @Override
-    public int getCost() {
+    public int getCost(GameMember actor) {
         return 25;
     }
 }

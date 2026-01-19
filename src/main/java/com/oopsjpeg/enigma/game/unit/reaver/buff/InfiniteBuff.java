@@ -30,17 +30,18 @@ public class InfiniteBuff extends Buff {
                     @Override
                     public void execute(DamageEvent e) {
                         if (e.getAttacker() != getOwner()) return;
+                        if (e.isDoT()) return;
 
                         if (RANDOM.nextFloat() < chance) {
                             e.proposeEffect(() -> {
                                 GameMember victim = e.getVictim();
                                 if (!victim.hasBuff(VoidburnDebuff.class)) {
-                                    VoidburnDebuff burn = new VoidburnDebuff(victim, e.getAttacker(), 2, getPower());
+                                    VoidburnDebuff burn = new VoidburnDebuff(victim, e.getAttacker(), 3, getPower());
                                     e.getOutput().add(victim.addBuff(burn, Emote.VOIDBURN));
                                 } else {
                                     VoidburnDebuff burn = (VoidburnDebuff) victim.getBuff(VoidburnDebuff.class);
                                     burn.setPower(burn.getPower() + getPower());
-                                    // TODO: add burn.reset(); when isDoT is added
+                                    burn.reset();
                                     e.getOutput().add(Emote.VOIDBURN + "**Voidburn**'s damage increased to **" + burn.formatPower() + "**!");
                                 }
                             });

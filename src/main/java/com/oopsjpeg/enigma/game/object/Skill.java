@@ -47,12 +47,9 @@ public abstract class Skill implements Command, GameAction
         return cooldown != null;
     }
 
-    public int getCost() {
+    @Override
+    public int getCost(GameMember actor) {
         return cost;
-    }
-
-    public boolean hasCost() {
-        return cost > 0;
     }
 
     public String getStatus(GameMember member)
@@ -84,7 +81,7 @@ public abstract class Skill implements Command, GameAction
             return;
         }
 
-        if (hasCost() && actor.getEnergy() < getCost())
+        if (hasCost(actor) && actor.getEnergy() < getCost(actor))
         {
             Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + cost + "** energy. You have **" + actor.getEnergy() + "**.");
             return;

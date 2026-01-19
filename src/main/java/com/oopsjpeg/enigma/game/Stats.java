@@ -16,11 +16,14 @@ public class Stats
         values.put(MAX_HEALTH, 0.0f);
         values.put(MAX_ENERGY, 0.0f);
         values.put(ATTACK_POWER, 0.0f);
+        values.put(ATTACK_COST, 0.0f);
         values.put(SKILL_POWER, 0.0f);
         values.put(CRIT_CHANCE, 0.0f);
         values.put(CRIT_DAMAGE, 0.0f);
         values.put(LIFE_STEAL, 0.0f);
         values.put(RESIST, 0.0f);
+        values.put(SKILL_RESIST, 0.0f);
+        values.put(BLOCK_CHANCE, 0.0f);
         values.put(DODGE, 0.0f);
         values.put(COOLDOWN_REDUCTION, 0.0f);
 
@@ -41,6 +44,8 @@ public class Stats
                 value = Math.max(0, value);
                 break;
             case CRIT_CHANCE:
+            case SKILL_RESIST:
+            case BLOCK_CHANCE:
                 value = Util.limit(value, 0, 1);
                 break;
             case RESIST:

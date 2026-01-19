@@ -146,7 +146,7 @@ public class Util
         Stats stats = event.getVictim().getStats();
         return emote + "**" + attacker + "** damaged **" + victim + "** by **" + Math.round(event.getDamage()) + "**"
                 //+ (event.bonus > 0 ? " (+" + Math.round(event.bonus) + ")" : "")
-                + "!" + (event.isGoingToCrit() ? " **CRIT**!" : "")
+                + "!" + (event.isGoingToCrit() ? " **CRIT**!" : "") + (event.isBlocked() ? " **BLOCK**!" : "")
                 + " [**" + (victimM.hasShield() ? victimM.getShield() : victimM.getHealth() + " / " + stats.getInt(MAX_HEALTH)) + "**]"
                 + (!source.isEmpty() ? " (" + source + ")" : "");
     }

@@ -1,9 +1,6 @@
 package com.oopsjpeg.enigma.game.action;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.DamageManager;
-import com.oopsjpeg.enigma.game.GameAction;
-import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.*;
 import com.oopsjpeg.enigma.util.Emote;
 
 public class AttackAction implements GameAction
@@ -33,7 +30,7 @@ public class AttackAction implements GameAction
     }
 
     @Override
-    public int getCost() {
-        return 50;
+    public int getCost(GameMember actor) {
+        return 50 + actor.getStats().getInt(StatType.ATTACK_COST);
     }
 }

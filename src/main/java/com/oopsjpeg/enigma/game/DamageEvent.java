@@ -13,6 +13,7 @@ public class DamageEvent
     private final GameMember attacker;
     private final GameMember victim;
     private float damage;
+    private boolean blocked = false;
     private boolean cancelled = false;
 
     private String source = "";
@@ -27,6 +28,7 @@ public class DamageEvent
     private boolean isOnHit;
     private boolean isAttack;
     private boolean isSkill;
+    private boolean isDoT;
 
     public DamageEvent(GameMember attacker, GameMember victim)
     {
@@ -105,6 +107,14 @@ public class DamageEvent
         return cancelled;
     }
 
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
     public boolean isOnHit() {
         return isOnHit;
     }
@@ -135,6 +145,14 @@ public class DamageEvent
 
     public void setIsGoingToCrit(boolean goingToCrit) {
         isGoingToCrit = goingToCrit;
+    }
+
+    public boolean isDoT() {
+        return isDoT;
+    }
+
+    public void setIsDoT(boolean dot) {
+        isDoT = dot;
     }
 
     public void crit()

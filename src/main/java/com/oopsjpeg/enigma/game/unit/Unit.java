@@ -27,7 +27,7 @@ public interface Unit extends GameObject {
             embed.addField("`>" + skill.getName() + "` - Cooldown: **" +
                     (skill.hasCooldown() ? skill.getCooldown().getDuration() : "None") +
                     "** - Energy Cost: **" +
-                    (skill.hasCost() ? skill.getCost() : "Free") +
+                    (skill.hasCost(getOwner()) ? skill.getCost(getOwner()) : "Free") +
                     "**", skill.getDescription(), false);
 
         return embed.build();

@@ -14,7 +14,7 @@ import static com.oopsjpeg.enigma.game.unit.assassin.AssassinUnit.*;
 
 public class TracingBuff extends Buff {
     public TracingBuff(GameMember owner, GameMember source) {
-        super(owner, source, "Tracing", false, 1, 0);
+        super(owner, source, "Tracing", false, 3, 0);
     }
 
     @Override

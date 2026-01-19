@@ -37,6 +37,7 @@ public class Emote
     public static final String NINJA = ":ninja: ";
     public static final String REFRESH = ":recycle: ";
     public static final String TIME = ":hourglass: ";
+    public static final String ANGER = ":anger: ";
 
     public static final String TRACE = ":part_alternation_mark: ";
 

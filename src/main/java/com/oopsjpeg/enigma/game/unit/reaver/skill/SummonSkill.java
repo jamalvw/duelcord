@@ -61,6 +61,6 @@ public class SummonSkill extends Skill {
         return "Summon a creature with __" + HP + "__ + __" + percent(HP_AP_RATIO) + " Attack Power__ + __"
                 + percent(HP_SP_RATIO) + " Skill Power__ health that lasts for 3 turns. Consumes Void Power to summon up to 2 more." +
                 "\nCreatures deal __" + DAMAGE + "__ + __" + percent(DAMAGE_AP_RATIO) + " Attack Power__ + __"
-                + percent(DAMAGE_SP_RATIO) + " Skill Power__ damage when I attack. If I take damage, they take damage as well.";
+                + percent(DAMAGE_SP_RATIO) + " Skill Power__ damage when I attack.\nIf I take damage, they take damage as well.";
     }
 }

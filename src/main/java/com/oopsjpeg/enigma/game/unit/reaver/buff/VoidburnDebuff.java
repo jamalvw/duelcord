@@ -16,6 +16,7 @@ public class VoidburnDebuff extends Buff {
         DamageEvent event = new DamageEvent(getSource(), owner);
         event.setEmote(Emote.VOIDBURN);
         event.setIsSkill(true);
+        event.setIsDoT(true);
         event.setSource(getName());
         event.setDamage(getPower());
         return DamageManager.process(event);

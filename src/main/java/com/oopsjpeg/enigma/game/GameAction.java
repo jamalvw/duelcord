@@ -15,5 +15,9 @@ public interface GameAction
 
     String getName();
 
-    int getCost();
+    int getCost(GameMember actor);
+
+    default boolean hasCost(GameMember actor) {
+        return getCost(actor) > 0;
+    }
 }

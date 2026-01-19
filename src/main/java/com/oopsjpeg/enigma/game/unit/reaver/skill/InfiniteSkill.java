@@ -38,7 +38,7 @@ public class InfiniteSkill extends Skill {
     @Override
     public String getDescription() {
         return "Gain \"Infinite\" buff for 2 turns. Your damage has a 60% chance to apply Voidburn."
-                + "\nVoidburn deals __" + DAMAGE + "__ + " + percent(DAMAGE_SP_RATIO) + " Skill Power__ damage, stacks infinitely, and lasts for 2 turns."
+                + "\nVoidburn deals __" + DAMAGE + "__ + __" + percent(DAMAGE_SP_RATIO) + " Skill Power__ damage, stacks infinitely, and lasts for 2 turns."
                 + "\nIf the enemy already has Voidburn, refresh it.";
     }
 }

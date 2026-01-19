@@ -44,7 +44,7 @@ public class BuyAction implements GameAction
     }
 
     @Override
-    public int getCost() {
+    public int getCost(GameMember actor) {
         return 0;
     }
 }
