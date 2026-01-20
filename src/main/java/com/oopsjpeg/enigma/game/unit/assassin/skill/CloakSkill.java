@@ -13,7 +13,7 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 public class CloakSkill extends Skill {
     public static final int COST = 25;
     public static final int COOLDOWN = 4;
-    public static final float DODGE = .8f;
+    public static final float DODGE = .9f;
 
     public CloakSkill(Unit unit) {
         super(unit, COST, COOLDOWN);

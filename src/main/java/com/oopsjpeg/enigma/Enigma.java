@@ -211,7 +211,7 @@ public class Enigma
             //mongo.savePlayer(winner.getPlayer());
 
             removeListener(game.getCommandListener());
-            game.getMembers().stream().flatMap(m -> getListeners().stream()).forEach(this::removeListener);
+            //game.getMembers().stream().flatMap(m -> getListeners().stream()).forEach(this::removeListener);
 
             // Losers
             for (GameMember loser : losers)

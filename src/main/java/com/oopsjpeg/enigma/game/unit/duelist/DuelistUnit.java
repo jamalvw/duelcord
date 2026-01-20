@@ -90,8 +90,8 @@ public class DuelistUnit implements Unit {
     public Stats getStats() {
         return new Stats()
                 .put(MAX_ENERGY, 125)
-                .put(MAX_HEALTH, 1030)
-                .put(ATTACK_POWER, 20)
+                .put(MAX_HEALTH, 1420)
+                .put(ATTACK_POWER, 18)
                 .put(HEALTH_PER_TURN, 8);
     }
 

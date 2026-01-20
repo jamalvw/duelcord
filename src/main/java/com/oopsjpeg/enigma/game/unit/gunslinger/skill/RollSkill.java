@@ -14,8 +14,8 @@ import static com.oopsjpeg.enigma.util.Util.percentRaw;
 
 public class RollSkill extends Skill {
     public static final int COST = 0;
-    public static final float DODGE = 0.35f;
-    public static final float SP_RATIO = 0.0025f;
+    public static final float DODGE = 0.4f;
+    public static final float SP_RATIO = 0.004f;
     public static final int COOLDOWN = 4;
 
     public RollSkill(Unit unit) {

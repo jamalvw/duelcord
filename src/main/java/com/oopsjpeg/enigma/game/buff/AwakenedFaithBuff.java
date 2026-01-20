@@ -11,7 +11,7 @@ public class AwakenedFaithBuff extends Buff
 {
     public AwakenedFaithBuff(GameMember owner, GameMember source, float power)
     {
-        super(owner, source, "Awakened Faith", false, 2, power);
+        super(owner, source, "Awakening Faith", false, 2, power);
     }
 
     @Override

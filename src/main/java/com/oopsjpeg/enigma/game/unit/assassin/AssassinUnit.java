@@ -75,9 +75,9 @@ public class AssassinUnit implements Unit {
     public Stats getStats() {
         return new Stats()
                 .put(MAX_ENERGY, 100)
-                .put(MAX_HEALTH, 945)
-                .put(ATTACK_POWER, 16)
-                .put(HEALTH_PER_TURN, 15);
+                .put(MAX_HEALTH, 1260)
+                .put(ATTACK_POWER, 13)
+                .put(HEALTH_PER_TURN, 17);
     }
 
     @Override

@@ -17,12 +17,10 @@ public class CriticalStrikeHook implements DamageHook {
         if (event.isAbleToCrit()) {
             Pity pity = event.getAttacker().getCritPity();
 
-            event.proposeEffect(() -> {
-                if (event.isGoingToCrit() || pity.roll()) {
-                    event.crit();
-                    event.multiplyDamage(1.5f + event.getAttacker().getStats().get(CRIT_DAMAGE));
-                }
-            });
+            if (event.isGoingToCrit() || pity.roll()) {
+                event.crit();
+                event.multiplyDamage(1.5f + event.getAttacker().getStats().get(CRIT_DAMAGE));
+            }
         }
     }
 }

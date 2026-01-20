@@ -19,7 +19,7 @@ public class BlockHook implements DamageHook {
 
         if (rand < event.getVictim().getStats().get(StatType.BLOCK_CHANCE))
         {
-            event.multiplyDamage(0.2f);
+            event.multiplyDamage(0.15f);
             event.setBlocked(true);
         }
     }

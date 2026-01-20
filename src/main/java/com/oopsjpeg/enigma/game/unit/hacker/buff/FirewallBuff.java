@@ -13,7 +13,7 @@ import java.util.List;
 
 public class FirewallBuff extends Buff {
     public FirewallBuff(GameMember owner, GameMember source, int totalTurns, float power) {
-        super(owner, source, "Firewall", false, totalTurns, power);
+        super(owner, source, "Firewalled", false, totalTurns, power);
     }
 
     @Override

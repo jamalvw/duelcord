@@ -48,6 +48,8 @@ public class SummonSkill extends Skill {
         }
         output.add(0, Emote.SKILL + "**" + actor.getUsername() + "** used **Summon**!");
 
+        ((ReaverUnit) getUnit()).resetVoidPower();
+
         return Util.joinNonEmpty("\n", output);
     }
 

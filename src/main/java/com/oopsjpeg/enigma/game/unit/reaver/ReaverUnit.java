@@ -35,6 +35,10 @@ public class ReaverUnit implements Unit {
         return voidPower;
     }
 
+    public void resetVoidPower() {
+        voidPower = 0;
+    }
+
     @Override
     public DamageHook[] getDamageHooks() {
         return new DamageHook[]{
@@ -83,9 +87,9 @@ public class ReaverUnit implements Unit {
     public Stats getStats() {
         return new Stats()
                 .put(MAX_ENERGY, 125)
-                .put(MAX_HEALTH, 1105)
+                .put(MAX_HEALTH, 1390)
                 .put(ATTACK_POWER, 22)
-                .put(HEALTH_PER_TURN, 13);
+                .put(HEALTH_PER_TURN, 10);
     }
 
     @Override

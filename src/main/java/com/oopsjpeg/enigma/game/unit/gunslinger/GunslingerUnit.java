@@ -59,9 +59,9 @@ public class GunslingerUnit implements Unit {
     public Stats getStats() {
         return new Stats()
                 .put(MAX_ENERGY, 125)
-                .put(MAX_HEALTH, 1090)
-                .put(ATTACK_POWER, 19)
-                .put(HEALTH_PER_TURN, 12);
+                .put(MAX_HEALTH, 1325)
+                .put(ATTACK_POWER, 16)
+                .put(HEALTH_PER_TURN, 17);
     }
 
     @Override

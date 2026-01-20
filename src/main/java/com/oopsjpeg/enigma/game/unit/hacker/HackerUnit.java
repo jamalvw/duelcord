@@ -105,8 +105,8 @@ public class HackerUnit implements Unit {
         return new Stats()
                 .put(StatType.MAX_ENERGY, 125)
                 .put(StatType.ATTACK_POWER, 22)
-                .put(StatType.HEALTH_PER_TURN, 19)
-                .put(StatType.MAX_HEALTH, 920);
+                .put(StatType.HEALTH_PER_TURN, 10)
+                .put(StatType.MAX_HEALTH, 1310);
     }
 
     @Override
