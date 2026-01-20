@@ -44,7 +44,7 @@ public class BlitzBuff extends Buff {
 
     @Override
     public String onTurnEnd(GameMember member) {
-        remove();
+        remove(true);
         return "";
     }
 }

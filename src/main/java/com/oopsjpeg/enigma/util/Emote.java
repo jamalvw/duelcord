@@ -40,6 +40,9 @@ public class Emote
     public static final String ANGER = ":anger: ";
 
     public static final String TRACE = ":part_alternation_mark: ";
+    public static final String DIAMOND = ":diamond_shape_with_a_dot_inside: ";
+
+    public static final String BOT = ":robot: ";
 
     // Custom emotes
 

@@ -40,7 +40,7 @@ public class ParryBuff extends Buff {
                         e.proposeEffect(() -> {
                             EnGardeBuff buff = new EnGardeBuff(getOwner(), e.getAttacker(), 1, 25);
                             e.getOutput().add(getOwner().addBuff(buff, Emote.BUFF));
-                            remove();
+                            remove(true);
                         });
                     }
                 }

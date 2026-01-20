@@ -29,6 +29,7 @@ public class DamageEvent
     private boolean isAttack;
     private boolean isSkill;
     private boolean isDoT;
+    private boolean ignoreShield;
 
     public DamageEvent(GameMember attacker, GameMember victim)
     {
@@ -198,5 +199,13 @@ public class DamageEvent
 
     public void setIsSkill(boolean skill) {
         isSkill = skill;
+    }
+
+    public boolean isIgnoreShield() {
+        return ignoreShield;
+    }
+
+    public void setIgnoreShield(boolean ignoreShield) {
+        this.ignoreShield = ignoreShield;
     }
 }

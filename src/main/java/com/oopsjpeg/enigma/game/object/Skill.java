@@ -87,9 +87,11 @@ public abstract class Skill implements Command, GameAction
             return;
         }
 
+        // TODO make actor.act return a string and send it straight from here
         actor.act(this);
         for (GameObject o : actor.getData()) o.onSkillUsed(actor);
-        cooldown.start(actor.getStats().getInt(COOLDOWN_REDUCTION));
+        if (hasCooldown())
+            cooldown.start(actor.getStats().getInt(COOLDOWN_REDUCTION));
         actor.updateStats();
     }
 }

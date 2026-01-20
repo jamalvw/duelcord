@@ -63,9 +63,6 @@ public class DamageManager {
             event.getOutput().add(attacker.updateStats());
             event.getOutput().add(victim.updateStats());
 
-            for (PendingAction action : event.getEffects())
-                action.execute();
-
             game.getMode().handleDamage(event);
 
             if (event.getHealing() > 0)
@@ -85,9 +82,13 @@ public class DamageManager {
             if (event.getDamage() > 0) {
                 event.getVictim().takeHealth(round(event.getDamage()));
                 event.getOutput().add(0, Util.damageText(event, attacker.getUsername(), event.getVictim().getUsername(), event.getEmote(), event.getSource()));
-                if (!event.getVictim().hasHealth())
-                    event.getOutput().add(event.getVictim().lose());
             }
+
+            for (PendingAction action : event.getEffects())
+                action.execute();
+
+            if (!event.getVictim().hasHealth())
+                event.getOutput().add(event.getVictim().lose());
         }
 
         return Util.joinNonEmpty("\n", event.getOutput());

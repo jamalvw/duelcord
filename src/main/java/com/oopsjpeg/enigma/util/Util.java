@@ -36,7 +36,8 @@ public class Util
         return min + RANDOM.nextFloat() * (max - min);
     }
 
-    public static <T> T pickRandom(T[] array)
+    @SafeVarargs
+    public static <T> T pickRandom(T... array)
     {
         return array[RANDOM.nextInt(array.length)];
     }
@@ -147,7 +148,7 @@ public class Util
         return emote + "**" + attacker + "** damaged **" + victim + "** by **" + Math.round(event.getDamage()) + "**"
                 //+ (event.bonus > 0 ? " (+" + Math.round(event.bonus) + ")" : "")
                 + "!" + (event.isGoingToCrit() ? " **CRIT**!" : "") + (event.isBlocked() ? " **BLOCK**!" : "")
-                + " [**" + (victimM.hasShield() ? victimM.getShield() : victimM.getHealth() + " / " + stats.getInt(MAX_HEALTH)) + "**]"
+                + " [**" + (victimM.hasShield() && !event.isIgnoreShield() ? victimM.getShield() : victimM.getHealth() + " / " + stats.getInt(MAX_HEALTH)) + "**]"
                 + (!source.isEmpty() ? " (" + source + ")" : "");
     }
 

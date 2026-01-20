@@ -42,4 +42,8 @@ public interface GameObject
     {
         return shieldAmount;
     }
+
+    default String onShieldBreak(GameMember member) {
+        return null;
+    }
 }

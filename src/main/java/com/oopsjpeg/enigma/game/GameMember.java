@@ -524,7 +524,7 @@ public class GameMember
         return targetGoldAmount - getGold();
     }
 
-    public float getShield()
+    public int getShield()
     {
         return shield;
     }
@@ -534,13 +534,13 @@ public class GameMember
         shield = round(max(shieldAmount, 0));
     }
 
-    public double giveShield(float shieldAmount)
+    public float giveShield(float shieldAmount)
     {
         setShield(getShield() + shieldAmount);
         return getShield();
     }
 
-    public double takeShield(float shieldAmount)
+    public float takeShield(float shieldAmount)
     {
         setShield(getShield() - shieldAmount);
         return getShield();
