@@ -10,11 +10,11 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 import static com.oopsjpeg.enigma.util.Util.percentRaw;
 
 public class ExecuteSkill extends Skill {
-    public static final int COST = 75   ;
+    public static final int COST = 75;
     public static final int COOLDOWN = 5;
-    public static final int DAMAGE_BASE = 40;
-    public static final float DAMAGE_MISSING_HP = .12f;
-    public static final float DAMAGE_PER_DEBUFF = .07f;
+    public static final int DAMAGE_BASE = 20;
+    public static final float DAMAGE_MISSING_HP = .1f;
+    public static final float DAMAGE_PER_DEBUFF = .06f;
 
     public ExecuteSkill(Unit unit)
     {

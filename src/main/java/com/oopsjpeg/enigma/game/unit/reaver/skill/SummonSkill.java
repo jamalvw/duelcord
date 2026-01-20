@@ -20,11 +20,11 @@ public class SummonSkill extends Skill {
     public static final int COST = 25;
     public static final int COOLDOWN = 3;
     public static final int HP = 15;
-    public static final float HP_AP_RATIO = 0.5f;
+    public static final float HP_AP_RATIO = 0.7f;
     public static final float HP_SP_RATIO = 2.35f;
     public static final int DAMAGE = 5;
-    public static final float DAMAGE_AP_RATIO = .5f;
-    public static final float DAMAGE_SP_RATIO = .2f;
+    public static final float DAMAGE_AP_RATIO = .4f;
+    public static final float DAMAGE_SP_RATIO = .1f;
 
     public SummonSkill(Unit unit) {
         super(unit, COST, COOLDOWN);

@@ -14,7 +14,7 @@ import java.util.List;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class BlitzSkill extends Skill {
-    public static final float ATTACK_RATIO = 0.65f;
+    public static final float ATTACK_RATIO = 0.6f;
 
     public BlitzSkill(Unit unit) {
         super(unit, 50, 3);
@@ -31,8 +31,8 @@ public class BlitzSkill extends Skill {
         BlitzBuff blitz = new BlitzBuff(actor, actor, 1, ATTACK_RATIO);
 
         output.add(Emote.SKILL + "**" + actor.getUsername() + "** used **Blitz** - Attacks will cost 25 energy!");
-        actor.addBuff(blitz, Emote.BUFF);
         output.add(actor.updateStats());
+        actor.addBuff(blitz, Emote.BUFF);
 
         return Util.joinNonEmpty("\n", output);
     }

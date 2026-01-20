@@ -43,7 +43,11 @@ public class KorasWillEffect extends Effect
                         if (event.getAttacker() != getOwner()) return;
                         if (!event.isSkill()) return;
 
-                        event.addDamage(getTotalPower(event.getAttacker().getStats().get(SKILL_POWER)));
+                        float power = getTotalPower(event.getAttacker().getStats().get(SKILL_POWER));
+
+                        if (event.isDoT()) power /= 3;
+
+                        event.addDamage(power);
                     }
                 }
         };

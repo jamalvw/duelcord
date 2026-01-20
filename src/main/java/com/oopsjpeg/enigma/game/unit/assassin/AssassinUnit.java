@@ -25,8 +25,8 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class AssassinUnit implements Unit {
     public static final int PASSIVE_DAMAGE_BASE = 10;
-    public static final float PASSIVE_DAMAGE_AP_RATIO = .15f;
-    public static final float PASSIVE_DAMAGE_SP_RATIO = 1.1f;
+    public static final float PASSIVE_DAMAGE_AP_RATIO = .2f;
+    public static final float PASSIVE_DAMAGE_SP_RATIO = 0.5f;
     public static final int PASSIVE_ENERGY_RESTORE = 25;
 
     private final GameMember owner;

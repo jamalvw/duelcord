@@ -26,7 +26,7 @@ public class CrimsonMightItem extends Item {
     @Override
     public Stats getStats() {
         return new Stats()
-                .put(StatType.SKILL_POWER, 40);
+                .put(StatType.SKILL_POWER, 50);
     }
 
     @Override

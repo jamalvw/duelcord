@@ -122,7 +122,7 @@ public class Game
         {
             GameMember member = getCurrentMember();
             member.heal(member.getStats().get(HEALTH_PER_TURN) * (member.isDefensive() ? 2 : 1), null, false);
-            member.giveGold(mode.handleGold(125 + turnCount));
+            member.giveGold(mode.handleGold(125 + (turnCount * 5)));
             member.giveGold(member.getStats().getInt(GOLD_PER_TURN));
             member.setEnergy(member.getStats().getInt(MAX_ENERGY));
             member.setDefensive(false);

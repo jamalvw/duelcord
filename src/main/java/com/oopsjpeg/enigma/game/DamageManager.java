@@ -34,6 +34,8 @@ public class DamageManager {
         GameMember attacker = event.getAttacker();
         GameMember victim = event.getVictim();
 
+        if (!victim.hasHealth()) return null;
+
         List<DamageHook> pipeline = new ArrayList<>();
 
         // Add dynamic hooks
@@ -60,9 +62,6 @@ public class DamageManager {
 
         // Final damage application
         if (!event.isCancelled()) {
-            event.getOutput().add(attacker.updateStats());
-            event.getOutput().add(victim.updateStats());
-
             game.getMode().handleDamage(event);
 
             if (event.getHealing() > 0)
@@ -86,6 +85,9 @@ public class DamageManager {
 
             for (PendingAction action : event.getEffects())
                 action.execute();
+
+            event.getOutput().add(attacker.updateStats());
+            event.getOutput().add(victim.updateStats());
 
             if (!event.getVictim().hasHealth())
                 event.getOutput().add(event.getVictim().lose());

@@ -2,6 +2,7 @@ package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.Enigma;
+import com.oopsjpeg.enigma.TrapType;
 import com.oopsjpeg.enigma.game.object.*;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.listener.CommandListener;
@@ -17,6 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
+import static com.oopsjpeg.enigma.util.Util.RANDOM;
 import static com.oopsjpeg.enigma.util.Util.percent;
 import static java.lang.Math.max;
 import static java.lang.Math.round;
@@ -28,6 +30,7 @@ public class GameMember
     private Unit unit;
     private boolean alive = true;
     private boolean defensive = false;
+    private TrapType lastTrapType = null;
 
     CommandListener commands;
 
@@ -223,7 +226,7 @@ public class GameMember
             {
                 buffs.remove(buff);
                 if (!buff.isSilent())
-                    output.add(Emote.TIME + "**" + getUsername() + "'s " + buff.getName() + "** has expired.");
+                    output.add(Emote.TIME + "**" + getUsername() + "** is no longer **" + buff.getName() + "**.");
             } else
                 stats.addAll(buff.getStats());
         }
@@ -330,7 +333,7 @@ public class GameMember
 
     public float getResist()
     {
-        return stats.get(RESIST) + (defensive ? 0.2f : 0);
+        return stats.get(RESIST) + (defensive ? 0.25f : 0);
     }
 
     public float getBonusDamage()
@@ -410,6 +413,19 @@ public class GameMember
     public Pity getCritPity()
     {
         return critPity;
+    }
+
+    public TrapType randomTrapType() {
+        TrapType[] types = Arrays.stream(TrapType.values())
+                .filter(type -> type != getLastTrapType())
+                .toArray(TrapType[]::new);
+        TrapType type = types[RANDOM.nextInt(types.length)];
+        lastTrapType = type;
+        return type;
+    }
+
+    public TrapType getLastTrapType() {
+        return lastTrapType;
     }
 
     public int getHealth()

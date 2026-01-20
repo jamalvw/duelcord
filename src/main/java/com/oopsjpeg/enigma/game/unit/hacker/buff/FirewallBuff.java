@@ -34,8 +34,7 @@ public class FirewallBuff extends Buff {
             hacker.getBots().add(bot);
             botTypes.add("**" + type.getName() + " Bot**");
 
-            // TODO check limit dynamically
-            if (hacker.getBots().size() >= 6) break;
+            if (hacker.getBots().size() >= HackerUnit.BOT_LIMIT) break;
         }
 
         remove(true);

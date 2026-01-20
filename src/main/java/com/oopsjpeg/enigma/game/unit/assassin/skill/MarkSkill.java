@@ -11,7 +11,7 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 public class MarkSkill extends Skill {
     public static final int COST = 25;
     public static final int COOLDOWN = 3;
-    public static final float CRIPPLE = .35f;
+    public static final float CRIPPLE = .3f;
 
     public MarkSkill(Unit unit)
     {

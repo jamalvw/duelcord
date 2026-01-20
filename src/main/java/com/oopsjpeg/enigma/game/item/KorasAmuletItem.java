@@ -26,7 +26,7 @@ public class KorasAmuletItem extends Item {
     @Override
     public Stats getStats() {
         return new Stats()
-                .put(StatType.SKILL_POWER, 20);
+                .put(StatType.SKILL_POWER, 25);
     }
 
     @Override

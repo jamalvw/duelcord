@@ -20,13 +20,13 @@ public class HolyBandItem extends Item {
 
     @Override
     public Effect[] generateEffects() {
-        return new Effect[]{new DivinityEffect(getOwner(), 10)};
+        return new Effect[]{new DivinityEffect(getOwner(), 20)};
     }
 
     @Override
     public Stats getStats() {
         return new Stats()
-                .put(StatType.SKILL_POWER, 25);
+                .put(StatType.SKILL_POWER, 30);
     }
 
     @Override

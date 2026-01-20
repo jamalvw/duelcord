@@ -15,8 +15,8 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 public class InfiniteSkill extends Skill {
     public static final int COST = 25;
     public static final int COOLDOWN = 2;
-    public static final int DAMAGE = 4;
-    public static final float DAMAGE_SP_RATIO = 0.12f;
+    public static final int DAMAGE = 2;
+    public static final float DAMAGE_SP_RATIO = 0.09f;
 
     public InfiniteSkill(Unit unit) {
         super(unit, COST, COOLDOWN);
@@ -25,8 +25,7 @@ public class InfiniteSkill extends Skill {
     @Override
     public String act(GameMember actor) {
         List<String> output = new ArrayList<>();
-        float damage = DAMAGE + (actor.getStats().get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
-        output.add(actor.addBuff(new InfiniteBuff(actor, actor, 2, damage, 0.6f), ":infinity: "));
+        output.add(actor.addBuff(new InfiniteBuff(actor, actor, 2, 0, 0.5f), ":infinity: "));
         return Util.joinNonEmpty("\n", output);
     }
 
@@ -37,7 +36,7 @@ public class InfiniteSkill extends Skill {
 
     @Override
     public String getDescription() {
-        return "Gain \"Infinite\" buff for 2 turns. Your damage has a 60% chance to apply Voidburn."
+        return "Gain \"Infinite\" buff for 2 turns. Your damage has a 50% chance to apply Voidburn."
                 + "\nVoidburn deals __" + DAMAGE + "__ + __" + percent(DAMAGE_SP_RATIO) + " Skill Power__ damage, stacks infinitely, and lasts for 2 turns."
                 + "\nIf the enemy already has Voidburn, refresh it.";
     }

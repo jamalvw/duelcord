@@ -26,7 +26,7 @@ public class FaithbreakerItem extends Item {
     @Override
     public Stats getStats() {
         return new Stats()
-                .put(StatType.SKILL_POWER, 45);
+                .put(StatType.SKILL_POWER, 55);
     }
 
     @Override

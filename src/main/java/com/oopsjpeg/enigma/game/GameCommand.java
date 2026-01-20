@@ -6,6 +6,7 @@ import com.oopsjpeg.enigma.game.action.AttackAction;
 import com.oopsjpeg.enigma.game.action.BuyAction;
 import com.oopsjpeg.enigma.game.action.SellAction;
 import com.oopsjpeg.enigma.game.action.UseAction;
+import com.oopsjpeg.enigma.game.buff.DisarmDebuff;
 import com.oopsjpeg.enigma.game.object.Item;
 import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.unit.Unit;
@@ -21,6 +22,7 @@ import java.util.List;
 
 public enum GameCommand implements Command
 {
+    // TODO Energy costs should be found dynamically somehow - changing energy costs of system commands requires changing values in multiple locations
     ATTACK("attack")
             {
                 @Override
@@ -36,6 +38,10 @@ public enum GameCommand implements Command
                         message.delete().subscribe();
                         if (game.getGameState() == GameState.PICKING)
                             Util.sendFailure(channel, "You cannot attack until the game has started.");
+                        else if (member.hasBuff(DisarmDebuff.class))
+                            Util.sendFailure(channel, "You are currently disarmed and cannot attack.");
+                        else if (member.getEnergy() < 50 + member.getStats().get(StatType.ATTACK_COST))
+                            Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + 50 + "** energy. You have **" + member.getEnergy() + "**.");
                         else
                             channel.createMessage(member.act(new AttackAction(game.getRandomTarget(member)))).subscribe();
                     }
@@ -220,6 +226,8 @@ public enum GameCommand implements Command
                                 Util.sendFailure(channel, "You don't have a(n) **" + item.getName() + "**.");
                             else if (!item.canUse(member))
                                 Util.sendFailure(channel, "**" + item.getName() + "** can't be used.");
+                            else if (member.getEnergy() < 25)
+                                Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + 25 + "** energy. You have **" + member.getEnergy() + "**.");
                             else
                                 channel.createMessage(member.act(new UseAction(item))).subscribe();
                         }

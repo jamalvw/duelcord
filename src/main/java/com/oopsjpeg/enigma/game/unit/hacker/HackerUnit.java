@@ -22,10 +22,11 @@ import java.util.stream.Collectors;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class HackerUnit implements Unit {
+    public static final int BOT_LIMIT = 6;
     public static final int BOT_DAMAGE = 6;
-    public static final float BOT_DAMAGE_AP_RATIO = 0.14f;
-    public static final float BOT_DAMAGE_SP_RATIO = 0.3f;
-    public static final float BOT_ON_HIT_RATIO = 0.5f;
+    public static final float BOT_DAMAGE_AP_RATIO = 0.12f;
+    public static final float BOT_DAMAGE_SP_RATIO = 0.25f;
+    public static final float BOT_ON_HIT_RATIO = 0.4f;
 
     private final GameMember owner;
 
@@ -88,10 +89,15 @@ public class HackerUnit implements Unit {
 
     @Override
     public String getDescription() {
-        return "When the enemy activates a trap, create a **Bot**, up to **7**." +
+        return "When the enemy activates a trap, create a **Bot**, up to **" + BOT_LIMIT + "**." +
                 "\n\nBots deal __" + BOT_DAMAGE + "__ + __" + percent(BOT_DAMAGE_AP_RATIO) + " Attack Power__ + __"
                 + percent(BOT_DAMAGE_SP_RATIO) + " Skill Power__ damage and apply On-Hit effects at __"
                 + percent(BOT_ON_HIT_RATIO) + "__ power when activated.";
+    }
+
+    @Override
+    public String getStatus(GameMember member) {
+        return "Bots: " + getBots().size() + " / " + BOT_LIMIT;
     }
 
     @Override
@@ -115,7 +121,12 @@ public class HackerUnit implements Unit {
 
     @Override
     public String onSkillUsed(GameMember member) {
-        // TODO: if this skill had a specific target, the bot should not choose a random target to strike
+        /*
+         TODO:
+          if this skill had a specific target, the bot should not choose a random target to strike
+          Solution is to create a SkillUseEvent.
+         */
+
         List<String> output = new ArrayList<>();
         getBots(BotType.SKILL).forEach(bot -> {
             DamageEvent botStrike = new BotDamageEvent(owner, member.getGame().getRandomTarget(member));

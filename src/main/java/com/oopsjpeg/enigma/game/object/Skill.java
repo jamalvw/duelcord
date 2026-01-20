@@ -90,7 +90,6 @@ public abstract class Skill implements Command, GameAction
             return;
         }
 
-        // TODO There is DEFINITELY a bug with ALL actions after making this return string. Please fix
         List<String> output = new ArrayList<>();
         output.add(actor.act(this));
         actor.getData().forEach(o -> output.add(o.onSkillUsed(actor)));

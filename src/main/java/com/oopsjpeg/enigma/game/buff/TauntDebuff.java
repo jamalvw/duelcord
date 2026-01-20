@@ -20,6 +20,6 @@ public class TauntDebuff extends Buff {
     public String onTurnStart(GameMember member) {
         remove(true);
         AttackAction action = new AttackAction(member.getGame().getRandomTarget(member));
-        return action.act(member);
+        return member.act(action);
     }
 }

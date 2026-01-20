@@ -7,7 +7,7 @@ public class PotionBuff extends Buff
 {
     public PotionBuff(GameMember owner, GameMember source, int totalTurns, float power)
     {
-        super(owner, source, "Potion", false, totalTurns, power);
+        super(owner, source, "Healing from Potion", false, totalTurns, power);
     }
 
     @Override

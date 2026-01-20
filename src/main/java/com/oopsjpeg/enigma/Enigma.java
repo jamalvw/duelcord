@@ -210,6 +210,9 @@ public class Enigma
             //winner.getPlayer().getUnitData(winner.getUnit().getName()).addPoints(Util.nextInt(160, 200));
             //mongo.savePlayer(winner.getPlayer());
 
+            removeListener(game.getCommandListener());
+            game.getMembers().stream().flatMap(m -> getListeners().stream()).forEach(this::removeListener);
+
             // Losers
             for (GameMember loser : losers)
             {

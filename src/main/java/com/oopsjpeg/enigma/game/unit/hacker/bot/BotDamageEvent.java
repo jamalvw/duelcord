@@ -15,6 +15,8 @@ public class BotDamageEvent extends DamageEvent {
         setSource("Bot");
         setEmote(Emote.BOT);
         setIsOnHit(true);
+        setIsSkill(true);
+        setIsDoT(true);
         setOnHitScale(BOT_ON_HIT_RATIO);
         addDamage(BOT_DAMAGE);
         addDamage(stats.get(StatType.ATTACK_POWER) * BOT_DAMAGE_AP_RATIO);

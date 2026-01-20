@@ -15,7 +15,7 @@ public class ParryBuff extends Buff {
     private final float blockChance;
 
     public ParryBuff(GameMember owner, GameMember source, int totalTurns, float skillResist, float blockChance) {
-        super(owner, source, "Parry", false, totalTurns, skillResist);
+        super(owner, source, "Parrying", false, totalTurns, skillResist);
         this.blockChance = blockChance;
     }
 

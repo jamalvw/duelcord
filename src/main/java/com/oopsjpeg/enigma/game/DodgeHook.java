@@ -15,7 +15,7 @@ public class DodgeHook implements DamageHook {
 
     @Override
     public void execute(DamageEvent event) {
-        if (event.isSkill()) return;
+        if (!event.isOnHit()) return;
 
         GameMember victim = event.getVictim();
         float dodgeChance = victim.getStats().get(DODGE);

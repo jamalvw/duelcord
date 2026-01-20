@@ -26,8 +26,8 @@ public class ShadowReaverItem extends Item {
     @Override
     public Stats getStats() {
         return new Stats()
-                .put(StatType.ATTACK_POWER, 30)
-                .put(StatType.SKILL_POWER, 30);
+                .put(StatType.ATTACK_POWER, 40)
+                .put(StatType.SKILL_POWER, 40);
     }
 
     @Override
