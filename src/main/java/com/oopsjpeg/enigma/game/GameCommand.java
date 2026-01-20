@@ -37,7 +37,7 @@ public enum GameCommand implements Command
                         if (game.getGameState() == GameState.PICKING)
                             Util.sendFailure(channel, "You cannot attack until the game has started.");
                         else
-                            member.act(new AttackAction(game.getRandomTarget(member)));
+                            channel.createMessage(member.act(new AttackAction(game.getRandomTarget(member)))).subscribe();
                     }
                 }
             },
@@ -73,7 +73,7 @@ public enum GameCommand implements Command
                                     else if (build.getPostData().size() >= 5)
                                         Util.sendFailure(channel, "You do not have enough inventory space for a(n) **" + item.getName() + "**.");
                                     else
-                                        member.act(new BuyAction(build));
+                                        channel.createMessage(member.act(new BuyAction(build))).subscribe();
                                 }
                             }
                         }
@@ -191,7 +191,7 @@ public enum GameCommand implements Command
                             else if (!member.getData().contains(item))
                                 Util.sendFailure(channel, "You don't have a(n) **" + item.getName() + "**.");
                             else
-                                member.act(new SellAction(item));
+                                channel.createMessage(member.act(new SellAction(item))).subscribe();
                         }
                     }
                 }
@@ -221,7 +221,7 @@ public enum GameCommand implements Command
                             else if (!item.canUse(member))
                                 Util.sendFailure(channel, "**" + item.getName() + "** can't be used.");
                             else
-                                member.act(new UseAction(item));
+                                channel.createMessage(member.act(new UseAction(item))).subscribe();
                         }
                     }
                 }

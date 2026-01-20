@@ -242,27 +242,21 @@ public class GameMember
         return Util.joinNonEmpty("\n", output);
     }
 
-    public void act(GameAction action)
-    {
-        if (getEnergy() < action.getCost(this))
-            Util.sendFailure(game.getChannel(), action.getName() + " costs **" + action.getCost(this) + "** Energy.");
+    public String act(GameAction action) {
+        game.getActions().add(action);
+
+        takeEnergy(action.getCost(this));
+
+        final List<String> output = new ArrayList<>();
+        output.add(action.execute(this));
+        output.add(updateStats());
+
+        if (!hasEnergy())
+            output.add(game.nextTurn());
         else
-        {
-            game.getActions().add(action);
+            game.updateStatus();
 
-            takeEnergy(action.getCost(this));
-
-            final List<String> output = new ArrayList<>();
-            output.add(action.execute(this));
-            output.add(updateStats());
-
-            if (!hasEnergy())
-                output.add(game.nextTurn());
-            else
-                game.updateStatus();
-
-            game.getChannel().createMessage(Util.joinNonEmpty("\n", output)).subscribe();
-        }
+        return Util.joinNonEmpty("\n", output);
     }
 
     public String shield(float shieldAmount)

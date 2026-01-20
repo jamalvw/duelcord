@@ -13,6 +13,9 @@ import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.oopsjpeg.enigma.game.StatType.COOLDOWN_REDUCTION;
 
 public abstract class Skill implements Command, GameAction
@@ -87,11 +90,12 @@ public abstract class Skill implements Command, GameAction
             return;
         }
 
-        // TODO make actor.act return a string and send it straight from here
-        actor.act(this);
-        for (GameObject o : actor.getData()) o.onSkillUsed(actor);
+        // TODO There is DEFINITELY a bug with ALL actions after making this return string. Please fix
+        List<String> output = new ArrayList<>();
+        output.add(actor.act(this));
+        actor.getData().forEach(o -> output.add(o.onSkillUsed(actor)));
         if (hasCooldown())
             cooldown.start(actor.getStats().getInt(COOLDOWN_REDUCTION));
-        actor.updateStats();
+        channel.createMessage(Util.joinNonEmpty("\n", output)).subscribe();
     }
 }
