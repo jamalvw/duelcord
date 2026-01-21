@@ -30,7 +30,7 @@ public class TracingBuff extends Buff {
 
                 Stats stats = actor.getStats();
                 e.addDamage(PASSIVE_DAMAGE_BASE);
-                e.addDamage(stats.get(ATTACK_POWER) * PASSIVE_DAMAGE_AP_RATIO);
+                // e.addDamage(stats.get(ATTACK_POWER) * PASSIVE_DAMAGE_AP_RATIO);
                 e.addDamage(stats.get(SKILL_POWER) * PASSIVE_DAMAGE_SP_RATIO);
 
                 e.proposeEffect(() -> {
@@ -54,7 +54,7 @@ public class TracingBuff extends Buff {
 
     public int getTotalDamage(Stats stats) {
         return Math.round(PASSIVE_DAMAGE_BASE +
-                (stats.get(ATTACK_POWER) * PASSIVE_DAMAGE_AP_RATIO) +
+                // (stats.get(ATTACK_POWER) * PASSIVE_DAMAGE_AP_RATIO) +
                 (stats.get(SKILL_POWER) * PASSIVE_DAMAGE_SP_RATIO));
     }
 }

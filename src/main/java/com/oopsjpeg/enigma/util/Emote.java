@@ -26,6 +26,7 @@ public class Emote
     public static final String WOUND = ":cupid: ";
     public static final String ZAP = ":zap: ";
     public static final String VOIDBURN = "<:firepurple:1462293157545902194> ";
+    public static final String DRAGON = "<:dragon:1463497473359220893> ";
 
     public static final String GUN = ":gun: ";
     public static final String KNIFE = ":knife: ";
