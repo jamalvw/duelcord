@@ -11,19 +11,19 @@ public class AwakenedFaithBuff extends Buff
 {
     public AwakenedFaithBuff(GameMember owner, GameMember source, float power)
     {
-        super(owner, source, "Awakening Faith", false, 2, power);
+        super(owner, source, "Awakened Faith", false, 2, true, power);
     }
 
     @Override
     public String getStatus(GameMember member)
     {
-        return "Awakened Faith: " + Math.round(getPower()) + " bonus Energy this turn";
+        return "Awakened Faith: " + formatPower() + " bonus energy";
     }
 
     @Override
     public String onTurnStart(GameMember member)
     {
-        return Emote.ENERGY + "**" + member.getUsername() + "** gained __" + formatPower() + "__ bonus Energy this turn.";
+        return Emote.ENERGY + "**" + member.getUsername() + "** gained __" + formatPower() + "__ bonus energy this turn.";
     }
 
     @Override

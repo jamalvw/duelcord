@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.assassin.buff;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.game.unit.assassin.AssassinUnit;
@@ -14,45 +14,42 @@ import static com.oopsjpeg.enigma.game.unit.assassin.AssassinUnit.*;
 
 public class TracingBuff extends Buff {
     public TracingBuff(GameMember owner, GameMember source) {
-        super(owner, source, "Tracing", false, 2, 0);
-    }
+        super(owner, source, "Tracing", false, 1, true, 0);
 
-    @Override
-    public DamageHook[] getDamageHooks() {
-        return new DamageHook[]{
-                new DamageHook() {
-                    @Override
-                    public DamagePhase getPhase() {
-                        return DamagePhase.PRE_CALCULATION;
+        hook(DamageEvent.class, new Hook<DamageEvent>() {
+            @Override
+            public DamagePhase getPhase() {
+                return DamagePhase.PRE_CALCULATION;
+            }
+
+            @Override
+            public void execute(DamageEvent e) {
+                GameMember actor = e.getActor();
+
+                if (actor != getOwner()) return;
+
+                Stats stats = actor.getStats();
+                e.addDamage(PASSIVE_DAMAGE_BASE);
+                e.addDamage(stats.get(ATTACK_POWER) * PASSIVE_DAMAGE_AP_RATIO);
+                e.addDamage(stats.get(SKILL_POWER) * PASSIVE_DAMAGE_SP_RATIO);
+
+                e.proposeEffect(() -> {
+                    actor.giveEnergy(PASSIVE_ENERGY_RESTORE);
+
+                    if (actor.getUnit() instanceof AssassinUnit)
+                    {
+                        ((AssassinUnit) actor.getUnit()).getSlash().getCooldown().reset();
                     }
 
-                    @Override
-                    public void execute(DamageEvent e) {
-                        if (e.getAttacker() != getOwner()) return;
-
-                        Stats stats = e.getAttacker().getStats();
-                        e.addDamage(PASSIVE_DAMAGE_BASE);
-                        e.addDamage(stats.get(ATTACK_POWER) * PASSIVE_DAMAGE_AP_RATIO);
-                        e.addDamage(stats.get(SKILL_POWER) * PASSIVE_DAMAGE_SP_RATIO);
-
-                        e.proposeEffect(() -> {
-                            e.getAttacker().giveEnergy(PASSIVE_ENERGY_RESTORE);
-
-                            if (e.getAttacker().getUnit() instanceof AssassinUnit)
-                            {
-                                ((AssassinUnit) e.getAttacker().getUnit()).getSlash().getCooldown().reset();
-                            }
-
-                            remove(true);
-                        });
-                    }
-                }
-        };
+                    remove(true);
+                });
+            }
+        });
     }
 
     @Override
     public String getStatus(GameMember member) {
-        return "Tracing: " + getTotalDamage(member.getStats()) + " bonus on Attack, restore " + PASSIVE_ENERGY_RESTORE + " Energy, reset Slash";
+        return "Tracing: " + getTotalDamage(member.getStats()) + " bonus damage on attack, restores " + PASSIVE_ENERGY_RESTORE + " energy, resets Slash";
     }
 
     public int getTotalDamage(Stats stats) {

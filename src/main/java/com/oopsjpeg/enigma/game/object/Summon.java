@@ -5,7 +5,7 @@ import com.oopsjpeg.enigma.game.GameObject;
 
 import static java.lang.Math.round;
 
-public abstract class Summon implements GameObject {
+public abstract class Summon extends GameObject {
     private final String name;
     private final GameMember owner;
     private float health;

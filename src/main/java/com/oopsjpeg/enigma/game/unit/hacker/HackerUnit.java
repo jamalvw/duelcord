@@ -1,6 +1,5 @@
 package com.oopsjpeg.enigma.game.unit.hacker;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.*;
 import com.oopsjpeg.enigma.game.object.Skill;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
-public class HackerUnit implements Unit {
+public class HackerUnit extends Unit {
     public static final int BOT_LIMIT = 6;
     public static final int BOT_DAMAGE = 6;
     public static final float BOT_DAMAGE_AP_RATIO = 0.12f;
@@ -39,29 +38,24 @@ public class HackerUnit implements Unit {
 
     public HackerUnit(GameMember owner) {
         this.owner = owner;
-    }
 
-    @Override
-    public DamageHook[] getDamageHooks() {
-        return new DamageHook[]{
-                new DamageHook() {
-                    @Override
-                    public DamagePhase getPhase() {
-                        return DamagePhase.SUMMONS;
-                    }
+        hook(DamageEvent.class, new Hook<DamageEvent>() {
+            @Override
+            public DamagePhase getPhase() {
+                return DamagePhase.SUMMONS;
+            }
 
-                    @Override
-                    public void execute(DamageEvent e) {
-                        if (e.getAttacker() != getOwner()) return;
-                        if (!e.isAttack()) return;
+            @Override
+            public void execute(DamageEvent e) {
+                if (e.getActor() != getOwner()) return;
+                if (!e.isAttack()) return;
 
-                        e.proposeEffect(() -> getBots(BotType.ATTACK).forEach(bot -> {
-                            DamageEvent botStrike = new BotDamageEvent(owner, e.getVictim());
-                            e.getOutput().add(DamageManager.process(botStrike));
-                        }));
-                    }
-                }
-        };
+                e.proposeEffect(() -> getBots(BotType.ATTACK).forEach(bot -> {
+                    DamageEvent botStrike = new BotDamageEvent(bot, owner, e.getVictim());
+                    e.getOutput().add(EventManager.process(botStrike));
+                }));
+            }
+        });
     }
 
     public List<Bot> getBots() {
@@ -113,8 +107,8 @@ public class HackerUnit implements Unit {
     public String onDefend(GameMember member) {
         List<String> output = new ArrayList<>();
         getBots(BotType.DEFEND).forEach(bot -> {
-            DamageEvent botStrike = new BotDamageEvent(owner, member.getGame().getRandomTarget(member));
-            output.add(DamageManager.process(botStrike));
+            DamageEvent botStrike = new BotDamageEvent(bot, owner, member.getGame().getRandomTarget(member));
+            output.add(EventManager.process(botStrike));
         });
         return Util.joinNonEmpty("\n", output);
     }
@@ -129,8 +123,8 @@ public class HackerUnit implements Unit {
 
         List<String> output = new ArrayList<>();
         getBots(BotType.SKILL).forEach(bot -> {
-            DamageEvent botStrike = new BotDamageEvent(owner, member.getGame().getRandomTarget(member));
-            output.add(DamageManager.process(botStrike));
+            DamageEvent botStrike = new BotDamageEvent(bot, owner, member.getGame().getRandomTarget(member));
+            output.add(EventManager.process(botStrike));
         });
         return Util.joinNonEmpty("\n", output);
     }

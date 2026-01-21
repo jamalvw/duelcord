@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.effect;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.buff.WoundedDebuff;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.util.Emote;
@@ -19,32 +19,27 @@ public class LifewasterEffect extends Effect
     {
         super(owner, "Lifewaster", power, null);
         hitCount = new Stacker(hitLimit);
-    }
 
-    @Override
-    public DamageHook[] getDamageHooks() {
-        return new DamageHook[]{
-                new DamageHook() {
-                    @Override
-                    public DamagePhase getPhase() {
-                        return DamagePhase.PRE_CALCULATION;
+        hook(DamageEvent.class, new Hook<DamageEvent>() {
+            @Override
+            public DamagePhase getPhase() {
+                return DamagePhase.PRE_CALCULATION;
+            }
+
+            @Override
+            public void execute(DamageEvent event) {
+                if (event.getActor() != getOwner()) return;
+                if (!event.isOnHit()) return;
+
+                event.proposeEffect(() -> {
+                    if (hitCount.stack())
+                    {
+                        event.getOutput().add(event.getVictim().addBuff(new WoundedDebuff(event.getVictim(), event.getActor(), 1, getPower()), Emote.WOUND));
+                        hitCount.reset();
                     }
-
-                    @Override
-                    public void execute(DamageEvent event) {
-                        if (event.getAttacker() != getOwner()) return;
-                        if (!event.isOnHit()) return;
-
-                        event.proposeEffect(() -> {
-                            if (hitCount.stack())
-                            {
-                                event.getOutput().add(event.getVictim().addBuff(new WoundedDebuff(event.getVictim(), event.getAttacker(), 1, getPower()), Emote.WOUND));
-                                hitCount.reset();
-                            }
-                        });
-                    }
-                }
-        };
+                });
+            }
+        });
     }
 
     @Override

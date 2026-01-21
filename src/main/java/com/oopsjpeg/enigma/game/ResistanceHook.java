@@ -1,9 +1,8 @@
 package com.oopsjpeg.enigma.game;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 
-public class ResistanceHook implements DamageHook {
+public class ResistanceHook implements Hook<DamageEvent> {
     @Override
     public DamagePhase getPhase() {
         return DamagePhase.RESISTANCE;

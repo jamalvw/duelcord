@@ -35,7 +35,7 @@ public class ShockSkill extends Skill {
         e.setDamage(DAMAGE + actor.getStats().get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
         e.proposeEffect(() -> e.getOutput().add(target.addBuff(new ShockDebuff(target, actor, 1, 50), Emote.ZAP)));
 
-        output.add(DamageManager.process(e));
+        output.add(EventManager.process(e));
 
         return Util.joinNonEmpty("\n", output);
     }

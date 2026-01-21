@@ -1,10 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.assassin;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
-import com.oopsjpeg.enigma.game.buff.CrippledDebuff;
+import com.oopsjpeg.enigma.game.buff.CrippleDebuff;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.assassin.buff.MarkedDebuff;
@@ -23,7 +22,7 @@ import java.util.List;
 import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
-public class AssassinUnit implements Unit {
+public class AssassinUnit extends Unit {
     public static final int PASSIVE_DAMAGE_BASE = 10;
     public static final float PASSIVE_DAMAGE_AP_RATIO = .2f;
     public static final float PASSIVE_DAMAGE_SP_RATIO = 0.5f;
@@ -105,7 +104,7 @@ public class AssassinUnit implements Unit {
         {
             if (enemy.hasBuff(MarkedDebuff.class)) {
                 enemy.removeBuffs(MarkedDebuff.class);
-                enemy.addBuff(new CrippledDebuff(enemy, member, 1, MarkSkill.CRIPPLE), Emote.CRIPPLE);
+                enemy.addBuff(new CrippleDebuff(enemy, member, 1, MarkSkill.CRIPPLE), Emote.CRIPPLE);
                 output.add(Emote.CRIPPLE + "**" + enemy.getUsername() + "** was marked by the assassin, suffering **Cripple** (" + percent(MarkSkill.CRIPPLE) + ").");
             }
         }

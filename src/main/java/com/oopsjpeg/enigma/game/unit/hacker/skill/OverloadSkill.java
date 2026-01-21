@@ -1,6 +1,6 @@
 package com.oopsjpeg.enigma.game.unit.hacker.skill;
 
-import com.oopsjpeg.enigma.game.DamageManager;
+import com.oopsjpeg.enigma.game.EventManager;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.buff.DisarmDebuff;
 import com.oopsjpeg.enigma.game.object.Skill;
@@ -18,8 +18,8 @@ import static com.oopsjpeg.enigma.util.Util.RANDOM;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class OverloadSkill extends Skill {
-    private final static float DISARM_CHANCE = 0.15f;
-    private final static float BONUS_DAMAGE = 0.25f;
+    private final static float DISARM_CHANCE = 0.3f;
+    private final static float BONUS_DAMAGE = 0.3f;
 
     public OverloadSkill(Unit unit) {
         super(unit, 50, 4);
@@ -33,8 +33,8 @@ public class OverloadSkill extends Skill {
 
         output.add(Emote.SKILL + "**" + actor.getUsername() + "** used **Overload**!" + (unit.getBots().isEmpty() ? " ...But there were no bots to activate." : ""));
 
-        for (int i = 0; i < unit.getBots().size(); i++) {
-            BotDamageEvent e = new BotDamageEvent(actor, target);
+        for (Bot bot : unit.getBots()) {
+            BotDamageEvent e = new BotDamageEvent(bot, actor, target);
             float rand = RANDOM.nextFloat();
             if (rand < DISARM_CHANCE) {
                 if (!target.hasBuff(DisarmDebuff.class)) {
@@ -46,7 +46,7 @@ public class OverloadSkill extends Skill {
                     e.multiplyDamage(1 + BONUS_DAMAGE);
                 }
             }
-            output.add(DamageManager.process(e));
+            output.add(EventManager.process(e));
         }
 
         unit.getBots().clear();

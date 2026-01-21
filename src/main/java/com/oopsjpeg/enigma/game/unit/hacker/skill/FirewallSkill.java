@@ -23,10 +23,12 @@ public class FirewallSkill extends Skill {
     @Override
     public String act(GameMember actor) {
         Stats stats = actor.getStats();
-        actor.addBuff(new FirewallBuff(actor, actor, 2, 2), Emote.BUFF);
+        actor.addBuff(new FirewallBuff(actor, actor, 1, 2), Emote.BUFF);
         actor.setEnergy(0);
+        // TODO: When ShieldEvent is made, use that instead
         float shield = SHIELD + (stats.get(ATTACK_POWER) * SHIELD_AP_RATIO) + (stats.get(SKILL_POWER) * SHIELD_SP_RATIO);
-        return Emote.SKILL + "**" + actor.getUsername() + "** used **Firewall**!\n" + actor.shield(shield);
+        actor.shield(shield);
+        return Emote.SHIELD + "**" + actor.getUsername() + "** used **Firewall** and shielded for **" + shield + "**! [**" + actor.getShield() + "**]";
     }
 
     @Override

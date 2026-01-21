@@ -13,12 +13,12 @@ import java.util.List;
 
 public class FirewallBuff extends Buff {
     public FirewallBuff(GameMember owner, GameMember source, int totalTurns, float power) {
-        super(owner, source, "Firewalled", false, totalTurns, power);
+        super(owner, source, "Firewall", false, totalTurns, false, power);
     }
 
     @Override
     public String getStatus(GameMember member) {
-        return "Firewall: Test";
+        return "Firewall: Gain bots on shield break";
     }
 
     @Override
@@ -29,12 +29,12 @@ public class FirewallBuff extends Buff {
 
         List<String> botTypes = new ArrayList<>();
         for (int i = 0; i < getPower(); i++) {
+            if (hacker.getBots().size() >= HackerUnit.BOT_LIMIT) break;
+
             BotType type = Util.pickRandom(BotType.values());
             Bot bot = new Bot(type);
             hacker.getBots().add(bot);
-            botTypes.add("**" + type.getName() + " Bot**");
-
-            if (hacker.getBots().size() >= HackerUnit.BOT_LIMIT) break;
+            botTypes.add("**" + type.getName() + "**");
         }
 
         remove(true);

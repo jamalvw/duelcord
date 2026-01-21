@@ -1,11 +1,11 @@
 package com.oopsjpeg.enigma.game.unit.duelist;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.Stats;
-import com.oopsjpeg.enigma.game.buff.BleedingDebuff;
+import com.oopsjpeg.enigma.game.buff.BleedDebuff;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.duelist.skill.BlitzSkill;
@@ -19,7 +19,7 @@ import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.game.StatType.HEALTH_PER_TURN;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
-public class DuelistUnit implements Unit {
+public class DuelistUnit extends Unit {
     public static final int PASSIVE_DAMAGE = 5;
     public static final float PASSIVE_DAMAGE_HP_RATIO = 0.06f;
 
@@ -33,32 +33,27 @@ public class DuelistUnit implements Unit {
 
     public DuelistUnit(GameMember owner) {
         this.owner = owner;
-    }
 
-    @Override
-    public DamageHook[] getDamageHooks() {
-        return new DamageHook[]{
-                new DamageHook() {
-                    @Override
-                    public DamagePhase getPhase() {
-                        return DamagePhase.PRE_CALCULATION;
+        hook(DamageEvent.class, new Hook<DamageEvent>() {
+            @Override
+            public DamagePhase getPhase() {
+                return DamagePhase.PRE_CALCULATION;
+            }
+
+            @Override
+            public void execute(DamageEvent e) {
+                if (e.getActor() != getOwner()) return;
+                if (!e.isOnHit()) return;
+
+                e.proposeEffect(() -> {
+                    if (bleed.stack()) {
+                        BleedDebuff buff = new BleedDebuff(e.getVictim(), owner, 2, (e.getVictim().getHealth() * PASSIVE_DAMAGE_HP_RATIO) / 2);
+                        e.getOutput().add(e.getVictim().addBuff(buff, Emote.BLEED));
+                        bleed.reset();
                     }
-
-                    @Override
-                    public void execute(DamageEvent e) {
-                        if (e.getAttacker() != getOwner()) return;
-                        if (!e.isOnHit()) return;
-
-                        e.proposeEffect(() -> {
-                            if (bleed.stack()) {
-                                BleedingDebuff buff = new BleedingDebuff(e.getVictim(), owner, 2, (e.getVictim().getHealth() * PASSIVE_DAMAGE_HP_RATIO) / 2);
-                                e.getOutput().add(e.getVictim().addBuff(buff, Emote.BLEED));
-                                bleed.reset();
-                            }
-                        });
-                    }
-                }
-        };
+                });
+            }
+        });
     }
 
     @Override

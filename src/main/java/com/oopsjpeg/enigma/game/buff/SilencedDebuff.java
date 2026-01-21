@@ -8,7 +8,7 @@ public class SilencedDebuff extends Buff
 {
     public SilencedDebuff(GameMember owner, GameMember source)
     {
-        super(owner, source, "Silenced", true, 1, 0);
+        super(owner, source, "Silence", true, 1, true, 0);
     }
 
     @Override
@@ -20,6 +20,6 @@ public class SilencedDebuff extends Buff
     @Override
     public String getStatus(GameMember member)
     {
-        return "Silenced: Can't use Skills or Defend";
+        return "Silenced: Can't use skills or defend";
     }
 }

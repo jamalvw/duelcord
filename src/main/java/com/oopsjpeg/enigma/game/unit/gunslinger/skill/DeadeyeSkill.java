@@ -55,7 +55,7 @@ public class DeadeyeSkill extends Skill {
             jackpot = true;
         }
 
-        output.add(DamageManager.process(event));
+        output.add(EventManager.process(event));
         output.add(0, Emote.SKILL + "**" + actor.getUsername() + "** used **Deadeye**!" + (jackpot ? " **BULLSEYE**!" : ""));
 
         return Util.joinNonEmpty("\n", output);

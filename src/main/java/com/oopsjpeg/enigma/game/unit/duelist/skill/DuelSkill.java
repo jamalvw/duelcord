@@ -14,8 +14,8 @@ import static com.oopsjpeg.enigma.util.Util.RANDOM;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class DuelSkill extends Skill {
-    public static final float DAMAGE_AP_RATIO = 0.7f;
-    public static final float DAMAGE_SP_RATIO = 0.7f;
+    public static final float DAMAGE_AP_RATIO = 0.6f;
+    public static final float DAMAGE_SP_RATIO = 0.6f;
     public static final float ON_HIT_SCALE = 0.5f;
     public static final float TAUNT_CHANCE = 0.5f;
 
@@ -39,7 +39,7 @@ public class DuelSkill extends Skill {
             e.setOnHitScale(ON_HIT_SCALE);
             e.addDamage(stats.get(StatType.ATTACK_POWER) * DAMAGE_AP_RATIO);
             e.addDamage(stats.get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
-            output.add(DamageManager.process(e));
+            output.add(EventManager.process(e));
         }
 
         float random = RANDOM.nextFloat();

@@ -6,7 +6,7 @@ import com.oopsjpeg.enigma.util.Emote;
 
 public class ShockDebuff extends Buff {
     public ShockDebuff(GameMember owner, GameMember source, int totalTurns, float power) {
-        super(owner, source, "Shocked", true, totalTurns, power);
+        super(owner, source, "Shock", true, totalTurns, false, power);
     }
 
     @Override
@@ -17,6 +17,6 @@ public class ShockDebuff extends Buff {
 
     @Override
     public String getStatus(GameMember member) {
-        return "Shocked: Energy reduced by " + formatPower();
+        return "Shocked: " + formatPower() + " reduced energy";
     }
 }

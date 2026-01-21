@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.effect;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.buff.WeakenedDebuff;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.util.Emote;
@@ -19,32 +19,27 @@ public class WolfbiteEffect extends Effect
     {
         super(owner, "Wolfbite", power, null);
         this.attackCount = new Stacker(attackLimit);
-    }
 
-    @Override
-    public DamageHook[] getDamageHooks() {
-        return new DamageHook[] {
-                new DamageHook() {
-                    @Override
-                    public DamagePhase getPhase() {
-                        return DamagePhase.PRE_CALCULATION;
+        hook(DamageEvent.class, new Hook<DamageEvent>() {
+            @Override
+            public DamagePhase getPhase() {
+                return DamagePhase.PRE_CALCULATION;
+            }
+
+            @Override
+            public void execute(DamageEvent e) {
+                if (e.getActor() != getOwner()) return;
+                if (!e.isAttack()) return;
+
+                e.proposeEffect(() -> {
+                    if (attackCount.stack())
+                    {
+                        e.getOutput().add(e.getVictim().addBuff(new WeakenedDebuff(e.getActor(), e.getVictim(), 1, getPower()), Emote.WEAKEN));
+                        attackCount.reset();
                     }
-
-                    @Override
-                    public void execute(DamageEvent e) {
-                        if (e.getAttacker() != getOwner()) return;
-                        if (!e.isAttack()) return;
-
-                        e.proposeEffect(() -> {
-                            if (attackCount.stack())
-                            {
-                                e.getOutput().add(e.getVictim().addBuff(new WeakenedDebuff(e.getAttacker(), e.getVictim(), 1, getPower()), Emote.WEAKEN));
-                                attackCount.reset();
-                            }
-                        });
-                    }
-                }
-        };
+                });
+            }
+        });
     }
 
     @Override

@@ -90,7 +90,9 @@ public class Game
                 output.add(getCurrentMember().defend());
             // Decrement buff timers
             // This used to also add to output, but updateStats() now checks for expired buffs.
-            getCurrentMember().getBuffs().forEach(Buff::turn);
+            getCurrentMember().getBuffs().stream()
+                    .filter(Buff::shouldCountOnTurnEnd)
+                    .forEach(Buff::turn);
             // Update current member's stats
             output.add(getCurrentMember().updateStats());
         }
@@ -125,6 +127,7 @@ public class Game
             member.giveGold(mode.handleGold(125 + (turnCount * 5)));
             member.giveGold(member.getStats().getInt(GOLD_PER_TURN));
             member.setEnergy(member.getStats().getInt(MAX_ENERGY));
+            member.setShield(0);
             member.setDefensive(false);
 
             turnCount++;
@@ -171,6 +174,11 @@ public class Game
                     })
                     .map(skill -> "**`>" + skill.getName() + "`**")
                     .collect(Collectors.toList());
+
+            getCurrentMember().getBuffs().stream()
+                    .filter(b -> !b.shouldCountOnTurnEnd())
+                    .forEach(Buff::turn);
+
             if (readiedSkills.size() == 1)
                 output.add(Emote.REFRESH + readiedSkills.get(0) + " is ready to use.");
             else if (readiedSkills.size() >= 1)
@@ -180,8 +188,6 @@ public class Game
                 output.add(Emote.WARN + "**" + member.getUsername() + "** is critically low on health.");
             // Update current member's stats
             output.add(getCurrentMember().updateStats());
-
-            member.setShield(0);
         }
 
         updateStatus();

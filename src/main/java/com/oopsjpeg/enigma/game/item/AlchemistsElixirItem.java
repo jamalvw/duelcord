@@ -73,7 +73,7 @@ public class AlchemistsElixirItem extends Item {
 
         public ElixirOfMightBuff(GameMember owner, GameMember source, int attackPower, float resist)
         {
-            super(owner, source, "Elixir of Might", false, 2, attackPower + resist);
+            super(owner, source, "Elixir of Might", false, 2, true, attackPower + resist);
             this.attackPower = attackPower;
             this.resist = resist;
         }
@@ -105,7 +105,7 @@ public class AlchemistsElixirItem extends Item {
 
         public ElixirOfWillBuff(GameMember owner, GameMember source, int skillPower, float dodge)
         {
-            super(owner, source, "Elixir of Will", false, 2, skillPower + dodge);
+            super(owner, source, "Elixir of Will", false, 2, true, skillPower + dodge);
             this.skillPower = skillPower;
             this.dodge = dodge;
         }
@@ -137,7 +137,7 @@ public class AlchemistsElixirItem extends Item {
 
         public ElixirOfHasteBuff(GameMember owner, GameMember source, int maxEnergy, int cdReduction)
         {
-            super(owner, source, "Elixir of Haste", false, 2, maxEnergy + cdReduction);
+            super(owner, source, "Elixir of Haste", false, 2, true, maxEnergy + cdReduction);
             this.maxEnergy = maxEnergy;
             this.cdReduction = cdReduction;
         }

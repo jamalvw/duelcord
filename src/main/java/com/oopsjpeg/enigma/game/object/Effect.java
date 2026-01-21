@@ -4,8 +4,7 @@ import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.GameObject;
 import com.oopsjpeg.enigma.game.Stats;
 
-public abstract class Effect implements GameObject
-{
+public abstract class Effect extends GameObject {
     private final GameMember owner;
     private final String name;
     private final float power;

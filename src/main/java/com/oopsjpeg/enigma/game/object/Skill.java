@@ -91,8 +91,8 @@ public abstract class Skill implements Command, GameAction
         }
 
         List<String> output = new ArrayList<>();
-        output.add(actor.act(this));
         actor.getData().forEach(o -> output.add(o.onSkillUsed(actor)));
+        output.add(actor.act(this));
         if (hasCooldown())
             cooldown.start(actor.getStats().getInt(COOLDOWN_REDUCTION));
         channel.createMessage(Util.joinNonEmpty("\n", output)).subscribe();

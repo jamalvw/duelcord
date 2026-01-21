@@ -7,7 +7,7 @@ public class PotionBuff extends Buff
 {
     public PotionBuff(GameMember owner, GameMember source, int totalTurns, float power)
     {
-        super(owner, source, "Healing from Potion", false, totalTurns, power);
+        super(owner, source, "Potion Healing", false, totalTurns, false, power);
     }
 
     @Override
@@ -19,6 +19,6 @@ public class PotionBuff extends Buff
     @Override
     public String getStatus(GameMember member)
     {
-        return "Potion: Healing " + Math.round(getPower());
+        return "Potion: Healing " + formatPower() + " per turn";
     }
 }

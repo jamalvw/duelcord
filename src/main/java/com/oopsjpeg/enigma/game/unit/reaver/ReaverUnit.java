@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.reaver;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
@@ -16,7 +16,7 @@ import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.game.StatType.HEALTH_PER_TURN;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
-public class ReaverUnit implements Unit {
+public class ReaverUnit extends Unit {
     public static final float PASSIVE_SP_RATIO = 0.15f;
 
     private final GameMember owner;
@@ -29,6 +29,8 @@ public class ReaverUnit implements Unit {
 
     public ReaverUnit(GameMember owner) {
         this.owner = owner;
+
+        hook(DamageEvent.class, new PassiveDamageHook());
     }
 
     public int getVoidPower() {
@@ -40,19 +42,12 @@ public class ReaverUnit implements Unit {
     }
 
     @Override
-    public DamageHook[] getDamageHooks() {
-        return new DamageHook[]{
-                new PassiveDamageHook()
-        };
-    }
-
-    @Override
     public String onSkillUsed(GameMember member) {
         if (voidPower < 2) {
             voidPower++;
 
             if (voidPower >= 2) {
-                return ":infinity: **" + member.getUsername() + "** has reached **2** Void Power.";
+                return ":infinity: **" + member.getUsername() + "** has reached max Void Power.";
             }
         }
         return null;
@@ -97,7 +92,7 @@ public class ReaverUnit implements Unit {
         return new Skill[]{infinite, shock, summon};
     }
 
-    public class PassiveDamageHook implements DamageHook {
+    public class PassiveDamageHook implements Hook<DamageEvent> {
         @Override
         public DamagePhase getPhase() {
             return DamagePhase.PRE_CALCULATION;
@@ -105,7 +100,7 @@ public class ReaverUnit implements Unit {
 
         @Override
         public void execute(DamageEvent event) {
-            if (event.getAttacker() != owner) return;
+            if (event.getActor() != owner) return;
             if (!event.isAttack()) return;
 
             Stats stats = owner.getStats();

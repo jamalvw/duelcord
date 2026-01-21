@@ -4,26 +4,28 @@ import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.GameObject;
 import com.oopsjpeg.enigma.game.Stats;
 
-public abstract class Buff implements GameObject
-{
+public abstract class Buff extends GameObject {
     private final String name;
     private final boolean debuff;
     private final GameMember owner;
     private final GameMember source;
+    private final boolean shouldCountOnTurnEnd;
 
     private int totalTurns;
     private int currentTurns;
+
     private boolean shouldRemove = false;
     private boolean isSilent = false;
     private float power;
 
-    public Buff(GameMember owner, GameMember source, String name, boolean debuff, int totalTurns, float power)
+    public Buff(GameMember owner, GameMember source, String name, boolean debuff, int totalTurns, boolean shouldCountOnTurnEnd, float power)
     {
         this.owner = owner;
         this.source = source;
         this.name = name;
         this.debuff = debuff;
         this.totalTurns = totalTurns;
+        this.shouldCountOnTurnEnd = shouldCountOnTurnEnd;
         this.power = power;
 
         currentTurns = totalTurns;
@@ -33,9 +35,6 @@ public abstract class Buff implements GameObject
     {
         return name;
     }
-
-    @Override
-    public abstract String getStatus(GameMember member);
 
     public boolean turn()
     {
@@ -108,6 +107,10 @@ public abstract class Buff implements GameObject
     public boolean isSilent()
     {
         return isSilent;
+    }
+
+    public boolean shouldCountOnTurnEnd() {
+        return shouldCountOnTurnEnd;
     }
 
     public void remove()

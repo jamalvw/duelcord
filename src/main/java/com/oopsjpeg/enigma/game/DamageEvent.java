@@ -1,23 +1,19 @@
 package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.util.Emote;
+import com.oopsjpeg.enigma.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DamageEvent
-{
-    private final List<String> output = new ArrayList<>();
-    private final List<PendingAction> effects = new ArrayList<>();
+import static java.lang.Math.ceil;
+import static java.lang.Math.round;
 
-    private final GameMember attacker;
+public class DamageEvent extends Event {
     private final GameMember victim;
     private float damage;
     private boolean blocked = false;
-    private boolean cancelled = false;
 
-    private String source = "";
-    private String emote = Emote.ATTACK;
     private float onHitScale = 1.0f;
     private boolean isAbleToCrit = false;
     private boolean isGoingToCrit = false;
@@ -33,49 +29,28 @@ public class DamageEvent
 
     public DamageEvent(GameMember attacker, GameMember victim)
     {
-        this.attacker = attacker;
+        super(attacker);
         this.victim = victim;
-    }
-
-    public Game getGame()
-    {
-        return attacker.getGame();
-    }
-
-    public void proposeEffect(PendingAction action) {
-        this.effects.add(action);
-    }
-
-    public List<PendingAction> getEffects() {
-        return effects;
-    }
-
-    public List<String> getOutput() {
-        return output;
-    }
-
-    public GameMember getAttacker() {
-        return attacker;
+        setEmote(Emote.ATTACK);
     }
 
     public GameMember getVictim() {
         return victim;
     }
 
-    public String getEmote() {
-        return emote;
-    }
+    @Override
+    public List<Hook<?>> createPipeline() {
+        List<Hook<?>> pipeline = new ArrayList<>((getActor().getHooks(this.getClass())));
+        pipeline.addAll(victim.getHooks(this.getClass()));
 
-    public void setEmote(String emote) {
-        this.emote = emote;
-    }
+        pipeline.add(new CriticalStrikeHook());
+        pipeline.add(new ResistanceHook());
+        pipeline.add(new ShieldHook());
+        pipeline.add(new LifeStealHook());
+        pipeline.add(new DodgeHook());
+        pipeline.add(new BlockHook());
 
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
+        return pipeline;
     }
 
     public float getDamage() {
@@ -98,14 +73,6 @@ public class DamageEvent
     public void subtractDamage(float amount)
     {
         setDamage(getDamage() - amount);
-    }
-
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
     }
 
     public void setBlocked(boolean blocked) {
@@ -207,5 +174,36 @@ public class DamageEvent
 
     public void setIgnoreShield(boolean ignoreShield) {
         this.ignoreShield = ignoreShield;
+    }
+
+    @Override
+    public void complete() {
+        getGame().getMode().handleDamage(this);
+
+        if (healing > 0)
+            getOutput().add(getActor().heal((int) ceil(healing)));
+        if (shielding > 0)
+            getOutput().add(getActor().shield((int) ceil(shielding)));
+
+        for (PendingAction action : getEffects()) {
+            System.out.println("Executing pending action: " + action.getClass().getSimpleName());
+            action.execute();
+            getOutput().add(getActor().updateStats());
+            getOutput().add(victim.updateStats());
+        }
+
+        // Summon damaging
+        //if (event.target.hasBlockingSummon())
+        //{
+        //    Summon summon = event.target.getBlockingSummon();
+        //    summon.takeHealth(event.damage + event.bonus);
+        //    if (summon.getHealth() <= 0) summon.remove();
+        //    event.output.add(0, Util.damageText(event, event.actor.getUsername(), event.target.getUsername() + "'s " + summon.getName(), emote, source));
+        //}
+
+        if (damage > 0) {
+            victim.takeHealth(round(damage));
+            getOutput().add(0, Util.damageText(this, getActor().getUsername(), victim.getUsername(), getEmote(), getSource()));
+        }
     }
 }

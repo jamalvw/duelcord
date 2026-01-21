@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.effect;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.util.Util;
 
@@ -19,32 +19,27 @@ public class BloodWellEffect extends Effect
     {
         super(owner, "Blood Well", power, null);
         this.maxShield = maxShield;
-    }
 
-    @Override
-    public DamageHook[] getDamageHooks() {
-        return new DamageHook[] {
-                new DamageHook() {
-                    @Override
-                    public DamagePhase getPhase() {
-                        return DamagePhase.POST_DAMAGE;
-                    }
+        hook(DamageEvent.class, new Hook<DamageEvent>() {
+            @Override
+            public DamagePhase getPhase() {
+                return DamagePhase.POST_DAMAGE;
+            }
 
-                    @Override
-                    public void execute(DamageEvent event) {
-                        if (event.getAttacker() != getOwner()) return;
-                        if (!event.isAttack()) return;
+            @Override
+            public void execute(DamageEvent event) {
+                if (event.getActor() != getOwner()) return;
+                if (!event.isAttack()) return;
 
-                        float shieldAmount = event.getDamage() * getPower();
+                float shieldAmount = event.getDamage() * getPower();
 
-                        shieldAmount = Util.limit(shieldAmount, 0, maxShield - currentShield);
+                shieldAmount = Util.limit(shieldAmount, 0, maxShield - currentShield);
 
-                        currentShield += shieldAmount;
+                currentShield += shieldAmount;
 
-                        event.addShielding(shieldAmount);
-                    }
-                }
-        };
+                event.addShielding(shieldAmount);
+            }
+        });
     }
 
     public int getMaxShield()

@@ -1,6 +1,5 @@
 package com.oopsjpeg.enigma.game;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.TrapType;
 import com.oopsjpeg.enigma.game.object.*;
@@ -81,6 +80,7 @@ public class GameMember
         data.addAll(getItems());
         data.addAll(getEffects());
         data.addAll(getBuffs());
+        System.out.println("Buffs: " + getBuffs());
         data.addAll(getSummons());
         return data;
     }
@@ -135,6 +135,10 @@ public class GameMember
     public String addBuff(Buff buff, String emote)
     {
         final List<String> output = new ArrayList<>();
+
+        // If the member already has this buff, replace it
+        if (hasBuff(buff.getClass())) buffs.removeIf(b -> b.getClass().equals(buff.getClass()));
+
         buffs.add(buff);
         output.add(emote + "**" + getUsername() + "** received **" + buff.getName() + "**" +
                 (buff.hasPower() ? " (" + buff.formatPower() + ")" : "") +
@@ -172,6 +176,12 @@ public class GameMember
         return Util.joinNonEmpty("\n", output);
     }
 
+    public List<Hook<?>> getHooks(Class<? extends Event> eventClass) {
+        return getData().stream()
+                .flatMap(o -> o.getHooks(eventClass).stream())
+                .collect(Collectors.toList());
+    }
+
     public boolean hasBlockingSummon()
     {
         return summons.stream().anyMatch(Summon::isBlocker);
@@ -182,12 +192,6 @@ public class GameMember
         return summons.stream().filter(Summon::isBlocker).findFirst().orElse(null);
     }
 
-    public List<DamageHook> getDamageHooks() {
-        return getData().stream()
-                .flatMap(o -> Arrays.stream(o.getDamageHooks()))
-                .collect(Collectors.toList());
-    }
-
     public boolean alreadyPickedUnit()
     {
         return getUnit() != null;
@@ -196,8 +200,6 @@ public class GameMember
     public String updateStats()
     {
         final List<String> output = new ArrayList<>();
-
-        effects.clear();
 
         stats.putAll(unit.getStats());
 
@@ -226,7 +228,7 @@ public class GameMember
             {
                 buffs.remove(buff);
                 if (!buff.isSilent())
-                    output.add(Emote.TIME + "**" + getUsername() + "** is no longer **" + buff.getName() + "**.");
+                    output.add(Emote.TIME + "**" + getUsername() + "** no longer has **" + buff.getName() + "**.");
             } else
                 stats.addAll(buff.getStats());
         }
@@ -242,6 +244,8 @@ public class GameMember
 
         critPity.setChance(stats.get(CRIT_CHANCE));
 
+        if (game.getGameState() == GameState.PLAYING && !hasHealth()) output.add(lose());
+
         return Util.joinNonEmpty("\n", output);
     }
 
@@ -256,8 +260,10 @@ public class GameMember
 
         if (!hasEnergy())
             output.add(game.nextTurn());
-        else
-            game.updateStatus();
+        else if (!hasHealth())
+            output.add(lose());
+
+        game.updateStatus();
 
         return Util.joinNonEmpty("\n", output);
     }
@@ -452,12 +458,12 @@ public class GameMember
 
     public boolean hasHealth(int healthAmount)
     {
-        return getHealth() > healthAmount;
+        return health > healthAmount;
     }
 
     public boolean hasHealth()
     {
-        return hasHealth(0);
+        return health >= 1;
     }
 
     public float getHealthPercentage()

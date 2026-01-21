@@ -13,12 +13,12 @@ public class ParrySkill extends Skill {
     public static final float BLOCK_CHANCE = 0.5f;
 
     public ParrySkill(Unit unit) {
-        super(unit, 25, 2);
+        super(unit, 25, 3);
     }
 
     @Override
     public String act(GameMember actor) {
-        ParryBuff parry = new ParryBuff(actor, actor, 2, SKILL_RESIST, BLOCK_CHANCE);
+        ParryBuff parry = new ParryBuff(actor, actor, 1, SKILL_RESIST, BLOCK_CHANCE);
         actor.addBuff(parry, Emote.SHIELD);
         actor.setEnergy(0);
         return Emote.SKILL + "**" + actor.getUsername() + "** used **Parry**, gaining __" + percent(SKILL_RESIST)

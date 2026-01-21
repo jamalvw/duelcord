@@ -51,6 +51,6 @@ public class ExecuteSkill extends Skill {
                 .filter(Buff::isDebuff)
                 .forEach(debuff -> e.addDamage(DAMAGE_PER_DEBUFF * target.getMissingHealth()));
 
-        return Emote.SKILL + "**" + actor.getUsername() + "** used **Execute**!\n" + DamageManager.process(e);
+        return Emote.SKILL + "**" + actor.getUsername() + "** used **Execute**!\n" + EventManager.process(e);
     }
 }

@@ -1,14 +1,14 @@
 package com.oopsjpeg.enigma.game.unit.reaver.buff;
 
 import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.DamageManager;
+import com.oopsjpeg.enigma.game.EventManager;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.util.Emote;
 
 public class VoidburnDebuff extends Buff {
     public VoidburnDebuff(GameMember owner, GameMember source, int totalTurns, float power) {
-        super(owner, source, "Voidburn", true, totalTurns, power);
+        super(owner, source, "Voidburn", true, totalTurns, false, power);
     }
 
     @Override
@@ -19,7 +19,7 @@ public class VoidburnDebuff extends Buff {
         event.setIsDoT(true);
         event.setSource(getName());
         event.setDamage(getPower());
-        return DamageManager.process(event);
+        return EventManager.process(event);
     }
 
     @Override

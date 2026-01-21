@@ -29,7 +29,7 @@ public class BreachSkill extends Skill {
         e.addDamage(stats.get(StatType.ATTACK_POWER) * DAMAGE_AP_RATIO);
         e.addDamage(stats.get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
 
-        return DamageManager.process(e);
+        return EventManager.process(e);
     }
 
     @Override

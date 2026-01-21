@@ -10,13 +10,13 @@ public class WoundedDebuff extends Buff
 {
     public WoundedDebuff(GameMember owner, GameMember source, int totalTurns, float power)
     {
-        super(owner, source, "Wounded", true, totalTurns, power);
+        super(owner, source, "Wound", true, totalTurns, true, power);
     }
 
     @Override
     public String getStatus(GameMember member)
     {
-        return "Wounded: " + percent(getPower()) + " (" + getCurrentTurns() + " turns left)";
+        return "Wounded: Receives " + formatPower() + " less healing";
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.oopsjpeg.enigma.game.action;
 
 import com.oopsjpeg.enigma.game.*;
-import com.oopsjpeg.enigma.util.Emote;
 
 public class AttackAction implements GameAction
 {
@@ -20,8 +19,8 @@ public class AttackAction implements GameAction
     @Override
     public String act(GameMember actor)
     {
-        DamageEvent e = DamageManager.attack(actor, target);
-        return DamageManager.process(e);
+        DamageEvent e = EventManager.attack(actor, target);
+        return EventManager.process(e);
     }
 
     @Override

@@ -1,39 +1,34 @@
 package com.oopsjpeg.enigma.game.object;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.TrapType;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Hook;
 
 public abstract class Trap extends Buff {
     private final TrapType type;
 
     public Trap(GameMember owner, GameMember source, String name, int totalTurns, float power, TrapType type) {
-        super(owner, source, name, true, totalTurns, power);
+        super(owner, source, name, true, totalTurns, true, power);
         this.type = type;
-    }
 
-    @Override
-    public DamageHook[] getDamageHooks() {
-        return new DamageHook[]{
-                new DamageHook() {
-                    @Override
-                    public DamagePhase getPhase() {
-                        return DamagePhase.POST_DAMAGE;
-                    }
+        hook(DamageEvent.class, new Hook<DamageEvent>() {
+            @Override
+            public DamagePhase getPhase() {
+                return DamagePhase.POST_DAMAGE;
+            }
 
-                    @Override
-                    public void execute(DamageEvent e) {
-                        if (type != TrapType.ATTACK) return;
-                        if (e.getAttacker() != getOwner()) return;
-                        if (!e.isAttack()) return;
+            @Override
+            public void execute(DamageEvent e) {
+                if (type != TrapType.ATTACK) return;
+                if (e.getActor() != getOwner()) return;
+                if (!e.isAttack()) return;
 
-                        e.getOutput().add(onActivated());
-                        remove(true);
-                    }
-                }
-        };
+                e.getOutput().add(onActivated());
+                remove(true);
+            }
+        });
     }
 
     @Override

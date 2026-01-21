@@ -9,10 +9,14 @@ import com.oopsjpeg.enigma.util.Emote;
 import static com.oopsjpeg.enigma.game.unit.hacker.HackerUnit.*;
 
 public class BotDamageEvent extends DamageEvent {
-    public BotDamageEvent(GameMember attacker, GameMember victim) {
+    private final Bot bot;
+
+    public BotDamageEvent(Bot bot, GameMember attacker, GameMember victim) {
         super(attacker, victim);
+        this.bot = bot;
+
         Stats stats = attacker.getStats();
-        setSource("Bot");
+        setSource(bot.getType().getName());
         setEmote(Emote.BOT);
         setIsOnHit(true);
         setIsSkill(true);
@@ -21,5 +25,9 @@ public class BotDamageEvent extends DamageEvent {
         addDamage(BOT_DAMAGE);
         addDamage(stats.get(StatType.ATTACK_POWER) * BOT_DAMAGE_AP_RATIO);
         addDamage(stats.get(StatType.SKILL_POWER) * BOT_DAMAGE_SP_RATIO);
+    }
+
+    public Bot getBot() {
+        return bot;
     }
 }

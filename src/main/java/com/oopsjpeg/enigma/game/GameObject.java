@@ -1,49 +1,57 @@
 package com.oopsjpeg.enigma.game;
 
-import com.oopsjpeg.enigma.DamageHook;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public interface GameObject
-{
-    default DamageHook[] getDamageHooks() {
-        return new DamageHook[0];
+public abstract class GameObject  {
+    private final Map<Class<? extends Event>, List<Hook<?>>> hooks = new HashMap<>();
+
+    protected <T extends Event> void hook(Class<T> eventClass, Hook<T> hook) {
+        hooks.computeIfAbsent(eventClass, k -> new ArrayList<>()).add(hook);
     }
 
-    default String getStatus(GameMember member)
+    public List<Hook<?>> getHooks(Class<? extends Event> eventClass) {
+        return new ArrayList<>(hooks.getOrDefault(eventClass, new ArrayList<>()));
+    }
+
+    public String getStatus(GameMember member)
     {
         return null;
     }
 
-    default String onTurnStart(GameMember member)
+    public String onTurnStart(GameMember member)
     {
         return null;
     }
 
-    default String onTurnEnd(GameMember member)
+    public String onTurnEnd(GameMember member)
     {
         return null;
     }
 
-    default String onDefend(GameMember member)
+    public String onDefend(GameMember member)
     {
         return null;
     }
 
-    default String onSkillUsed(GameMember member)
+    public String onSkillUsed(GameMember member)
     {
         return null;
     }
 
-    default float onHeal(float healAmount)
+    public float onHeal(float healAmount)
     {
         return healAmount;
     }
 
-    default float onShield(float shieldAmount)
+    public float onShield(float shieldAmount)
     {
         return shieldAmount;
     }
 
-    default String onShieldBreak(GameMember member) {
+    public String onShieldBreak(GameMember member) {
         return null;
     }
 }

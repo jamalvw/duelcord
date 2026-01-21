@@ -47,7 +47,7 @@ public class BarrageSkill extends Skill {
                     if (getUnit() instanceof GunslingerUnit)
                         ((GunslingerUnit) getUnit()).barrageShot();
                 });
-                output.add(DamageManager.process(event));
+                output.add(EventManager.process(event));
             }
         }
 

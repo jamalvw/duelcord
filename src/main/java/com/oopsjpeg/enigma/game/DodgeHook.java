@@ -1,13 +1,12 @@
 package com.oopsjpeg.enigma.game;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Util;
 
 import static com.oopsjpeg.enigma.game.StatType.DODGE;
 
-public class DodgeHook implements DamageHook {
+public class DodgeHook implements Hook<DamageEvent> {
     @Override
     public DamagePhase getPhase() {
         return DamagePhase.VALIDATION;
@@ -26,8 +25,8 @@ public class DodgeHook implements DamageHook {
 
             if (rand < dodgeChance)
             {
-                event.getOutput().add(Emote.DODGE + "**" + event.getVictim().getUsername() + "** dodged the hit!");
-                event.setCancelled(true);
+                event.getOutput().add(Emote.DODGE + "**" + event.getVictim().getUsername() + "** dodged **" + event.getActor().getUsername() + "**'s hit!");
+                event.cancel();
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.oopsjpeg.enigma.game.unit.assassin.skill;
 
 import com.oopsjpeg.enigma.game.*;
-import com.oopsjpeg.enigma.game.buff.BleedingDebuff;
+import com.oopsjpeg.enigma.game.buff.BleedDebuff;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.util.Emote;
@@ -63,11 +63,11 @@ public class SlashSkill extends Skill {
             if (rand <= BLEED_CHANCE)
             {
                 float bleedDamage = e.getDamage() * BLEED_DAMAGE_RATIO;
-                output.add(target.addBuff(new BleedingDebuff(target, actor, BLEED_TURNS, bleedDamage), Emote.BLEED));
+                output.add(target.addBuff(new BleedDebuff(target, actor, BLEED_TURNS, bleedDamage), Emote.BLEED));
             }
         });
 
-        output.add(DamageManager.process(e));
+        output.add(EventManager.process(e));
 
         return Util.joinNonEmpty("\n", output);
     }

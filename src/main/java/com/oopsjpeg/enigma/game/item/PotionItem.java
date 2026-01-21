@@ -5,9 +5,11 @@ import com.oopsjpeg.enigma.game.buff.PotionBuff;
 import com.oopsjpeg.enigma.game.object.Item;
 import com.oopsjpeg.enigma.util.Emote;
 
+import static com.oopsjpeg.enigma.game.StatType.MAX_HEALTH;
+
 public class PotionItem extends Item {
     private static final int COST = 50;
-    private static final int HEAL = 120;
+    private static final int HEAL = 160;
     private static final int TURNS = 2;
 
     public PotionItem(GameMember owner) {
@@ -28,7 +30,11 @@ public class PotionItem extends Item {
     public String onUse(GameMember member)
     {
         member.addBuff(new PotionBuff(member, member, TURNS, HEAL), Emote.HEAL);
-        return member.heal((float) HEAL / TURNS, "Potion");
+        int heal = HEAL / TURNS;
+        member.heal(heal);
+        // TODO: use healevent when created
+        return Emote.HEAL + "**" + member.getUsername() + "** used **Potion** and healed for **" + heal
+                + "**! [**" + member.getHealth() + "** / **" + member.getStats().getInt(MAX_HEALTH) + "**]";
     }
 
     @Override

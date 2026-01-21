@@ -44,9 +44,9 @@ public class SummonSkill extends Skill {
             float health = HP + (stats.get(ATTACK_POWER) * HP_AP_RATIO) + (stats.get(SKILL_POWER) * HP_SP_RATIO);
             float damage = DAMAGE + (stats.get(ATTACK_POWER) * DAMAGE_AP_RATIO) + (stats.get(SKILL_POWER) * DAMAGE_SP_RATIO);
             ReaverSummon summon = new ReaverSummon(actor, health, damage);
-            output.add(actor.addSummon(summon, ":space_invader: "));
+            actor.addSummon(summon, ":space_invader: ");
         }
-        output.add(0, Emote.SKILL + "**" + actor.getUsername() + "** used **Summon**!");
+        output.add(0, Emote.SKILL + "**" + actor.getUsername() + "** used **Summon** and created **" + (1 + voidPower) + "** creatures!");
 
         ((ReaverUnit) getUnit()).resetVoidPower();
 

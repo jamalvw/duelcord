@@ -9,12 +9,12 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class RollingBuff extends Buff {
     public RollingBuff(GameMember owner, GameMember source, float power) {
-        super(owner, source, "Rolling", false, 2, power);
+        super(owner, source, "Roll", false, 1, false, power);
     }
 
     @Override
     public String getStatus(GameMember member) {
-        return "Rolling: " + percent(getPower()) + " bonus Dodge";
+        return "Rolling: " + percent(getPower()) + " dodge chance";
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.duelist.buff;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Buff;
 
@@ -11,24 +11,19 @@ import static com.oopsjpeg.enigma.game.StatType.ATTACK_COST;
 
 public class BlitzBuff extends Buff {
     public BlitzBuff(GameMember owner, GameMember source, int totalTurns, float power) {
-        super(owner, source, "Blitz", false, totalTurns, power);
-    }
+        super(owner, source, "Blitz", false, totalTurns, true, power);
 
-    @Override
-    public DamageHook[] getDamageHooks() {
-        return new DamageHook[]{
-                new DamageHook() {
-                    @Override
-                    public DamagePhase getPhase() {
-                        return DamagePhase.POST_DAMAGE;
-                    }
+        hook(DamageEvent.class, new Hook<DamageEvent>() {
+            @Override
+            public DamagePhase getPhase() {
+                return DamagePhase.POST_DAMAGE;
+            }
 
-                    @Override
-                    public void execute(DamageEvent event) {
-                        event.multiplyDamage(getPower());
-                    }
-                }
-        };
+            @Override
+            public void execute(DamageEvent event) {
+                event.multiplyDamage(getPower());
+            }
+        });
     }
 
     @Override

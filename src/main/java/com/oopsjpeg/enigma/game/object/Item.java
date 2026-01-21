@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class Item implements GameObject {
+public abstract class Item extends GameObject {
     private final GameMember owner;
     private final int cost;
     private final String name;

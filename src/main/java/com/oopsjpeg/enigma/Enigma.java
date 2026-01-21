@@ -75,7 +75,7 @@ public class Enigma
         // Create mongo manager
         //mongo = new MongoManager(settings.get(Settings.MONGO_HOST), settings.get(Settings.MONGO_DATABASE));
 
-        // Create discord client
+        // Create Discord client
         DiscordClient client = DiscordClientBuilder.create(Config.getBotToken()).build();
 
         // Create command listener

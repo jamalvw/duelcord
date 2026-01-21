@@ -1,11 +1,10 @@
 package com.oopsjpeg.enigma.game;
 
-import com.oopsjpeg.enigma.DamageHook;
 import com.oopsjpeg.enigma.DamagePhase;
 
 import static com.oopsjpeg.enigma.util.Util.RANDOM;
 
-public class BlockHook implements DamageHook {
+public class BlockHook implements Hook<DamageEvent> {
     @Override
     public DamagePhase getPhase() {
         return DamagePhase.RESISTANCE;
