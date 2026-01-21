@@ -10,7 +10,7 @@ import com.oopsjpeg.enigma.game.object.Items;
 
 public class IronScimitarItem extends Item {
     public IronScimitarItem(GameMember owner) {
-        super(owner, 1200, "Iron Scimitar");
+        super(owner, 1275, "Iron Scimitar");
     }
 
     @Override

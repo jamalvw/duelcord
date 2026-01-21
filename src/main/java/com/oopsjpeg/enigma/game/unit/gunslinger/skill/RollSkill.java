@@ -14,9 +14,9 @@ import static com.oopsjpeg.enigma.util.Util.percentRaw;
 
 public class RollSkill extends Skill {
     public static final int COST = 0;
-    public static final float DODGE = 0.4f;
-    public static final float SP_RATIO = 0.004f;
-    public static final int COOLDOWN = 4;
+    public static final float DODGE = 0.35f;
+    public static final float SP_RATIO = 0.0045f;
+    public static final int COOLDOWN = 3;
 
     public RollSkill(Unit unit) {
         super(unit, COST, COOLDOWN);
@@ -41,6 +41,6 @@ public class RollSkill extends Skill {
 
     @Override
     public String getDescription() {
-        return "End the turn and gain __" + percent(DODGE) + "__ + __" + percentRaw(SP_RATIO) + " Skill Power__ Dodge.";
+        return "End the turn and gain __" + percent(DODGE) + "__ + __" + percentRaw(SP_RATIO) + " Skill Power__ Dodge until your next turn.";
     }
 }

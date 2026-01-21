@@ -11,7 +11,7 @@ import static com.oopsjpeg.enigma.game.StatType.ATTACK_POWER;
 
 public class BoneSpearItem extends Item {
     public BoneSpearItem(GameMember owner) {
-        super(owner, 500, "Bone Spear");
+        super(owner, 575, "Bone Spear");
     }
 
     @Override
@@ -26,7 +26,7 @@ public class BoneSpearItem extends Item {
 
     @Override
     public Stats getStats() {
-        return new Stats().put(ATTACK_POWER, 10);
+        return new Stats().put(ATTACK_POWER, 15);
     }
 
     @Override

@@ -10,7 +10,7 @@ import com.oopsjpeg.enigma.game.object.Items;
 
 public class ShadowReaverItem extends Item {
     public ShadowReaverItem(GameMember owner) {
-        super(owner, 1225, "Shadow Reaver");
+        super(owner, 1250, "Shadow Reaver");
     }
 
     @Override

@@ -16,7 +16,7 @@ import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class GunslingerUnit extends Unit {
-    public static final float PASSIVE_SP_RATIO = .2f;
+    public static final float PASSIVE_SP_RATIO = .6f;
 
     private final GameMember owner;
 

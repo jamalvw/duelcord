@@ -14,7 +14,7 @@ import java.util.List;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class BlitzSkill extends Skill {
-    public static final float ATTACK_RATIO = 0.5f;
+    public static final float ATTACK_RATIO = 0.4f;
 
     public BlitzSkill(Unit unit) {
         super(unit, 50, 3);

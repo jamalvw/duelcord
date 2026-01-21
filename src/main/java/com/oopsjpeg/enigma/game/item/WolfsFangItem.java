@@ -11,7 +11,7 @@ import com.oopsjpeg.enigma.game.object.Items;
 
 public class WolfsFangItem extends Item {
     public WolfsFangItem(GameMember owner) {
-        super(owner, 1175, "Wolf's Fang");
+        super(owner, 1200, "Wolf's Fang");
     }
 
     @Override
@@ -22,15 +22,15 @@ public class WolfsFangItem extends Item {
     @Override
     public Effect[] generateEffects() {
         return new Effect[]{
-                new LifewasterEffect(getOwner(), 3, .75f),
-                new WolfbiteEffect(getOwner(), 3, .5f)
+                new LifewasterEffect(getOwner(), 5, .75f),
+                new WolfbiteEffect(getOwner(), 4, .5f)
         };
     }
 
     @Override
     public Stats getStats() {
         return new Stats()
-                .put(StatType.ATTACK_POWER, 35);
+                .put(StatType.ATTACK_POWER, 40);
     }
 
     @Override

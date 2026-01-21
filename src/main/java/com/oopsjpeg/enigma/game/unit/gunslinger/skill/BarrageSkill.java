@@ -19,8 +19,8 @@ public class BarrageSkill extends Skill {
     public static final int COST = 25;
     public static final int SHOTS = 4;
     public static final int DAMAGE = 6;
-    public static final float AP_RATIO = 0.25f;
-    public static final float SP_RATIO = 0.30f;
+    public static final float AP_RATIO = 0.2f;
+    public static final float SP_RATIO = 0.55f;
 
     public BarrageSkill(Unit unit) {
         super(unit, COST, COOLDOWN);
@@ -40,7 +40,7 @@ public class BarrageSkill extends Skill {
                 event.setIsSkill(true);
                 event.setIsAbleToCrit(true);
                 event.setIsOnHit(true);
-                event.setOnHitScale(.25f);
+                event.setOnHitScale(.4f);
                 event.addDamage(stats.get(ATTACK_POWER) * AP_RATIO);
                 event.addDamage(stats.get(SKILL_POWER) * SP_RATIO);
                 event.proposeEffect(() -> {

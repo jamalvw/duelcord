@@ -12,7 +12,7 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class CloakSkill extends Skill {
     public static final int COST = 25;
-    public static final int COOLDOWN = 4;
+    public static final int COOLDOWN = 3;
     public static final float DODGE = .9f;
 
     public CloakSkill(Unit unit) {
@@ -34,7 +34,7 @@ public class CloakSkill extends Skill {
 
     @Override
     public String getDescription() {
-        return "End the turn and gain __" + percent(DODGE) + " Dodge__ until your next turn.\n" +
-                "Enemy damaging Skills end this effect.";
+        return "End the turn early and gain __" + percent(DODGE) + " Dodge__ until your next turn.\n" +
+                "Being damaged by a skill ends this effect.";
     }
 }

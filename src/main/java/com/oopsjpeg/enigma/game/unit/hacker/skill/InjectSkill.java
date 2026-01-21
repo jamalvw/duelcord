@@ -9,7 +9,7 @@ import com.oopsjpeg.enigma.util.Emote;
 
 public class InjectSkill extends Skill {
     public InjectSkill(Unit unit) {
-        super(unit, 25, 3);
+        super(unit, 25, 2);
     }
 
     @Override

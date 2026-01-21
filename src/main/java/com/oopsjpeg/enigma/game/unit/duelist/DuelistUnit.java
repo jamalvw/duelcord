@@ -87,7 +87,7 @@ public class DuelistUnit extends Unit {
                 .put(MAX_ENERGY, 125)
                 .put(MAX_HEALTH, 1420)
                 .put(ATTACK_POWER, 18)
-                .put(HEALTH_PER_TURN, 8);
+                .put(HEALTH_PER_TURN, 7);
     }
 
     @Override

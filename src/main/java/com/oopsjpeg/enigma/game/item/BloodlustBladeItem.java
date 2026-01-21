@@ -7,7 +7,7 @@ import com.oopsjpeg.enigma.game.object.Item;
 import com.oopsjpeg.enigma.game.object.Items;
 
 public class BloodlustBladeItem extends Item {
-    public static final int COST = 550;
+    public static final int COST = 575;
 
     public BloodlustBladeItem(GameMember owner) {
         super(owner, COST, "Bloodlust Blade");

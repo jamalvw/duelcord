@@ -19,7 +19,7 @@ public class BronzeCutlassItem extends Item {
     @Override
     public Stats getStats() {
         return new Stats()
-                .put(StatType.ATTACK_POWER, 25)
+                .put(StatType.ATTACK_POWER, 20)
                 .put(StatType.CRIT_CHANCE, .2f);
     }
 }

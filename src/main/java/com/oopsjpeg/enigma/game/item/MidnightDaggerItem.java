@@ -10,7 +10,7 @@ import com.oopsjpeg.enigma.game.object.Items;
 
 public class MidnightDaggerItem extends Item {
     public MidnightDaggerItem(GameMember owner) {
-        super(owner, 600, "Midnight Dagger");
+        super(owner, 625, "Midnight Dagger");
     }
 
     @Override

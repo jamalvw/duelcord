@@ -23,9 +23,8 @@ import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class AssassinUnit extends Unit {
-    public static final int PASSIVE_DAMAGE_BASE = 10;
-    public static final float PASSIVE_DAMAGE_AP_RATIO = .2f;
-    public static final float PASSIVE_DAMAGE_SP_RATIO = 0.5f;
+    public static final int PASSIVE_DAMAGE_BASE = 15;
+    public static final float PASSIVE_DAMAGE_SP_RATIO = 0.55f;
     public static final int PASSIVE_ENERGY_RESTORE = 25;
 
     private final GameMember owner;
@@ -75,14 +74,14 @@ public class AssassinUnit extends Unit {
         return new Stats()
                 .put(MAX_ENERGY, 100)
                 .put(MAX_HEALTH, 1260)
-                .put(ATTACK_POWER, 13)
+                .put(ATTACK_POWER, 18)
                 .put(HEALTH_PER_TURN, 17);
     }
 
     @Override
     public String getDescription() {
-        return "After using a damaging Skill, your next Attack deals __" + PASSIVE_DAMAGE_BASE + "__ + __" + percent(PASSIVE_DAMAGE_AP_RATIO)
-                + " AP__ + __" + percent(PASSIVE_DAMAGE_SP_RATIO) + " SP__ bonus damage, restores **"
+        return "After using a damaging Skill, your next Attack deals __" + PASSIVE_DAMAGE_BASE + "__ + __"
+                + percent(PASSIVE_DAMAGE_SP_RATIO) + " Skill Power__ bonus damage, restores **"
                 + PASSIVE_ENERGY_RESTORE + "** Energy, and resets **Slash** cooldown.";
     }
 

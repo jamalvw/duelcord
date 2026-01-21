@@ -10,7 +10,7 @@ import com.oopsjpeg.enigma.game.object.Items;
 
 public class SoulstealerItem extends Item {
     public SoulstealerItem(GameMember owner) {
-        super(owner, 1200, "Soulstealer");
+        super(owner, 1250, "Soulstealer");
     }
 
     @Override

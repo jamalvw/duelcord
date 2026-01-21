@@ -18,11 +18,11 @@ import static com.oopsjpeg.enigma.util.Util.RANDOM;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class OverloadSkill extends Skill {
-    private final static float DISARM_CHANCE = 0.3f;
-    private final static float BONUS_DAMAGE = 0.3f;
+    private final static float DISARM_CHANCE = 0.5f;
+    private final static float BONUS_DAMAGE = 0.2f;
 
     public OverloadSkill(Unit unit) {
-        super(unit, 50, 4);
+        super(unit, 50, 2);
     }
 
     @Override

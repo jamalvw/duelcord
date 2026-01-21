@@ -22,10 +22,10 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class HackerUnit extends Unit {
     public static final int BOT_LIMIT = 6;
-    public static final int BOT_DAMAGE = 6;
+    public static final int BOT_DAMAGE = 5;
     public static final float BOT_DAMAGE_AP_RATIO = 0.12f;
     public static final float BOT_DAMAGE_SP_RATIO = 0.25f;
-    public static final float BOT_ON_HIT_RATIO = 0.4f;
+    public static final float BOT_ON_HIT_RATIO = 0.25f;
 
     private final GameMember owner;
 

@@ -17,7 +17,7 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 public class SlashSkill extends Skill {
     public static final int COST = 25;
     public static final int COOLDOWN = 2;
-    public static final int DAMAGE_BASE = 15;
+    public static final int DAMAGE_BASE = 20;
     public static final float DAMAGE_AP_RATIO = .35f;
     public static final float DAMAGE_SP_RATIO = .2f;
     public static final float BLEED_CHANCE = .25f;
