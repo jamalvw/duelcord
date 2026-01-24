@@ -1,7 +1,7 @@
 package com.oopsjpeg.enigma.listener;
 
 import com.oopsjpeg.enigma.Enigma;
-import com.oopsjpeg.enigma.QueueManager;
+import com.oopsjpeg.enigma.service.QueueService;
 import com.oopsjpeg.enigma.game.GameState;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Listener;
@@ -31,7 +31,7 @@ public class ReadyListener implements Listener
 
         //instance.getMongo().loadPlayers();
 
-        QueueManager queues = instance.getQueueManager();
+        QueueService queues = instance.getQueueService();
 
         Enigma.SCHEDULER.scheduleAtFixedRate(queues::refresh, 12, 12, TimeUnit.SECONDS);
         //Enigma.SCHEDULER.scheduleAtFixedRate(() -> instance.getPlayers().values().stream()

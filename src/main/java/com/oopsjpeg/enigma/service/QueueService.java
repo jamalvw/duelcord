@@ -1,5 +1,6 @@
-package com.oopsjpeg.enigma;
+package com.oopsjpeg.enigma.service;
 
+import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.game.GameMode;
 import com.oopsjpeg.enigma.storage.Player;
@@ -12,8 +13,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class QueueManager {
-    private final Logger LOGGER = LoggerFactory.getLogger(QueueManager.class);
+public class QueueService {
+    private final Logger LOGGER = LoggerFactory.getLogger(QueueService.class);
 
     private final Map<GameMode, Set<Player>> queues = new ConcurrentHashMap<>();
     private final Map<String, GameMode> registry = new ConcurrentHashMap<>();

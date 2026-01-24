@@ -7,6 +7,8 @@ import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.listener.CommandListener;
 import com.oopsjpeg.enigma.listener.ComponentListener;
 import com.oopsjpeg.enigma.listener.ReadyListener;
+import com.oopsjpeg.enigma.service.PlayerService;
+import com.oopsjpeg.enigma.service.QueueService;
 import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Config;
 import com.oopsjpeg.enigma.util.ConfigException;
@@ -44,7 +46,7 @@ public class Enigma
     private final ArrayList<Listener> listeners = new ArrayList<>();
     private final LinkedList<Game> games = new LinkedList<>();
     private final PlayerService playerService = new PlayerService();
-    private final QueueManager queueManager = new QueueManager();
+    private final QueueService queueService = new QueueService();
     //private MongoManager mongo;
     private GatewayDiscordClient client;
     private CommandListener commands;
@@ -129,8 +131,8 @@ public class Enigma
         return player.getGame().getMember(user);
     }
 
-    public QueueManager getQueueManager() {
-        return queueManager;
+    public QueueService getQueueService() {
+        return queueService;
     }
 
     public void endGame(Game game)

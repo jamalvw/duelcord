@@ -1,4 +1,4 @@
-package com.oopsjpeg.enigma;
+package com.oopsjpeg.enigma.service;
 
 import com.oopsjpeg.enigma.storage.Player;
 import discord4j.core.object.entity.User;

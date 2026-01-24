@@ -7,6 +7,8 @@ import com.oopsjpeg.enigma.game.Tree;
 import com.oopsjpeg.enigma.game.object.Item;
 import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.unit.Units;
+import com.oopsjpeg.enigma.service.PlayerService;
+import com.oopsjpeg.enigma.service.QueueService;
 import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.component.ActionRow;
@@ -96,14 +98,14 @@ public enum GeneralCommand implements Command
                     User author = message.getAuthor().orElse(null);
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
                     Player player = playerService.getOrCreate(author);
-                    QueueManager queueManager = Enigma.getInstance().getQueueManager();
+                    QueueService queueService = Enigma.getInstance().getQueueService();
 
                     if (player.getGame() != null)
                         Util.sendFailure(channel, "You're already in a match.");
                     else if (!channel.equals(Enigma.getInstance().getMatchmakingChannel()))
                         Util.sendFailure(channel, "You must be in " + Enigma.getInstance().getMatchmakingChannel().getMention() + " to queue for games.");
-                    else if (queueManager.isInQueue(player)) {
-                        queueManager.removeFromQueue(player);
+                    else if (queueService.isInQueue(player)) {
+                        queueService.removeFromQueue(player);
                         Util.sendFailure(channel, "You have left the queue.");
                     } else {
                         GameMode mode = args.length > 0 ? GameMode.fromName(args[0]) : GameMode.DUEL;
@@ -113,7 +115,7 @@ public enum GeneralCommand implements Command
                         {
                             if (player.isSpectating())
                                 player.removeSpectate();
-                            queueManager.addToQueue(player, mode);
+                            queueService.addToQueue(player, mode);
                             Util.sendSuccess(channel, "**" + author.getUsername() + "** is in queue for **" + mode.getName() + "**.");
                         }
                     }

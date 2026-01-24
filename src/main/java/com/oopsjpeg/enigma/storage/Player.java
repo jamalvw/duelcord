@@ -1,7 +1,7 @@
 package com.oopsjpeg.enigma.storage;
 
 import com.oopsjpeg.enigma.Enigma;
-import com.oopsjpeg.enigma.PlayerService;
+import com.oopsjpeg.enigma.service.PlayerService;
 import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.common.util.Snowflake;
