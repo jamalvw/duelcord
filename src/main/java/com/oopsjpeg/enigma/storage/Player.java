@@ -2,7 +2,6 @@ package com.oopsjpeg.enigma.storage;
 
 import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.game.Game;
-import com.oopsjpeg.enigma.game.GameMode;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.PermissionOverwrite;
@@ -11,15 +10,9 @@ import discord4j.core.object.entity.User;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Player
 {
     private final long id;
-    private transient GameMode queueMode;
-    private transient Instant queueTime;
     private transient Game game;
     private transient long spectateId;
     private int gems;
@@ -45,35 +38,6 @@ public class Player
     public String getUsername()
     {
         return getUser().getUsername();
-    }
-
-    public GameMode getQueueMode()
-    {
-        return queueMode;
-    }
-
-    public List<Player> getQueue()
-    {
-        return queueMode != null ? Enigma.getInstance().getQueue(queueMode) : null;
-    }
-
-    public void setQueue(GameMode mode)
-    {
-        if (queueMode == mode) return;
-        if (queueMode != null) getQueue().remove(this);
-        queueMode = mode;
-        queueTime = Instant.now();
-        if (queueMode != null) getQueue().add(this);
-    }
-
-    public boolean isInQueue()
-    {
-        return queueMode != null;
-    }
-
-    public void removeQueue()
-    {
-        setQueue(null);
     }
 
     public boolean isInGame()
@@ -170,16 +134,6 @@ public class Player
     public long getId()
     {
         return this.id;
-    }
-
-    public Instant getQueueTime()
-    {
-        return this.queueTime;
-    }
-
-    public void setQueueTime(Instant queueTime)
-    {
-        this.queueTime = queueTime;
     }
 
     public Game getGame()

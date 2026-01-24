@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.GameMode;
 import com.oopsjpeg.enigma.listener.CommandListener;
 import com.oopsjpeg.enigma.listener.ComponentListener;
 import com.oopsjpeg.enigma.listener.ReadyListener;
@@ -33,7 +32,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class Enigma
 {
@@ -46,7 +44,7 @@ public class Enigma
     private final ArrayList<Listener> listeners = new ArrayList<>();
     private final LinkedList<Game> games = new LinkedList<>();
     private final HashMap<Long, Player> players = new HashMap<>();
-    private final HashMap<GameMode, LinkedList<Player>> queues = new HashMap<>();
+    private final QueueManager queueManager = new QueueManager();
     //private MongoManager mongo;
     private GatewayDiscordClient client;
     private CommandListener commands;
@@ -152,49 +150,8 @@ public class Enigma
         return players.containsKey(user.getId().asLong());
     }
 
-    public LinkedList<Player> getQueue(GameMode mode)
-    {
-        if (!queues.containsKey(mode))
-            queues.put(mode, new LinkedList<>());
-        return queues.get(mode);
-    }
-
-    public void refreshQueues()
-    {
-        // Loops queues for each game mode
-        for (Map.Entry<GameMode, LinkedList<Player>> queue : queues.entrySet())
-        {
-            GameMode mode = queue.getKey();
-            LinkedList<Player> players = queue.getValue();
-            ArrayList<Player> matched = new ArrayList<>();
-
-            // Find players for a match
-            for (Player player : players)
-            {
-                matched.add(player);
-
-                // Create the match
-                if (matched.size() >= mode.getSize())
-                {
-                    Game game = new Game(this, mode, matched);
-
-                    games.add(game);
-                    matched.forEach(p ->
-                    {
-                        p.setGame(game);
-                        p.removeQueue();
-                        queue.getValue().remove(p);
-                    });
-                    queues.get(mode).removeAll(matched);
-
-                    Util.send(getMatchmakingChannel(), "**" + mode.getName() + "** has been found for "
-                                    + game.getUsers().stream().map(User::getUsername).collect(Collectors.joining(", ")),
-                            "Go to " + game.getChannel().getMention() + " to play the match!");
-
-                    break;
-                }
-            }
-        }
+    public QueueManager getQueueManager() {
+        return queueManager;
     }
 
     public void endGame(Game game)
@@ -297,10 +254,5 @@ public class Enigma
     public HashMap<Long, Player> getPlayers()
     {
         return this.players;
-    }
-
-    public HashMap<GameMode, LinkedList<Player>> getQueues()
-    {
-        return this.queues;
     }
 }

@@ -93,17 +93,16 @@ public enum GeneralCommand implements Command
                     MessageChannel channel = message.getChannel().block();
                     User author = message.getAuthor().orElse(null);
                     Player player = Enigma.getInstance().getPlayer(author);
+                    QueueManager queueManager = Enigma.getInstance().getQueueManager();
 
                     if (player.getGame() != null)
                         Util.sendFailure(channel, "You're already in a match.");
                     else if (!channel.equals(Enigma.getInstance().getMatchmakingChannel()))
                         Util.sendFailure(channel, "You must be in " + Enigma.getInstance().getMatchmakingChannel().getMention() + " to queue for games.");
-                    else if (player.getQueue() != null)
-                    {
-                        player.removeQueue();
+                    else if (queueManager.isInQueue(player)) {
+                        queueManager.removeFromQueue(player);
                         Util.sendFailure(channel, "You have left the queue.");
-                    } else
-                    {
+                    } else {
                         GameMode mode = args.length > 0 ? GameMode.fromName(args[0]) : GameMode.DUEL;
                         if (mode == null)
                             Util.sendFailure(channel, "Invalid game mode.");
@@ -111,7 +110,7 @@ public enum GeneralCommand implements Command
                         {
                             if (player.isSpectating())
                                 player.removeSpectate();
-                            player.setQueue(mode);
+                            queueManager.addToQueue(player, mode);
                             Util.sendSuccess(channel, "**" + author.getUsername() + "** is in queue for **" + mode.getName() + "**.");
                         }
                     }
@@ -184,7 +183,9 @@ public enum GeneralCommand implements Command
                                 Util.sendFailure(channel, "That player isn't in a match.");
                             } else
                             {
-                                if (player.isInQueue()) player.removeQueue();
+                                QueueManager queueManager = Enigma.getInstance().getQueueManager();
+                                if (queueManager.isInQueue(player))
+                                    queueManager.removeFromQueue(player);
 
                                 player.setSpectateId(target.getId().asLong());
                                 Util.sendSuccess(channel, "You are now spectating **" + target.getUsername() + "**#" + target.getDiscriminator() + " in " + targetPlayer.getGame().getChannel().getMention() + ".");

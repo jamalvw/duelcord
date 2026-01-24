@@ -1,8 +1,8 @@
 package com.oopsjpeg.enigma.listener;
 
 import com.oopsjpeg.enigma.Enigma;
+import com.oopsjpeg.enigma.QueueManager;
 import com.oopsjpeg.enigma.game.GameState;
-import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Listener;
 import com.oopsjpeg.enigma.util.Util;
@@ -13,7 +13,6 @@ import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.MessageEditSpec;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 public class ReadyListener implements Listener
@@ -32,15 +31,17 @@ public class ReadyListener implements Listener
 
         //instance.getMongo().loadPlayers();
 
-        Enigma.SCHEDULER.scheduleAtFixedRate(instance::refreshQueues, 12, 12, TimeUnit.SECONDS);
-        Enigma.SCHEDULER.scheduleAtFixedRate(() -> instance.getPlayers().values().stream()
-                .filter(Player::isInQueue)
-                .filter(p -> Instant.now().isAfter(p.getQueueTime().plus(5, ChronoUnit.MINUTES)))
-                .forEach(p ->
-                {
-                    p.removeQueue();
-                    Util.sendFailure(p.getUser().getPrivateChannel().block(), "You've been removed from queue as there are currently no players available for that mode.");
-                }), 2, 2, TimeUnit.MINUTES);
+        QueueManager queues = instance.getQueueManager();
+
+        Enigma.SCHEDULER.scheduleAtFixedRate(queues::refresh, 12, 12, TimeUnit.SECONDS);
+        //Enigma.SCHEDULER.scheduleAtFixedRate(() -> instance.getPlayers().values().stream()
+        //        .filter(queues::isInQueue)
+        //        .filter(p -> Instant.now().isAfter(p.getQueueTime().plus(5, ChronoUnit.MINUTES)))
+        //        .forEach(p ->
+        //        {
+        //            p.removeQueue();
+        //            Util.sendFailure(p.getUser().getPrivateChannel().block(), "You've been removed from queue as there are currently no players available for that mode.");
+        //        }), 2, 2, TimeUnit.MINUTES);
         Enigma.SCHEDULER.scheduleAtFixedRate(() -> instance.getGames().stream()
                 .filter(g -> g.getGameState() == GameState.PLAYING)
                 .forEach(g ->
