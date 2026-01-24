@@ -16,7 +16,7 @@ public class QueueManager {
     private final Logger LOGGER = LoggerFactory.getLogger(QueueManager.class);
 
     private final Map<GameMode, Set<Player>> queues = new ConcurrentHashMap<>();
-    private final Map<Long, GameMode> registry = new ConcurrentHashMap<>();
+    private final Map<String, GameMode> registry = new ConcurrentHashMap<>();
 
     public void addToQueue(Player player, GameMode mode) {
         if (player == null || mode == null) return;

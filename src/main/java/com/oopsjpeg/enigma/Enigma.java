@@ -43,7 +43,7 @@ public class Enigma
 
     private final ArrayList<Listener> listeners = new ArrayList<>();
     private final LinkedList<Game> games = new LinkedList<>();
-    private final HashMap<Long, Player> players = new HashMap<>();
+    private final PlayerService playerService = new PlayerService();
     private final QueueManager queueManager = new QueueManager();
     //private MongoManager mongo;
     private GatewayDiscordClient client;
@@ -121,33 +121,12 @@ public class Enigma
         LOGGER.info("Removed listener of class '" + listener.getClass().getName() + "'.");
     }
 
-    public Player getPlayer(long id)
-    {
-        if (!players.containsKey(id))
-        {
-            User user = client.getUserById(Snowflake.of(id)).block();
-            if (user != null && !user.isBot())
-                players.put(id, new Player(id));
-        }
-        return players.getOrDefault(id, null);
-    }
-
     public static GameMember getGameMemberFromMessage(Message message)
     {
         User user = message.getAuthor().get();
-        Player player = Enigma.getInstance().getPlayer(user);
+        Player player = Enigma.getInstance().playerService.get(user);
         if (!player.isInGame()) return null;
         return player.getGame().getMember(user);
-    }
-
-    public Player getPlayer(User user)
-    {
-        return getPlayer(user.getId().asLong());
-    }
-
-    public boolean hasPlayer(User user)
-    {
-        return players.containsKey(user.getId().asLong());
     }
 
     public QueueManager getQueueManager() {
@@ -251,8 +230,7 @@ public class Enigma
         return this.games;
     }
 
-    public HashMap<Long, Player> getPlayers()
-    {
-        return this.players;
+    public PlayerService getPlayerService() {
+        return playerService;
     }
 }

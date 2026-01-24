@@ -1,6 +1,7 @@
 package com.oopsjpeg.enigma.storage;
 
 import com.oopsjpeg.enigma.Enigma;
+import com.oopsjpeg.enigma.PlayerService;
 import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.common.util.Snowflake;
@@ -12,15 +13,15 @@ import discord4j.rest.util.PermissionSet;
 
 public class Player
 {
-    private final long id;
+    private final String id;
     private transient Game game;
-    private transient long spectateId;
+    private transient String spectateId;
     private int gems;
     private int wins;
     private int losses;
     private int rp;
 
-    public Player(long id)
+    public Player(String id)
     {
         this.id = id;
     }
@@ -52,12 +53,12 @@ public class Player
 
     public boolean isSpectating()
     {
-        return spectateId != 0;
+        return spectateId != null;
     }
 
     public void removeSpectate()
     {
-        spectateId = 0;
+        spectateId = null;
     }
 
     public void addGems(int gems)
@@ -128,10 +129,10 @@ public class Player
     @Override
     public boolean equals(Object o)
     {
-        return (o instanceof Player && ((Player) o).id == id) || o.equals(getUser());
+        return (o instanceof Player && ((Player) o).id.equals(id));
     }
 
-    public long getId()
+    public String getId()
     {
         return this.id;
     }
@@ -146,16 +147,18 @@ public class Player
         this.game = game;
     }
 
-    public long getSpectateId()
-    {
-        return this.spectateId;
+    public String getSpectateId() {
+        return spectateId;
     }
 
-    public void setSpectateId(long spectateId)
+    // todo: yuck. make a spectate service
+    public void setSpectateId(String spectateId)
     {
+        PlayerService service = Enigma.getInstance().getPlayerService();
+
         if (isSpectating())
         {
-            Player player = Enigma.getInstance().getPlayer(spectateId);
+            Player player = service.get(spectateId);
             Snowflake id = Snowflake.of(this.id);
             player.getGame().getChannel().addMemberOverwrite(id, PermissionOverwrite.forMember(id,
                     PermissionSet.none(),
@@ -166,7 +169,7 @@ public class Player
 
         if (isSpectating())
         {
-            Player player = Enigma.getInstance().getPlayer(spectateId);
+            Player player = service.get(spectateId);
             Snowflake id = Snowflake.of(this.id);
             player.getGame().getChannel().addMemberOverwrite(id, PermissionOverwrite.forMember(id,
                     PermissionSet.of(Permission.VIEW_CHANNEL),

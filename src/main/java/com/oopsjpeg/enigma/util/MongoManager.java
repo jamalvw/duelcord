@@ -34,7 +34,7 @@ public class MongoManager
 
     public void savePlayers()
     {
-        Enigma.getInstance().getPlayers().values().forEach(this::savePlayer);
+        //Enigma.getInstance().getPlayers().values().forEach(this::savePlayer);
     }
 
     public void loadPlayer(Document d)

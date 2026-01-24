@@ -11,9 +11,11 @@ import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.SelectMenu;
+import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageCreateSpec;
 import discord4j.rest.util.Permission;
@@ -92,7 +94,8 @@ public enum GeneralCommand implements Command
                 {
                     MessageChannel channel = message.getChannel().block();
                     User author = message.getAuthor().orElse(null);
-                    Player player = Enigma.getInstance().getPlayer(author);
+                    PlayerService playerService = Enigma.getInstance().getPlayerService();
+                    Player player = playerService.getOrCreate(author);
                     QueueManager queueManager = Enigma.getInstance().getQueueManager();
 
                     if (player.getGame() != null)
@@ -123,7 +126,13 @@ public enum GeneralCommand implements Command
                 {
                     MessageChannel channel = message.getChannel().block();
                     User author = message.getAuthor().orElse(null);
-                    Player player = Enigma.getInstance().getPlayer(author);
+                    PlayerService playerService = Enigma.getInstance().getPlayerService();
+                    Player player = playerService.get(author);
+
+                    if (player == null) {
+                        Util.sendFailure(channel, "You haven't played any matches yet.");
+                        return;
+                    }
 
                     channel.createEmbed(e ->
                     {
@@ -151,47 +160,62 @@ public enum GeneralCommand implements Command
     SPECTATE("spectate")
             {
                 @Override
-                public void execute(Message message, String[] args)
-                {
+                public void execute(Message message, String[] args) {
                     MessageChannel channel = message.getChannel().block();
                     User author = message.getAuthor().orElse(null);
-                    Player player = Enigma.getInstance().getPlayer(author);
+                    PlayerService playerService = Enigma.getInstance().getPlayerService();
+                    Player player = playerService.getOrCreate(author);
 
-                    if (player.isSpectating())
-                    {
+                    if (player.isSpectating()) {
                         player.removeSpectate();
                         Util.sendFailure(channel, "You have stopped spectating.");
-                    } else if (player.isInGame())
-                    {
-                        Util.sendFailure(channel, "You can't spectate while in a match.");
-                    } else if (args.length < 1)
-                    {
-                        Util.sendFailure(channel, "You must specify a user to spectate.");
-                    } else
-                    {
-                        User target = Enigma.getInstance().getClient().getUsers()
-                                .filter(p -> p.getUsername().toLowerCase().startsWith(String.join(" ", args).toLowerCase()))
-                                .blockFirst();
-                        if (target == null || target.isBot())
-                        {
-                            Util.sendFailure(channel, "That player either doesn't exist or cannot be spectated.");
-                        } else
-                        {
-                            Player targetPlayer = Enigma.getInstance().getPlayer(target);
-                            if (!targetPlayer.isInGame())
-                            {
-                                Util.sendFailure(channel, "That player isn't in a match.");
-                            } else
-                            {
-                                QueueManager queueManager = Enigma.getInstance().getQueueManager();
-                                if (queueManager.isInQueue(player))
-                                    queueManager.removeFromQueue(player);
-
-                                player.setSpectateId(target.getId().asLong());
-                                Util.sendSuccess(channel, "You are now spectating **" + target.getUsername() + "**#" + target.getDiscriminator() + " in " + targetPlayer.getGame().getChannel().getMention() + ".");
-                            }
-                        }
+                        return;
                     }
+
+                    if (player.isInGame()) {
+                        Util.sendFailure(channel, "You can't spectate while in a match.");
+                        return;
+                    }
+
+                    if (!(channel instanceof TextChannel)) {
+                        Util.sendFailure(channel, "You can only spectate in a server.");
+                        return;
+                    }
+
+                    if (args.length < 1) {
+                        Util.sendFailure(channel, "You must specify a player to spectate.");
+                        return;
+                    }
+
+                    Guild guild = ((TextChannel) channel).getGuild().block();
+                    String search = args[0].toLowerCase();
+
+                    // - disclaimer -
+                    // inconveniently, this doesn't support mentions,
+                    // but that won't matter when slash commands are implemented
+                    User target = guild.searchMembers(search, 1)
+                            .filter(m -> m.getUsername().toLowerCase().equals(search))
+                            .blockFirst();
+
+                    if (target == null) {
+                        Util.sendFailure(channel, "That player either doesn't exist or can't be spectated.");
+                        return;
+                    }
+
+                    if (target.getId().equals(author.getId())) {
+                        Util.sendFailure(channel, "You can't spectate yourself. That'd be weird.");
+                        return;
+                    }
+
+                    Player targetPlayer = playerService.get(target);
+
+                    if (targetPlayer == null || !targetPlayer.isInGame()) {
+                        Util.sendFailure(channel, "That player isn't in a match.");
+                        return;
+                    }
+
+                    player.setSpectateId(target.getId().asString());
+                    Util.sendSuccess(channel, "You are now spectating **" + target.getUsername() + "**" + " in " + targetPlayer.getGame().getChannel().getMention() + ".");
                 }
             },
     ITEM("item")
@@ -207,9 +231,10 @@ public enum GeneralCommand implements Command
                     Item item = query.create(member);
                     int cost = item.getCost();
                     User author = message.getAuthor().get();
-                    Player player = Enigma.getInstance().getPlayer(author);
+                    PlayerService playerService = Enigma.getInstance().getPlayerService();
+                    Player player = playerService.get(author);
 
-                    if (player.isInGame())
+                    if (player != null && player.isInGame())
                     {
                         Build build = item.build(member.getItems());
                         cost -= build.getReduction();
