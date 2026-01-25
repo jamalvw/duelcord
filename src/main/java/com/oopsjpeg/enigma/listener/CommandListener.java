@@ -14,42 +14,36 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
-public class CommandListener implements Listener
-{
+public class CommandListener implements Listener {
     private final Enigma instance;
     private final String prefix;
     private final LinkedList<Command> commands;
     private MessageChannel limit;
     private User userLimit;
 
-    public CommandListener(Enigma instance, String prefix, Command[] commands)
-    {
+    public CommandListener(Enigma instance, String prefix, Command[] commands) {
         this.instance = instance;
         this.prefix = prefix;
         this.commands = new LinkedList<>(Arrays.asList(commands));
     }
 
-    public CommandListener(Enigma instance, String prefix, Command[] commands, MessageChannel limit)
-    {
+    public CommandListener(Enigma instance, String prefix, Command[] commands, MessageChannel limit) {
         this(instance, prefix, commands);
         this.limit = limit;
     }
 
-    public CommandListener(Enigma instance, String prefix, LinkedList<Command> commands)
-    {
+    public CommandListener(Enigma instance, String prefix, LinkedList<Command> commands) {
         this.instance = instance;
         this.prefix = prefix;
         this.commands = commands;
     }
 
     @Override
-    public void register(GatewayDiscordClient client)
-    {
+    public void register(GatewayDiscordClient client) {
         client.on(MessageCreateEvent.class).subscribe(this::onMessage);
     }
 
-    private void onMessage(MessageCreateEvent event)
-    {
+    private void onMessage(MessageCreateEvent event) {
         GatewayDiscordClient client = event.getClient();
         Message message = event.getMessage();
         User author = message.getAuthor().orElse(null);
@@ -59,8 +53,7 @@ public class CommandListener implements Listener
         if (author != null && channel != null
                 && (limit == null || channel.equals(limit))
                 && !author.equals(client.getSelf().block())
-                && content.toLowerCase().startsWith(prefix.toLowerCase()))
-        {
+                && content.toLowerCase().startsWith(prefix.toLowerCase())) {
             if (userLimit != null && !author.equals(userLimit)) return;
 
             String pat = Pattern.quote(prefix);
@@ -69,8 +62,7 @@ public class CommandListener implements Listener
             String[] chunks = content.replaceFirst(pat, "").split(pat);
 
             // Loop chunks and execute each command
-            for (String cmdChunk : chunks)
-            {
+            for (String cmdChunk : chunks) {
                 String[] split = cmdChunk.split(" ");
                 String alias = split[0].replaceFirst(pat, "");
                 String[] args = Arrays.copyOfRange(split, 1, split.length);
@@ -83,28 +75,23 @@ public class CommandListener implements Listener
         }
     }
 
-    public Enigma getInstance()
-    {
+    public Enigma getInstance() {
         return this.instance;
     }
 
-    public String getPrefix()
-    {
+    public String getPrefix() {
         return this.prefix;
     }
 
-    public LinkedList<Command> getCommands()
-    {
+    public LinkedList<Command> getCommands() {
         return this.commands;
     }
 
-    public MessageChannel getLimit()
-    {
+    public MessageChannel getLimit() {
         return this.limit;
     }
 
-    public void setLimit(TextChannel limit)
-    {
+    public void setLimit(TextChannel limit) {
         this.limit = limit;
     }
 

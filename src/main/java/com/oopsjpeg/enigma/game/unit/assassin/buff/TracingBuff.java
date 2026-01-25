@@ -8,7 +8,6 @@ import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.game.unit.assassin.AssassinUnit;
 
-import static com.oopsjpeg.enigma.game.StatType.ATTACK_POWER;
 import static com.oopsjpeg.enigma.game.StatType.SKILL_POWER;
 import static com.oopsjpeg.enigma.game.unit.assassin.AssassinUnit.*;
 
@@ -36,8 +35,7 @@ public class TracingBuff extends Buff {
                 e.proposeEffect(() -> {
                     actor.giveEnergy(PASSIVE_ENERGY_RESTORE);
 
-                    if (actor.getUnit() instanceof AssassinUnit)
-                    {
+                    if (actor.getUnit() instanceof AssassinUnit) {
                         ((AssassinUnit) actor.getUnit()).getSlash().getCooldown().reset();
                     }
 

@@ -60,8 +60,7 @@ public class GunslingerUnit extends Unit {
         return barrageShotsFired;
     }
 
-    public void barrageShot()
-    {
+    public void barrageShot() {
         barrageShotsFired++;
     }
 
@@ -110,8 +109,7 @@ public class GunslingerUnit extends Unit {
     }
 
     @Override
-    public String onTurnStart(GameMember member)
-    {
+    public String onTurnStart(GameMember member) {
         attackedThisRound = false;
         return null;
     }

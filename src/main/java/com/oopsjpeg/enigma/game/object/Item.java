@@ -1,6 +1,9 @@
 package com.oopsjpeg.enigma.game.object;
 
-import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.Build;
+import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.GameObject;
+import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
@@ -61,35 +64,29 @@ public abstract class Item extends GameObject {
         return null;
     }
 
-    public String onUse(GameMember member)
-    {
+    public String onUse(GameMember member) {
         return null;
     }
 
-    public boolean canUse(GameMember member)
-    {
+    public boolean canUse(GameMember member) {
         return false;
     }
 
-    public boolean removeOnUse()
-    {
+    public boolean removeOnUse() {
         return false;
     }
 
-    public Build build(Collection<Item> items)
-    {
+    public Build build(Collection<Item> items) {
         int reduction = 0;
 
         // At the start of the build chain, this == the player's items
         List<Item> postData = new ArrayList<>(items);
 
         // Loop nodes in the build and reduce our total cost if the node appears in our item collection
-        for (Items node : getBuild())
-        {
+        for (Items node : getBuild()) {
             Item item = node.create(null);
 
-            if (postData.stream().anyMatch(i -> i.getName().equals(item.getName())))
-            {
+            if (postData.stream().anyMatch(i -> i.getName().equals(item.getName()))) {
                 // Reduce directly
                 reduction += item.cost;
                 Item toRemove = postData.stream().filter(i -> i.getName().equals(item.getName())).findAny().get();
@@ -105,18 +102,15 @@ public abstract class Item extends GameObject {
         return new Build(this, reduction, postData);
     }
 
-    public boolean hasTip()
-    {
+    public boolean hasTip() {
         return getTip() != null;
     }
 
-    public boolean hasBuild()
-    {
+    public boolean hasBuild() {
         return getBuild() != null && getBuild().length > 0;
     }
 
-    public boolean isBuyable()
-    {
+    public boolean isBuyable() {
         return true;
     }
 
@@ -125,6 +119,6 @@ public abstract class Item extends GameObject {
                 "**`>buy " + getName() + "`**",
                 Util.formatStats(getStats()),
                 Util.formatEffects(getEffects()),
-                hasBuild() ? "*Builds from " + Arrays.stream(getBuild()).map(Items::getName).collect(Collectors.joining(" + ")) + "*": null), Color.CYAN);
+                hasBuild() ? "*Builds from " + Arrays.stream(getBuild()).map(Items::getName).collect(Collectors.joining(" + ")) + "*" : null), Color.CYAN);
     }
 }

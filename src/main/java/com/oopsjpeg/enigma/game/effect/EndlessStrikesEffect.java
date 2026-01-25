@@ -8,12 +8,10 @@ import com.oopsjpeg.enigma.game.object.Effect;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
-public class EndlessStrikesEffect extends Effect
-{
+public class EndlessStrikesEffect extends Effect {
     private int multiplier = 0;
 
-    public EndlessStrikesEffect(GameMember owner, float power)
-    {
+    public EndlessStrikesEffect(GameMember owner, float power) {
         super(owner, "Endless Strikes", power, null);
 
         hook(DamageEvent.class, new Hook<DamageEvent>() {
@@ -35,21 +33,18 @@ public class EndlessStrikesEffect extends Effect
     }
 
     @Override
-    public String onTurnEnd(GameMember member)
-    {
+    public String onTurnEnd(GameMember member) {
         multiplier = 0;
         return null;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Each Hit deals __" + percent(getPower()) + "__ more than the last for this turn.";
     }
 
     @Override
-    public String getStatus(GameMember member)
-    {
+    public String getStatus(GameMember member) {
         return "Endless Strikes: " + percent(multiplier * getPower());
     }
 }

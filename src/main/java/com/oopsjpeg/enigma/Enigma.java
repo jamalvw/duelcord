@@ -23,18 +23,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class Enigma
-{
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+public class Enigma {
     public static final Gson GSON = new GsonBuilder().create();
     public static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() + 1);
-
     private static Enigma instance;
-
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final ArrayList<Listener> listeners = new ArrayList<>();
     private final GameService gameService = new GameService();
     private final PlayerService playerService = new PlayerService();
@@ -44,24 +41,20 @@ public class Enigma
     private GatewayDiscordClient client;
     private CommandListener commands;
 
-    public static File getSettingsFile()
-    {
+    public static File getSettingsFile() {
         return new File("enigma.properties");
     }
 
-    public static void main(String[] args) throws ConfigException, IOException
-    {
+    public static void main(String[] args) throws ConfigException, IOException {
         instance = new Enigma();
         instance.start();
     }
 
-    public static Enigma getInstance()
-    {
+    public static Enigma getInstance() {
         return Enigma.instance;
     }
 
-    private void start() throws ConfigException, IOException
-    {
+    private void start() throws ConfigException, IOException {
         LOGGER.info("Loading configuration..");
         loadConfig();
 
@@ -85,12 +78,10 @@ public class Enigma
         this.client.on(ComponentInteractionEvent.class).subscribe(componentManager::execute);
     }
 
-    public void loadConfig() throws IOException, ConfigException
-    {
+    public void loadConfig() throws IOException, ConfigException {
         File configFile = new File(Config.CONFIG_FILE);
 
-        if (!configFile.exists())
-        {
+        if (!configFile.exists()) {
             Config.store();
             throw new ConfigException("Configuration file created");
         }
@@ -105,15 +96,13 @@ public class Enigma
             throw new ConfigException("Game prefix can't be empty");
     }
 
-    public void addListener(Listener listener)
-    {
+    public void addListener(Listener listener) {
         listener.register(client);
         listeners.add(listener);
         LOGGER.info("Added listener of class '" + listener.getClass().getName() + "'.");
     }
 
-    public void removeListener(Listener listener)
-    {
+    public void removeListener(Listener listener) {
         listeners.remove(listener);
         LOGGER.info("Removed listener of class '" + listener.getClass().getName() + "'.");
     }
@@ -122,28 +111,23 @@ public class Enigma
         return queueService;
     }
 
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return client.getGuildById(Snowflake.of(Config.getGuildId())).block();
     }
 
-    public TextChannel getUnitsChannel()
-    {
+    public TextChannel getUnitsChannel() {
         return client.getChannelById(Snowflake.of(Config.getUnitsChannelId())).cast(TextChannel.class).block();
     }
 
-    public TextChannel getMatchmakingChannel()
-    {
+    public TextChannel getMatchmakingChannel() {
         return client.getChannelById(Snowflake.of(Config.getMatchmakingChannelId())).cast(TextChannel.class).block();
     }
 
-    public TextChannel getMatchLogChannel()
-    {
+    public TextChannel getMatchLogChannel() {
         return client.getChannelById(Snowflake.of(Config.getMatchLogChannelId())).cast(TextChannel.class).block();
     }
 
-    public TextChannel getLeaderboardChannel()
-    {
+    public TextChannel getLeaderboardChannel() {
         return client.getChannelById(Snowflake.of(Config.getLeaderboardChannelId())).cast(TextChannel.class).block();
     }
 
@@ -151,18 +135,15 @@ public class Enigma
     //    return this.mongo;
     //}
 
-    public GatewayDiscordClient getClient()
-    {
+    public GatewayDiscordClient getClient() {
         return this.client;
     }
 
-    public ArrayList<Listener> getListeners()
-    {
+    public ArrayList<Listener> getListeners() {
         return this.listeners;
     }
 
-    public CommandListener getCommands()
-    {
+    public CommandListener getCommands() {
         return this.commands;
     }
 

@@ -1,7 +1,10 @@
 package com.oopsjpeg.enigma.game.unit.reaver.creature;
 
 import com.oopsjpeg.enigma.DamagePhase;
-import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.object.Summon;
 import com.oopsjpeg.enigma.util.Emote;
 

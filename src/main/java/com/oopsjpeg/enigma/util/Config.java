@@ -5,8 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 
-public class Config
-{
+public class Config {
     public static final String CONFIG_FILE = "DUELCORD.properties";
 
     private static final String BOT_TOKEN = "bot.token";
@@ -22,8 +21,7 @@ public class Config
 
     private static final Properties properties = new Properties();
 
-    static
-    {
+    static {
         properties.put(BOT_TOKEN, "");
 
         properties.put(PREFIX_PRIMARY, ".");
@@ -36,89 +34,71 @@ public class Config
         properties.put(ID_CHANNEL_LEADERBOARD, "");
     }
 
-    public static void load() throws IOException
-    {
-        try (FileReader fr = new FileReader(CONFIG_FILE))
-        {
+    public static void load() throws IOException {
+        try (FileReader fr = new FileReader(CONFIG_FILE)) {
             properties.load(fr);
         }
     }
 
-    public static void store() throws IOException
-    {
-        try (FileWriter fw = new FileWriter(CONFIG_FILE))
-        {
+    public static void store() throws IOException {
+        try (FileWriter fw = new FileWriter(CONFIG_FILE)) {
             properties.store(fw, "DUELCORD configuration");
         }
     }
 
-    private static <T> T get(String key, Class<T> clazz)
-    {
+    private static <T> T get(String key, Class<T> clazz) {
         return (T) properties.getOrDefault(key, null);
     }
 
-    private static String getString(String key)
-    {
+    private static String getString(String key) {
         return get(key, String.class);
     }
 
-    private static int getInt(String key)
-    {
+    private static int getInt(String key) {
         return get(key, Integer.class);
     }
 
-    private static long getLong(String key)
-    {
+    private static long getLong(String key) {
         return get(key, Long.class);
     }
 
-    private static float getFloat(String key)
-    {
+    private static float getFloat(String key) {
         return get(key, Float.class);
     }
 
-    private static double getDouble(String key)
-    {
+    private static double getDouble(String key) {
         return get(key, Double.class);
     }
 
-    public static String getBotToken()
-    {
+    public static String getBotToken() {
         return getString(BOT_TOKEN);
     }
 
-    public static String getPrimaryPrefix()
-    {
+    public static String getPrimaryPrefix() {
         return getString(PREFIX_PRIMARY);
     }
 
-    public static String getGamePrefix()
-    {
+    public static String getGamePrefix() {
         return getString(PREFIX_GAME);
     }
 
-    public static String getGuildId()
-    {
+    public static String getGuildId() {
         return getString(ID_GUILD);
     }
 
-    public static String getUnitsChannelId()
-    {
+    public static String getUnitsChannelId() {
         return getString(ID_CHANNEL_UNITS);
     }
 
-    public static String getMatchmakingChannelId()
-    {
+    public static String getMatchmakingChannelId() {
         return getString(ID_CHANNEL_MATCHMAKING);
     }
 
-    public static String getMatchLogChannelId()
-    {
+    public static String getMatchLogChannelId() {
         return getString(ID_CHANNEL_MATCH_LOG);
     }
 
-    public static String getLeaderboardChannelId()
-    {
+    public static String getLeaderboardChannelId() {
         return getString(ID_CHANNEL_LEADERBOARD);
     }
 }

@@ -1,7 +1,10 @@
 package com.oopsjpeg.enigma.game.unit.shifter;
 
 import com.oopsjpeg.enigma.DamagePhase;
-import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Hook;
+import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.buff.WeakenedDebuff;
 import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
@@ -14,7 +17,6 @@ import discord4j.rest.util.Color;
 import java.util.EnumSet;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
-import static com.oopsjpeg.enigma.game.StatType.HEALTH_PER_TURN;
 import static com.oopsjpeg.enigma.util.Util.RANDOM;
 import static com.oopsjpeg.enigma.util.Util.percent;
 

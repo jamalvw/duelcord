@@ -1,6 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.gunslinger.skill;
 
-import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.gunslinger.GunslingerUnit;

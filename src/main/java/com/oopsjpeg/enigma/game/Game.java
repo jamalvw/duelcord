@@ -9,19 +9,13 @@ import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.listener.CommandListener;
 import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.*;
-import discord4j.common.util.Snowflake;
-import discord4j.core.object.PermissionOverwrite;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
-import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.object.entity.channel.ThreadChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageEditSpec;
 import discord4j.core.spec.StartThreadWithoutMessageSpec;
-import discord4j.core.spec.TextChannelCreateSpec;
-import discord4j.rest.util.Permission;
-import discord4j.rest.util.PermissionSet;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -30,8 +24,7 @@ import java.util.stream.Collectors;
 import static com.oopsjpeg.enigma.game.GameState.*;
 import static com.oopsjpeg.enigma.game.StatType.*;
 
-public class Game
-{
+public class Game {
     private final Enigma instance;
     private final ThreadChannel channel;
     private final Message statusMessage;
@@ -77,13 +70,11 @@ public class Game
         channel.createMessage(nextTurn()).subscribe();
     }
 
-    public String nextTurn()
-    {
+    public String nextTurn() {
         final List<String> output = new ArrayList<>();
 
         // Handle turn ending
-        if (gameState == PLAYING)
-        {
+        if (gameState == PLAYING) {
             // On turn end
             output.addAll(getCurrentMember().getData().stream().map(e -> e.onTurnEnd(getCurrentMember())).collect(Collectors.toList()));
             // On defend
@@ -101,19 +92,16 @@ public class Game
         // Start next turn
         turnIndex++;
         // Reset turn index at max
-        if (turnIndex >= members.size())
-        {
+        if (turnIndex >= members.size()) {
             turnIndex = 0;
             // Start game once all players have picked
             if (gameState == PICKING && members.stream().allMatch(GameMember::alreadyPickedUnit))
                 gameState = PLAYING;
         }
 
-        if (gameState == PICKING)
-        {
+        if (gameState == PICKING) {
             // First pick message
-            if (turnIndex == 0)
-            {
+            if (turnIndex == 0) {
                 String playerList = getPlayers().stream().map(Player::getUsername).collect(Collectors.joining(", "));
                 output.add("## Welcome to " + mode.getName());
                 output.add("featuring **" + getMembers().get(0).getUsername() + "** vs. **" + getMembers().get(1).getUsername() + "**!");
@@ -121,8 +109,7 @@ public class Game
             output.add("# " + getCurrentMember().getMention() + "'s Pick");
             output.add("Choose a unit with **`" + commandListener.getPrefix() + GameCommand.PICK.getName() + " [unit]`**");
             output.add("Don't know who to play? Try **`" + commandListener.getPrefix() + GameCommand.PICK.getName() + " random`**");
-        } else if (gameState == PLAYING)
-        {
+        } else if (gameState == PLAYING) {
             GameMember member = getCurrentMember();
             member.heal(member.getStats().get(HEALTH_PER_TURN) * (member.isDefensive() ? 2 : 1), null, false);
             member.giveGold(mode.handleGold(125 + (turnCount * 5)));
@@ -201,8 +188,7 @@ public class Game
         return Util.joinNonEmpty("\n", output);
     }
 
-    public void updateStatus()
-    {
+    public void updateStatus() {
         List<EmbedCreateSpec> statuses = getNonCurrentMembers().stream()
                 .map(GameMember::getStatus)
                 .collect(Collectors.toList());
@@ -214,20 +200,17 @@ public class Game
                 .subscribe();
     }
 
-    public List<GameMember> getNonCurrentMembers()
-    {
+    public List<GameMember> getNonCurrentMembers() {
         return getMembers().stream()
                 .filter(member -> !getCurrentMember().equals(member))
                 .collect(Collectors.toList());
     }
 
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return channel.getGuild().block();
     }
 
-    public GameMember getMember(User user)
-    {
+    public GameMember getMember(User user) {
         return members.stream()
                 .filter(m -> m.getUser().equals(user))
                 .findAny().orElse(null);
@@ -239,89 +222,72 @@ public class Game
                 .findAny().orElse(null);
     }
 
-    public GameMember getCurrentMember()
-    {
+    public GameMember getCurrentMember() {
         return members.get(turnIndex);
     }
 
-    public GameMember getRandomTarget(GameMember exclude)
-    {
+    public GameMember getRandomTarget(GameMember exclude) {
         List<GameMember> targets = getAlive().stream().filter(m -> !m.equals(exclude)).collect(Collectors.toList());
         return targets.get(Util.RANDOM.nextInt(targets.size()));
     }
 
-    public List<User> getUsers()
-    {
+    public List<User> getUsers() {
         return members.stream().map(GameMember::getUser).collect(Collectors.toList());
     }
 
-    public List<Player> getPlayers()
-    {
+    public List<Player> getPlayers() {
         return members.stream().map(GameMember::getPlayer).collect(Collectors.toList());
     }
 
-    public List<GameMember> getAlive()
-    {
+    public List<GameMember> getAlive() {
         return members.stream().filter(GameMember::isAlive).collect(Collectors.toList());
     }
 
-    public List<GameMember> getDead()
-    {
+    public List<GameMember> getDead() {
         return members.stream().filter(m -> !m.isAlive()).collect(Collectors.toList());
     }
 
-    public GameMember getWinner()
-    {
+    public GameMember getWinner() {
         return gameState == FINISHED ? getAlive().get(0) : null;
     }
 
-    public Enigma getInstance()
-    {
+    public Enigma getInstance() {
         return this.instance;
     }
 
-    public ThreadChannel getChannel()
-    {
+    public ThreadChannel getChannel() {
         return this.channel;
     }
 
-    public GameMode getMode()
-    {
+    public GameMode getMode() {
         return this.mode;
     }
 
-    public List<GameMember> getMembers()
-    {
+    public List<GameMember> getMembers() {
         return this.members;
     }
 
-    public CommandListener getCommandListener()
-    {
+    public CommandListener getCommandListener() {
         return this.commandListener;
     }
 
-    public Stacker getAfkTimer()
-    {
+    public Stacker getAfkTimer() {
         return this.afkTimer;
     }
 
-    public List<GameAction> getActions()
-    {
+    public List<GameAction> getActions() {
         return this.actions;
     }
 
-    public void setActions(List<GameAction> actions)
-    {
+    public void setActions(List<GameAction> actions) {
         this.actions = actions;
     }
 
-    public List<Distortion> getDistortions()
-    {
+    public List<Distortion> getDistortions() {
         return distortions;
     }
 
-    public void setDistortions(List<Distortion> distortions)
-    {
+    public void setDistortions(List<Distortion> distortions) {
         this.distortions = distortions;
     }
 
@@ -333,43 +299,35 @@ public class Game
         return allDistortions;
     }
 
-    public LocalDateTime getLastAction()
-    {
+    public LocalDateTime getLastAction() {
         return this.lastAction;
     }
 
-    public void setLastAction(LocalDateTime lastAction)
-    {
+    public void setLastAction(LocalDateTime lastAction) {
         this.lastAction = lastAction;
     }
 
-    public GameState getGameState()
-    {
+    public GameState getGameState() {
         return this.gameState;
     }
 
-    public void setGameState(GameState state)
-    {
+    public void setGameState(GameState state) {
         this.gameState = state;
     }
 
-    public int getTurnCount()
-    {
+    public int getTurnCount() {
         return this.turnCount;
     }
 
-    public void setTurnCount(int turnCount)
-    {
+    public void setTurnCount(int turnCount) {
         this.turnCount = turnCount;
     }
 
-    public int getTurnIndex()
-    {
+    public int getTurnIndex() {
         return this.turnIndex;
     }
 
-    public void setTurnIndex(int turnIndex)
-    {
+    public void setTurnIndex(int turnIndex) {
         this.turnIndex = turnIndex;
     }
 }

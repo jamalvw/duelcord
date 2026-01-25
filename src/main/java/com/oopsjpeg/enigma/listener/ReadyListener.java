@@ -3,8 +3,6 @@ package com.oopsjpeg.enigma.listener;
 import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.QueueService;
-import com.oopsjpeg.enigma.game.GameState;
-import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Listener;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.common.util.Snowflake;
@@ -22,14 +20,25 @@ public class ReadyListener implements Listener {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final Enigma instance;
 
-    public ReadyListener(Enigma instance)
-    {
+    public ReadyListener(Enigma instance) {
         this.instance = instance;
     }
 
+    public static void schedule(Runnable task, long delay, long period, TimeUnit unit) {
+        Enigma.SCHEDULER.scheduleAtFixedRate(() -> {
+            try {
+                task.run();
+            } catch (Throwable t) {
+                // This is the "Safety Net"
+                System.err.printf("[%s] Task failed: %s%n",
+                        Thread.currentThread().getName(), t.getMessage());
+                t.printStackTrace();
+            }
+        }, delay, period, unit);
+    }
+
     @Override
-    public void register(GatewayDiscordClient client)
-    {
+    public void register(GatewayDiscordClient client) {
         client.on(ReadyEvent.class).subscribe(this::onReady);
 
         //instance.getMongo().loadPlayers();
@@ -56,26 +65,11 @@ public class ReadyListener implements Listener {
                 .subscribe(), 0, 10, TimeUnit.MINUTES);
     }
 
-    public static void schedule(Runnable task, long delay, long period, TimeUnit unit) {
-        Enigma.SCHEDULER.scheduleAtFixedRate(() -> {
-            try {
-                task.run();
-            } catch (Throwable t) {
-                // This is the "Safety Net"
-                System.err.printf("[%s] Task failed: %s%n",
-                        Thread.currentThread().getName(), t.getMessage());
-                t.printStackTrace();
-            }
-        }, delay, period, unit);
-    }
-
-    public void onReady(ReadyEvent event)
-    {
+    public void onReady(ReadyEvent event) {
         LOGGER.info("Enigma is ready.");
     }
 
-    public Enigma getInstance()
-    {
+    public Enigma getInstance() {
         return this.instance;
     }
 }

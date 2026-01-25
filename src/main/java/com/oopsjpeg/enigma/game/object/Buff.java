@@ -18,8 +18,7 @@ public abstract class Buff extends GameObject {
     private boolean isSilent = false;
     private float power;
 
-    public Buff(GameMember owner, GameMember source, String name, boolean debuff, int totalTurns, boolean shouldCountOnTurnEnd, float power)
-    {
+    public Buff(GameMember owner, GameMember source, String name, boolean debuff, int totalTurns, boolean shouldCountOnTurnEnd, float power) {
         this.owner = owner;
         this.source = source;
         this.name = name;
@@ -31,13 +30,11 @@ public abstract class Buff extends GameObject {
         currentTurns = totalTurns;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public boolean turn()
-    {
+    public boolean turn() {
         currentTurns--;
         return shouldRemove();
     }
@@ -46,8 +43,7 @@ public abstract class Buff extends GameObject {
         setCurrentTurns(getTotalTurns());
     }
 
-    public boolean isDebuff()
-    {
+    public boolean isDebuff() {
         return debuff;
     }
 
@@ -55,13 +51,11 @@ public abstract class Buff extends GameObject {
         return owner;
     }
 
-    public GameMember getSource()
-    {
+    public GameMember getSource() {
         return source;
     }
 
-    public float getPower()
-    {
+    public float getPower() {
         return power;
     }
 
@@ -69,43 +63,35 @@ public abstract class Buff extends GameObject {
         this.power = power;
     }
 
-    public boolean hasPower()
-    {
+    public boolean hasPower() {
         return power != 0;
     }
 
-    public String formatPower()
-    {
+    public String formatPower() {
         return String.valueOf((int) Math.ceil(getPower()));
     }
 
-    public int getTotalTurns()
-    {
+    public int getTotalTurns() {
         return totalTurns;
     }
 
-    public void setTotalTurns(int totalTurns)
-    {
+    public void setTotalTurns(int totalTurns) {
         this.totalTurns = totalTurns;
     }
 
-    public int getCurrentTurns()
-    {
+    public int getCurrentTurns() {
         return currentTurns;
     }
 
-    public void setCurrentTurns(int currentTurns)
-    {
+    public void setCurrentTurns(int currentTurns) {
         this.currentTurns = currentTurns;
     }
 
-    public boolean shouldRemove()
-    {
+    public boolean shouldRemove() {
         return shouldRemove || currentTurns == 0;
     }
 
-    public boolean isSilent()
-    {
+    public boolean isSilent() {
         return isSilent;
     }
 
@@ -113,25 +99,21 @@ public abstract class Buff extends GameObject {
         return shouldCountOnTurnEnd;
     }
 
-    public void remove()
-    {
+    public void remove() {
         remove(false);
     }
 
-    public void remove(boolean isSilent)
-    {
+    public void remove(boolean isSilent) {
         shouldRemove = true;
         this.isSilent = isSilent;
     }
 
-    public Stats getStats()
-    {
+    public Stats getStats() {
         return new Stats();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
 }

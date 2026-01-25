@@ -2,23 +2,19 @@ package com.oopsjpeg.enigma.game.action;
 
 import com.oopsjpeg.enigma.game.*;
 
-public class AttackAction implements GameAction
-{
+public class AttackAction implements GameAction {
     private final GameMember target;
 
-    public AttackAction(GameMember target)
-    {
+    public AttackAction(GameMember target) {
         this.target = target;
     }
 
-    public GameMember getTarget()
-    {
+    public GameMember getTarget() {
         return target;
     }
 
     @Override
-    public String act(GameMember actor)
-    {
+    public String act(GameMember actor) {
         DamageEvent e = EventManager.attack(actor, target);
         return EventManager.process(e);
     }

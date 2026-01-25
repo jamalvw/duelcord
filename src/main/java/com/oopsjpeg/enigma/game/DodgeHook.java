@@ -19,12 +19,10 @@ public class DodgeHook implements Hook<DamageEvent> {
         GameMember victim = event.getVictim();
         float dodgeChance = victim.getStats().get(DODGE);
 
-        if (dodgeChance > 0)
-        {
+        if (dodgeChance > 0) {
             float rand = Util.RANDOM.nextFloat();
 
-            if (rand < dodgeChance)
-            {
+            if (rand < dodgeChance) {
                 event.getOutput().add(Emote.DODGE + "**" + event.getVictim().getUsername() + "** dodged **" + event.getActor().getUsername() + "**'s hit!");
                 event.cancel();
             }

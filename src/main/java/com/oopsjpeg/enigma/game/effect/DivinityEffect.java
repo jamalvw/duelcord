@@ -6,41 +6,34 @@ import com.oopsjpeg.enigma.game.object.Effect;
 import static com.oopsjpeg.enigma.game.StatType.SKILL_POWER;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
-public class DivinityEffect extends Effect
-{
+public class DivinityEffect extends Effect {
     private final float spRatio;
 
-    public DivinityEffect(GameMember owner, float power)
-    {
+    public DivinityEffect(GameMember owner, float power) {
         this(owner, power, 0);
     }
 
-    public DivinityEffect(GameMember owner, float power, float spRatio)
-    {
+    public DivinityEffect(GameMember owner, float power, float spRatio) {
         super(owner, "Divinity", power, null);
         this.spRatio = spRatio;
     }
 
-    public float getTotalPower(float sp)
-    {
+    public float getTotalPower(float sp) {
         return getPower() + (sp * spRatio);
     }
 
     @Override
-    public String onDefend(GameMember member)
-    {
+    public String onDefend(GameMember member) {
         return member.shield(getTotalPower(member.getStats().get(SKILL_POWER)));
     }
 
     @Override
-    public String getStatus(GameMember member)
-    {
+    public String getStatus(GameMember member) {
         return "Divinity: " + Math.round(getTotalPower(member.getStats().get(SKILL_POWER)));
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Defending shields for **" + getPower() + "** " + (spRatio > 0 ? "+ __" + percent(spRatio) + " Skill Power__" : "") + ".";
     }
 }

@@ -10,8 +10,7 @@ public class DisarmDebuff extends Buff {
     }
 
     @Override
-    public String onTurnStart(GameMember member)
-    {
+    public String onTurnStart(GameMember member) {
         return Emote.ANGER + "**" + member.getUsername() + "** can't attack this turn.";
     }
 

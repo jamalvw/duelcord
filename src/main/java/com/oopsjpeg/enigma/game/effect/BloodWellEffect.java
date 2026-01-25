@@ -9,14 +9,12 @@ import com.oopsjpeg.enigma.util.Util;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
-public class BloodWellEffect extends Effect
-{
+public class BloodWellEffect extends Effect {
     private final int maxShield;
 
     private int currentShield = 0;
 
-    public BloodWellEffect(GameMember owner, float power, int maxShield)
-    {
+    public BloodWellEffect(GameMember owner, float power, int maxShield) {
         super(owner, "Blood Well", power, null);
         this.maxShield = maxShield;
 
@@ -42,32 +40,27 @@ public class BloodWellEffect extends Effect
         });
     }
 
-    public int getMaxShield()
-    {
+    public int getMaxShield() {
         return maxShield;
     }
 
-    public int getCurrentShield()
-    {
+    public int getCurrentShield() {
         return currentShield;
     }
 
     @Override
-    public String onTurnStart(GameMember member)
-    {
+    public String onTurnStart(GameMember member) {
         currentShield = 0;
         return null;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Attacks shield for __" + percent(getPower()) + "__ of damage dealt, up to **" + maxShield + "**.";
     }
 
     @Override
-    public String getStatus(GameMember member)
-    {
+    public String getStatus(GameMember member) {
         return "Blood Well: " + currentShield + "/" + maxShield;
     }
 }

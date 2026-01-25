@@ -1,6 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.assassin.skill;
 
-import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.buff.BleedDebuff;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
@@ -29,14 +32,12 @@ public class SlashSkill extends Skill {
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Slash";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Deal __" + DAMAGE_BASE + "__ + __" + percent(DAMAGE_AP_RATIO) + " AP__ + __"
                 + percent(DAMAGE_SP_RATIO) + " SP__ damage.\n" + "Has a __" + percent(BLEED_CHANCE)
                 + "__ chance to Bleed for __" + percent(BLEED_DAMAGE_RATIO) + "__ of damage dealt over **"
@@ -65,8 +66,7 @@ public class SlashSkill extends Skill {
         e.addDamage(stats.get(SKILL_POWER) * DAMAGE_SP_RATIO);
         e.proposeEffect(() -> {
             float rand = Util.RANDOM.nextFloat();
-            if (rand <= BLEED_CHANCE)
-            {
+            if (rand <= BLEED_CHANCE) {
                 float bleedDamage = e.getDamage() * BLEED_DAMAGE_RATIO;
                 output.add(target.addBuff(new BleedDebuff(target, actor, BLEED_TURNS, bleedDamage), Emote.BLEED));
             }

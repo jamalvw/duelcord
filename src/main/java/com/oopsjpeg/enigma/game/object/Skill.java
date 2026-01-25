@@ -20,26 +20,22 @@ import java.util.List;
 
 import static com.oopsjpeg.enigma.game.StatType.COOLDOWN_REDUCTION;
 
-public abstract class Skill implements Command, GameAction
-{
+public abstract class Skill implements Command, GameAction {
     private final Unit unit;
     private final Cooldown cooldown;
     private final int cost;
 
-    public Skill(Unit unit, int cost)
-    {
+    public Skill(Unit unit, int cost) {
         this(unit, cost, 0);
     }
 
-    public Skill(Unit unit, int cost, int cooldown)
-    {
+    public Skill(Unit unit, int cost, int cooldown) {
         this.unit = unit;
         this.cost = cost;
         this.cooldown = cooldown > 0 ? new Cooldown(cooldown) : null;
     }
 
-    public Unit getUnit()
-    {
+    public Unit getUnit() {
         return unit;
     }
 
@@ -47,8 +43,7 @@ public abstract class Skill implements Command, GameAction
         return cooldown;
     }
 
-    public boolean hasCooldown()
-    {
+    public boolean hasCooldown() {
         return cooldown != null;
     }
 
@@ -59,14 +54,12 @@ public abstract class Skill implements Command, GameAction
         return cost;
     }
 
-    public String getStatus(GameMember member)
-    {
+    public String getStatus(GameMember member) {
         return "**`>" + getName() + "`**: " + (!hasCooldown() ? "Ready" : (cooldown.isDone() ? "Ready" : "in " + cooldown.getCurrent() + " turn" + (cooldown.getCurrent() > 1 ? "s" : "")));
     }
 
     @Override
-    public void execute(Message message, String[] args)
-    {
+    public void execute(Message message, String[] args) {
         MessageChannel channel = message.getChannel().block();
         GameService gameService = Enigma.getInstance().getGameService();
         PlayerService playerService = Enigma.getInstance().getPlayerService();
@@ -79,20 +72,17 @@ public abstract class Skill implements Command, GameAction
 
         message.delete().subscribe();
 
-        if (actor.hasBuff(SilencedDebuff.class))
-        {
+        if (actor.hasBuff(SilencedDebuff.class)) {
             Util.sendFailure(channel, "You can't use skills while silenced.");
             return;
         }
 
-        if (hasCooldown() && !cooldown.isDone())
-        {
+        if (hasCooldown() && !cooldown.isDone()) {
             Util.sendFailure(channel, "**`>" + getName() + "`** will be ready in **" + cooldown.getCurrent() + "** turns.");
             return;
         }
 
-        if (hasCost(actor) && actor.getEnergy() < getCost(actor))
-        {
+        if (hasCost(actor) && actor.getEnergy() < getCost(actor)) {
             Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + cost + "** energy. You have **" + actor.getEnergy() + "**.");
             return;
         }

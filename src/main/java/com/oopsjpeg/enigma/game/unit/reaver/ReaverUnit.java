@@ -16,19 +16,16 @@ import discord4j.rest.util.Color;
 import java.util.EnumSet;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
-import static com.oopsjpeg.enigma.game.StatType.HEALTH_PER_TURN;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class ReaverUnit extends Unit {
     public static final float PASSIVE_SP_RATIO = 0.15f;
 
     private final GameMember owner;
-
-    private int voidPower = 0;
-
     private final InfiniteSkill infinite = new InfiniteSkill(this);
     private final ShockSkill shock = new ShockSkill(this);
     private final SummonSkill summon = new SummonSkill(this);
+    private int voidPower = 0;
 
     public ReaverUnit(GameMember owner) {
         this.owner = owner;

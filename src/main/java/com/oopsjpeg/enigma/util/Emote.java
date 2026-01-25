@@ -1,7 +1,6 @@
 package com.oopsjpeg.enigma.util;
 
-public class Emote
-{
+public class Emote {
     public static final String YES = ":white_check_mark: ";
     public static final String NO = "<:white_x:1115887841239638087> ";
 

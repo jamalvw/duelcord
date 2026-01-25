@@ -4,25 +4,21 @@ import com.oopsjpeg.enigma.game.Build;
 import com.oopsjpeg.enigma.game.GameAction;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Item;
-import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuyAction implements GameAction
-{
+public class BuyAction implements GameAction {
     private final Build build;
 
-    public BuyAction(Build build)
-    {
+    public BuyAction(Build build) {
         this.build = build;
     }
 
     @Override
-    public String act(GameMember actor)
-    {
+    public String act(GameMember actor) {
         List<String> output = new ArrayList<>();
         Item item = build.getItem();
 

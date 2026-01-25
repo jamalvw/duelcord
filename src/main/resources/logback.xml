@@ -8,10 +8,10 @@
         </encoder>
     </appender>
 
-    <logger name="com.oopsjpeg.enigma" level="debug" />
+    <logger name="com.oopsjpeg.enigma" level="debug"/>
 
     <root level="info">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
 
 </configuration>

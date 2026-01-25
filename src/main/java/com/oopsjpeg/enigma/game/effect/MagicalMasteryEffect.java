@@ -12,13 +12,11 @@ import static com.oopsjpeg.enigma.game.StatType.COOLDOWN_REDUCTION;
 import static com.oopsjpeg.enigma.game.StatType.MAX_HEALTH;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
-public class MagicalMasteryEffect extends Effect
-{
+public class MagicalMasteryEffect extends Effect {
     private final int cdReduction;
     private final Stacker skillCount;
 
-    public MagicalMasteryEffect(GameMember owner, int cdReduction, int skillLimit, float power)
-    {
+    public MagicalMasteryEffect(GameMember owner, int cdReduction, int skillLimit, float power) {
         super(owner, "Magical Mastery", power, null);
         this.cdReduction = cdReduction;
         this.skillCount = new Stacker(skillLimit);
@@ -35,8 +33,7 @@ public class MagicalMasteryEffect extends Effect
                 if (!event.isSkill()) return;
 
                 event.proposeEffect(() -> {
-                    if (skillCount.stack())
-                    {
+                    if (skillCount.stack()) {
                         event.addDamage(event.getVictim().getStats().get(MAX_HEALTH) * getPower());
                         skillCount.reset();
                     }
@@ -46,21 +43,18 @@ public class MagicalMasteryEffect extends Effect
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Skills recharge **" + cdReduction + "** turns faster." +
                 "\nEvery **" + skillCount.getMax() + "** damaging Skills, deal __" + percent(getPower()) + "__ of the target's max health.";
     }
 
     @Override
-    public String getStatus(GameMember member)
-    {
+    public String getStatus(GameMember member) {
         return "Magical Mastery: " + percent(getPower());
     }
 
     @Override
-    public Stats getStats()
-    {
+    public Stats getStats() {
         return new Stats()
                 .put(COOLDOWN_REDUCTION, cdReduction);
     }

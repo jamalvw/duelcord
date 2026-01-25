@@ -12,16 +12,22 @@ import java.util.EnumSet;
 
 public abstract class Unit extends GameObject {
     public abstract String getName();
+
     public abstract GameMember getOwner();
+
     public abstract Color getColor();
+
     public abstract String getDescription();
+
     public abstract String getSimpleDescription();
+
     public abstract Stats getStats();
+
     public abstract Skill[] getSkills();
+
     public abstract EnumSet<Items> getRecommendedBuild();
 
-    public EmbedCreateSpec embed()
-    {
+    public EmbedCreateSpec embed() {
         EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
 
         embed.color(getColor());

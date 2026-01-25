@@ -8,10 +8,8 @@ import com.oopsjpeg.enigma.game.object.Buff;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
-public class CrippleDebuff extends Buff
-{
-    public CrippleDebuff(GameMember owner, GameMember source, int totalTurns, float power)
-    {
+public class CrippleDebuff extends Buff {
+    public CrippleDebuff(GameMember owner, GameMember source, int totalTurns, float power) {
         super(owner, source, "Cripple", true, totalTurns, false, power);
 
         hook(DamageEvent.class, new Hook<DamageEvent>() {
@@ -30,14 +28,12 @@ public class CrippleDebuff extends Buff
     }
 
     @Override
-    public String getStatus(GameMember member)
-    {
+    public String getStatus(GameMember member) {
         return "Crippled: Taking " + formatPower() + " more damage";
     }
 
     @Override
-    public String formatPower()
-    {
+    public String formatPower() {
         return percent(getPower());
     }
 }

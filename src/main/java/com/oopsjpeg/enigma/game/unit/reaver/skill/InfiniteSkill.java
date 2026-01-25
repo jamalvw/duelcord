@@ -1,7 +1,6 @@
 package com.oopsjpeg.enigma.game.unit.reaver.skill;
 
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.StatType;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.reaver.buff.InfiniteBuff;

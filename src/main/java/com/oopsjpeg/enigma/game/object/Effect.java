@@ -10,8 +10,7 @@ public abstract class Effect extends GameObject {
     private final float power;
     private final Stats stats;
 
-    public Effect(GameMember owner, String name, float power, Stats stats)
-    {
+    public Effect(GameMember owner, String name, float power, Stats stats) {
         this.owner = owner;
         this.name = name;
         this.power = power;
@@ -22,26 +21,22 @@ public abstract class Effect extends GameObject {
         return owner;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public float getPower()
-    {
+    public float getPower() {
         return power;
     }
 
     public abstract String getDescription();
 
-    public Stats getStats()
-    {
+    public Stats getStats() {
         return stats != null ? stats : new Stats();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
 }

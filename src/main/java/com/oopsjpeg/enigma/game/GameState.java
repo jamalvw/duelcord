@@ -1,7 +1,6 @@
 package com.oopsjpeg.enigma.game;
 
-public enum GameState
-{
+public enum GameState {
     PICKING,
     PLAYING,
     FINISHED,

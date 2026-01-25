@@ -27,8 +27,7 @@ public class PotionItem extends Item {
     }
 
     @Override
-    public String onUse(GameMember member)
-    {
+    public String onUse(GameMember member) {
         member.addBuff(new PotionBuff(member, member, TURNS, HEAL), Emote.HEAL);
         int heal = HEAL / TURNS;
         member.heal(heal);
@@ -38,20 +37,17 @@ public class PotionItem extends Item {
     }
 
     @Override
-    public boolean canUse(GameMember member)
-    {
+    public boolean canUse(GameMember member) {
         return !member.hasBuff(PotionBuff.class);
     }
 
     @Override
-    public boolean removeOnUse()
-    {
+    public boolean removeOnUse() {
         return true;
     }
 
     @Override
-    public boolean isBuyable()
-    {
+    public boolean isBuyable() {
         return false;
     }
 }

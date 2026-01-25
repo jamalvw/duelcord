@@ -1,9 +1,6 @@
 package com.oopsjpeg.enigma.game.object;
 
-import com.oopsjpeg.enigma.game.*;
-
-import static com.oopsjpeg.enigma.game.object.Items.ALCHEMISTS_ELIXIR;
-import static com.oopsjpeg.enigma.util.Util.pickRandom;
+import com.oopsjpeg.enigma.game.Game;
 
 public enum Distortion {
     NONE("none", "none") {
@@ -148,21 +145,18 @@ public enum Distortion {
     private final String name;
     private final String description;
 
-    Distortion(String name, String description)
-    {
+    Distortion(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
     public abstract String start(Game game);
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 }

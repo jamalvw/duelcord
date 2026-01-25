@@ -61,8 +61,7 @@ public abstract class Event {
         this.effects.add(action);
     }
 
-    public Game getGame()
-    {
+    public Game getGame() {
         return actor.getGame();
     }
 

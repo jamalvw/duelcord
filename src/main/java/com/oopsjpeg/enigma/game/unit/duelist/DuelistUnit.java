@@ -19,7 +19,6 @@ import discord4j.rest.util.Color;
 import java.util.EnumSet;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
-import static com.oopsjpeg.enigma.game.StatType.HEALTH_PER_TURN;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class DuelistUnit extends Unit {

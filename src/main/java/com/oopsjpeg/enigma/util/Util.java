@@ -5,7 +5,6 @@ import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Effect;
-import com.oopsjpeg.enigma.storage.Player;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
@@ -18,27 +17,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
-import static com.oopsjpeg.enigma.game.Stats.*;
 
-public class Util
-{
+public class Util {
     public static final Random RANDOM = new Random();
     public static final Color COLOR_SUCCESS = Color.of(119, 178, 85);
     public static final Color COLOR_FAILURE = Color.of(221, 46, 68);
 
-    public static int nextInt(int min, int max)
-    {
+    public static int nextInt(int min, int max) {
         return min + RANDOM.nextInt(max - min);
     }
 
-    public static float nextFloat(float min, float max)
-    {
+    public static float nextFloat(float min, float max) {
         return min + RANDOM.nextFloat() * (max - min);
     }
 
     @SafeVarargs
-    public static <T> T pickRandom(T... array)
-    {
+    public static <T> T pickRandom(T... array) {
         return array[RANDOM.nextInt(array.length)];
     }
 
@@ -46,8 +40,7 @@ public class Util
         return list.get(RANDOM.nextInt(list.size()));
     }
 
-    public static String formatStats(Stats stats)
-    {
+    public static String formatStats(Stats stats) {
         List<String> output = new ArrayList<>();
         if (stats.get(MAX_HEALTH) > 0)
             output.add("Max Health: +**" + stats.getInt(MAX_HEALTH) + "**");
@@ -72,18 +65,15 @@ public class Util
         return Util.joinNonEmpty("\n", output);
     }
 
-    public static String formatEffects(List<Effect> effects)
-    {
+    public static String formatEffects(List<Effect> effects) {
         return effects.stream()
                 .map(e -> "**" + e.getName() + "**: " + e.getDescription())
                 .collect(Collectors.joining("\n"));
     }
 
-    public static String joinWithAnd(String... array)
-    {
+    public static String joinWithAnd(String... array) {
         StringBuilder builder = new StringBuilder();
-        for (int i = array.length - 1; i >= 0; i--)
-        {
+        for (int i = array.length - 1; i >= 0; i--) {
             if (i == 0)
                 builder.append(array[i]);
             else if (i == 1)
@@ -94,13 +84,11 @@ public class Util
         return builder.toString();
     }
 
-    public static String joinWithAnd(List<String> list)
-    {
+    public static String joinWithAnd(List<String> list) {
         return joinWithAnd(list.toArray(new String[0]));
     }
 
-    public static EmbedCreateSpec leaderboard()
-    {
+    public static EmbedCreateSpec leaderboard() {
         EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
         embed.author("Top 10 Players", null, Enigma.getInstance().getClient().getSelf().block().getAvatarUrl());
         embed.color(Color.YELLOW);
@@ -117,33 +105,27 @@ public class Util
         return embed.build();
     }
 
-    public static String percent(float x)
-    {
+    public static String percent(float x) {
         return Math.round(x * 100) + "%";
     }
 
-    public static String percentRaw(float x)
-    {
+    public static String percentRaw(float x) {
         return x * 100 + "%";
     }
 
-    public static float limit(float x, float min, float max)
-    {
+    public static float limit(float x, float min, float max) {
         return Math.max(min, Math.min(max, x));
     }
 
-    public static int limit(int x, int min, int max)
-    {
+    public static int limit(int x, int min, int max) {
         return (int) Math.ceil(limit((float) x, (float) min, (float) max));
     }
 
-    public static String damageText(DamageEvent event, String attacker, String victim, String emote)
-    {
+    public static String damageText(DamageEvent event, String attacker, String victim, String emote) {
         return damageText(event, attacker, victim, emote, "");
     }
 
-    public static String damageText(DamageEvent event, String attacker, String victim, String emote, String source)
-    {
+    public static String damageText(DamageEvent event, String attacker, String victim, String emote, String source) {
         GameMember victimM = event.getVictim();
         Stats stats = event.getVictim().getStats();
         return emote + "**" + attacker + "** damaged **" + victim + "** by **" + Math.round(event.getDamage()) + "**"
@@ -153,8 +135,7 @@ public class Util
                 + (!source.isEmpty() ? " (" + source + ")" : "");
     }
 
-    public static String timeDiff(LocalDateTime date1, LocalDateTime date2)
-    {
+    public static String timeDiff(LocalDateTime date1, LocalDateTime date2) {
         Duration duration = Duration.between(date1, date2);
         Stack<String> stack = new Stack<>();
 
@@ -172,24 +153,20 @@ public class Util
         return stack.stream().limit(3).collect(Collectors.joining(" "));
     }
 
-    public static String joinNonEmpty(String delimiter, Collection<String> output)
-    {
+    public static String joinNonEmpty(String delimiter, Collection<String> output) {
         output.removeAll(Arrays.asList("", null));
         return String.join(delimiter, output);
     }
 
-    public static String joinNonEmpty(String delimiter, String... output)
-    {
+    public static String joinNonEmpty(String delimiter, String... output) {
         return joinNonEmpty(delimiter, new ArrayList<>(Arrays.asList(output)));
     }
 
-    public static String comma(int value)
-    {
+    public static String comma(int value) {
         return new DecimalFormat("#,###").format(value);
     }
 
-    public static EmbedCreateSpec embed(String title, String description, Color color)
-    {
+    public static EmbedCreateSpec embed(String title, String description, Color color) {
         return EmbedCreateSpec.builder()
                 .title(title)
                 .description(description)
@@ -197,33 +174,27 @@ public class Util
                 .build();
     }
 
-    public static void send(MessageChannel channel, String content)
-    {
+    public static void send(MessageChannel channel, String content) {
         channel.createMessage(embed("", content, Color.CYAN)).subscribe();
     }
 
-    public static void send(MessageChannel channel, String title, String content)
-    {
+    public static void send(MessageChannel channel, String title, String content) {
         channel.createMessage(embed(title, content, Color.CYAN)).subscribe();
     }
 
-    public static void sendFailure(MessageChannel channel, String content)
-    {
+    public static void sendFailure(MessageChannel channel, String content) {
         channel.createMessage(embed("", Emote.NO + content, COLOR_FAILURE)).subscribe();
     }
 
-    public static void sendFailure(MessageChannel channel, String title, String content)
-    {
+    public static void sendFailure(MessageChannel channel, String title, String content) {
         channel.createMessage(embed(title, Emote.NO + content, COLOR_FAILURE)).subscribe();
     }
 
-    public static void sendSuccess(MessageChannel channel, String content)
-    {
+    public static void sendSuccess(MessageChannel channel, String content) {
         channel.createMessage(embed("", Emote.YES + content, COLOR_SUCCESS)).subscribe();
     }
 
-    public static void sendSuccess(MessageChannel channel, String title, String content)
-    {
+    public static void sendSuccess(MessageChannel channel, String title, String content) {
         channel.createMessage(embed(title, Emote.YES + content, COLOR_SUCCESS)).subscribe();
     }
 }

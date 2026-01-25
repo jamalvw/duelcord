@@ -29,8 +29,7 @@ public class EventManager {
         return event;
     }
 
-    public static <T extends Event> String process(T event)
-    {
+    public static <T extends Event> String process(T event) {
         Game game = event.getGame();
         GameMember actor = event.getActor();
 

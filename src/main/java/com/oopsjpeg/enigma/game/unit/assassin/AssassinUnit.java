@@ -106,16 +106,14 @@ public class AssassinUnit extends Unit {
     }
 
     @Override
-    public String onTurnStart(GameMember member)
-    {
+    public String onTurnStart(GameMember member) {
         Game game = member.getGame();
         List<GameMember> enemies = game.getNonCurrentMembers();
 
         if (enemies.isEmpty()) return null;
 
         List<String> output = new ArrayList<>();
-        for (GameMember enemy : enemies)
-        {
+        for (GameMember enemy : enemies) {
             if (enemy.hasBuff(MarkedDebuff.class)) {
                 enemy.removeBuffs(MarkedDebuff.class);
                 enemy.addBuff(new CrippleDebuff(enemy, member, 1, MarkSkill.CRIPPLE), Emote.CRIPPLE);

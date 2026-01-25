@@ -10,8 +10,7 @@ public class LifeStealHook implements Hook<DamageEvent> {
 
     @Override
     public void execute(DamageEvent event) {
-        if (event.isOnHit())
-        {
+        if (event.isOnHit()) {
             GameMember attacker = event.getActor();
             float heal = event.getDamage() * attacker.getStats().get(StatType.LIFE_STEAL);
             event.addHealing(heal * event.getOnHitScale());

@@ -10,22 +10,18 @@ import discord4j.core.event.domain.interaction.SelectMenuInteractionEvent;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 
-public class ComponentListener implements Listener
-{
+public class ComponentListener implements Listener {
     private final Enigma instance;
 
-    public ComponentListener(Enigma instance)
-    {
+    public ComponentListener(Enigma instance) {
         this.instance = instance;
     }
 
-    private void onSelectMenuInteraction(SelectMenuInteractionEvent event)
-    {
+    private void onSelectMenuInteraction(SelectMenuInteractionEvent event) {
         GatewayDiscordClient client = event.getClient();
 
         // Unit viewer
-        if (event.getCustomId().equals("unit_viewer"))
-        {
+        if (event.getCustomId().equals("unit_viewer")) {
             MessageChannel channel = event.getMessage().get().getChannel().block();
             Unit unit = Units.valueOf(event.getValues().get(0)).create(null);
 
@@ -40,8 +36,7 @@ public class ComponentListener implements Listener
         }
     }
 
-    public void onButtonInteractionEvent(ButtonInteractionEvent event)
-    {
+    public void onButtonInteractionEvent(ButtonInteractionEvent event) {
         String[] idChunks = event.getCustomId().split(";");
         String id = idChunks[0];
 
@@ -58,15 +53,13 @@ public class ComponentListener implements Listener
     }
 
     @Override
-    public void register(GatewayDiscordClient client)
-    {
+    public void register(GatewayDiscordClient client) {
         client.on(SelectMenuInteractionEvent.class).subscribe(this::onSelectMenuInteraction);
         client.on(ButtonInteractionEvent.class).subscribe(this::onButtonInteractionEvent);
     }
 
     @Override
-    public Enigma getInstance()
-    {
+    public Enigma getInstance() {
         return instance;
     }
 }

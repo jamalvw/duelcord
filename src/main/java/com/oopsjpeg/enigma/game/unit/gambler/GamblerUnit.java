@@ -11,7 +11,6 @@ import discord4j.rest.util.Color;
 import java.util.EnumSet;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
-import static com.oopsjpeg.enigma.game.StatType.HEALTH_PER_TURN;
 
 // Work in progress
 public class GamblerUnit extends Unit {

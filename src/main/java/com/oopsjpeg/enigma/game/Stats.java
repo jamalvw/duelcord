@@ -7,12 +7,10 @@ import java.util.Map;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
 
-public class Stats
-{
+public class Stats {
     private final Map<StatType, Float> values = new HashMap<>();
 
-    public Stats()
-    {
+    public Stats() {
         values.put(MAX_HEALTH, 0.0f);
         values.put(MAX_ENERGY, 0.0f);
         values.put(ATTACK_POWER, 0.0f);
@@ -31,10 +29,8 @@ public class Stats
         values.put(HEALTH_PER_TURN, 0.0f);
     }
 
-    public Stats put(StatType type, float value)
-    {
-        switch (type)
-        {
+    public Stats put(StatType type, float value) {
+        switch (type) {
             case MAX_HEALTH:
             case MAX_ENERGY:
             case ATTACK_POWER:
@@ -56,56 +52,47 @@ public class Stats
         return this;
     }
 
-    public float get(StatType type)
-    {
+    public float get(StatType type) {
         return values.getOrDefault(type, 0.0f);
     }
 
-    public int getInt(StatType type)
-    {
+    public int getInt(StatType type) {
         return (int) Math.ceil(get(type));
     }
 
-    public Stats add(StatType type, float value)
-    {
+    public Stats add(StatType type, float value) {
         put(type, get(type) + value);
         return this;
     }
 
-    public Stats sub(StatType type, float value)
-    {
+    public Stats sub(StatType type, float value) {
         put(type, get(type) - value);
         return this;
     }
 
-    public Stats mul(StatType type, float value)
-    {
+    public Stats mul(StatType type, float value) {
         put(type, get(type) * value);
         return this;
     }
 
-    public Stats div(StatType type, float value)
-    {
+    public Stats div(StatType type, float value) {
         put(type, get(type) / value);
         return this;
     }
 
-    public Stats putAll(Stats other)
-    {
+    public Stats putAll(Stats other) {
         values.clear();
         other.values.keySet().forEach(k -> put(k, other.values.get(k)));
         return this;
     }
 
-    public Stats addAll(Stats other)
-    {
+    public Stats addAll(Stats other) {
         other.values.keySet().forEach(k -> put(k, values.get(k) + other.values.get(k)));
         return this;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return values.toString();
     }
 }

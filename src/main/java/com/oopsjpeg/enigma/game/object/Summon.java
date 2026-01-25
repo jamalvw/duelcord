@@ -12,8 +12,7 @@ public abstract class Summon extends GameObject {
     private boolean shouldRemove = false;
     private boolean isBlocker = false;
 
-    public Summon(String name, GameMember owner, float health, boolean isBlocker)
-    {
+    public Summon(String name, GameMember owner, float health, boolean isBlocker) {
         this.name = name;
         this.owner = owner;
         this.health = health;
@@ -36,8 +35,7 @@ public abstract class Summon extends GameObject {
         this.health = health;
     }
 
-    public void takeHealth(float health)
-    {
+    public void takeHealth(float health) {
         setHealth(getHealth() - health);
     }
 
@@ -49,8 +47,7 @@ public abstract class Summon extends GameObject {
         return shouldRemove;
     }
 
-    public void remove()
-    {
+    public void remove() {
         shouldRemove = true;
     }
 

@@ -11,12 +11,10 @@ import com.oopsjpeg.enigma.util.Stacker;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
-public class DecimateEffect extends Effect
-{
+public class DecimateEffect extends Effect {
     private final Stacker critCount;
 
-    public DecimateEffect(GameMember owner, int critLimit, float power)
-    {
+    public DecimateEffect(GameMember owner, int critLimit, float power) {
         super(owner, "Decimate", power, null);
         this.critCount = new Stacker(critLimit);
 
@@ -42,14 +40,12 @@ public class DecimateEffect extends Effect
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Every **" + critCount.getMax() + "** Crits, **Cripple** the target by __" + percent(getPower()) + "__ until their next turn.";
     }
 
     @Override
-    public String getStatus(GameMember member)
-    {
+    public String getStatus(GameMember member) {
         return "Decimate: " + critCount.getCurrent() + "/" + critCount.getMax() + " (" + percent(getPower()) + ")";
     }
 }

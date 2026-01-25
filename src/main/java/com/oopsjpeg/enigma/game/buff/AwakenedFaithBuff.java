@@ -7,28 +7,23 @@ import com.oopsjpeg.enigma.util.Emote;
 
 import static com.oopsjpeg.enigma.game.StatType.MAX_ENERGY;
 
-public class AwakenedFaithBuff extends Buff
-{
-    public AwakenedFaithBuff(GameMember owner, GameMember source, float power)
-    {
+public class AwakenedFaithBuff extends Buff {
+    public AwakenedFaithBuff(GameMember owner, GameMember source, float power) {
         super(owner, source, "Awakened Faith", false, 2, true, power);
     }
 
     @Override
-    public String getStatus(GameMember member)
-    {
+    public String getStatus(GameMember member) {
         return "Awakened Faith: " + formatPower() + " bonus energy";
     }
 
     @Override
-    public String onTurnStart(GameMember member)
-    {
+    public String onTurnStart(GameMember member) {
         return Emote.ENERGY + "**" + member.getUsername() + "** gained __" + formatPower() + "__ bonus energy this turn.";
     }
 
     @Override
-    public Stats getStats()
-    {
+    public Stats getStats() {
         return new Stats()
                 .put(MAX_ENERGY, getPower());
     }

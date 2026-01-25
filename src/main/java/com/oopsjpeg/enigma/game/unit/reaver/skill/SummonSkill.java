@@ -38,8 +38,7 @@ public class SummonSkill extends Skill {
 
         List<String> output = new ArrayList<>();
 
-        for (int i = 0; i < 1 + voidPower; i++)
-        {
+        for (int i = 0; i < 1 + voidPower; i++) {
             Stats stats = actor.getStats();
             float health = HP + (stats.get(ATTACK_POWER) * HP_AP_RATIO) + (stats.get(SKILL_POWER) * HP_SP_RATIO);
             float damage = DAMAGE + (stats.get(ATTACK_POWER) * DAMAGE_AP_RATIO) + (stats.get(SKILL_POWER) * DAMAGE_SP_RATIO);

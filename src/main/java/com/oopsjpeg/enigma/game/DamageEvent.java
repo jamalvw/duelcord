@@ -31,8 +31,7 @@ public class DamageEvent extends Event {
     private boolean isDoT;
     private boolean ignoreShield;
 
-    public DamageEvent(GameMember attacker, GameMember victim)
-    {
+    public DamageEvent(GameMember attacker, GameMember victim) {
         super(attacker);
         this.victim = victim;
         setEmote(Emote.ATTACK);
@@ -69,22 +68,20 @@ public class DamageEvent extends Event {
         setDamage(getDamage() + amount);
     }
 
-    public void multiplyDamage(float mul)
-    {
+    public void multiplyDamage(float mul) {
         setDamage(getDamage() * mul);
     }
 
-    public void subtractDamage(float amount)
-    {
+    public void subtractDamage(float amount) {
         setDamage(getDamage() - amount);
-    }
-
-    public void setBlocked(boolean blocked) {
-        this.blocked = blocked;
     }
 
     public boolean isBlocked() {
         return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
     public boolean isOnHit() {
@@ -127,8 +124,7 @@ public class DamageEvent extends Event {
         isDoT = dot;
     }
 
-    public void crit()
-    {
+    public void crit() {
         isGoingToCrit = true;
     }
 

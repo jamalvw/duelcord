@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class GameObject  {
+public abstract class GameObject {
     private final Map<Class<? extends Event>, List<Hook<?>>> hooks = new HashMap<>();
 
     protected <T extends Event> void hook(Class<T> eventClass, Hook<T> hook) {
@@ -16,38 +16,31 @@ public abstract class GameObject  {
         return new ArrayList<>(hooks.getOrDefault(eventClass, new ArrayList<>()));
     }
 
-    public String getStatus(GameMember member)
-    {
+    public String getStatus(GameMember member) {
         return null;
     }
 
-    public String onTurnStart(GameMember member)
-    {
+    public String onTurnStart(GameMember member) {
         return null;
     }
 
-    public String onTurnEnd(GameMember member)
-    {
+    public String onTurnEnd(GameMember member) {
         return null;
     }
 
-    public String onDefend(GameMember member)
-    {
+    public String onDefend(GameMember member) {
         return null;
     }
 
-    public String onSkillUsed(GameMember member)
-    {
+    public String onSkillUsed(GameMember member) {
         return null;
     }
 
-    public float onHeal(float healAmount)
-    {
+    public float onHeal(float healAmount) {
         return healAmount;
     }
 
-    public float onShield(float shieldAmount)
-    {
+    public float onShield(float shieldAmount) {
         return shieldAmount;
     }
 

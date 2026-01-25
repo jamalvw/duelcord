@@ -1,6 +1,8 @@
 package com.oopsjpeg.enigma.game.unit.assassin.skill;
 
-import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
@@ -16,20 +18,17 @@ public class ExecuteSkill extends Skill {
     public static final float DAMAGE_MISSING_HP = .1f;
     public static final float DAMAGE_PER_DEBUFF = .06f;
 
-    public ExecuteSkill(Unit unit)
-    {
+    public ExecuteSkill(Unit unit) {
         super(unit, COST, COOLDOWN);
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Execute";
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Deal __" + DAMAGE_BASE + "__ + __" + percent(DAMAGE_MISSING_HP) +
                 "__ of enemy missing health, increased by __" + percentRaw(DAMAGE_PER_DEBUFF) + "__ per debuff they have.";
     }
@@ -40,8 +39,7 @@ public class ExecuteSkill extends Skill {
     }
 
     @Override
-    public String act(GameMember actor)
-    {
+    public String act(GameMember actor) {
         GameMember target = actor.getGame().getRandomTarget(actor);
 
         DamageEvent e = new DamageEvent(actor, target);

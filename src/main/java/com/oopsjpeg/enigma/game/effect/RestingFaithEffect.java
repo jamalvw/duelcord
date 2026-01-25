@@ -5,24 +5,20 @@ import com.oopsjpeg.enigma.game.buff.AwakenedFaithBuff;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.util.Emote;
 
-public class RestingFaithEffect extends Effect
-{
-    public RestingFaithEffect(GameMember owner, float power)
-    {
+public class RestingFaithEffect extends Effect {
+    public RestingFaithEffect(GameMember owner, float power) {
         super(owner, "Resting Faith", power, null);
     }
 
     @Override
-    public String onDefend(GameMember member)
-    {
+    public String onDefend(GameMember member) {
         if (!member.hasBuff(AwakenedFaithBuff.class))
             return member.addBuff(new AwakenedFaithBuff(member, member, getPower()), Emote.ENERGY);
         return null;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Defending grants **" + Math.round(getPower()) + "** bonus energy on the next turn." +
                 "\nCan't be activated while already in use.";
     }
