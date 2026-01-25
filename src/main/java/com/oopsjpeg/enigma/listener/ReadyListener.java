@@ -35,7 +35,7 @@ public class ReadyListener implements Listener
         QueueService queues = instance.getQueueService();
         GameService games = instance.getGameService();
 
-        Enigma.SCHEDULER.scheduleAtFixedRate(queues::refresh, 12, 12, TimeUnit.SECONDS);
+        schedule(queues::refresh, 12, 12, TimeUnit.SECONDS);
         //Enigma.SCHEDULER.scheduleAtFixedRate(() -> instance.getPlayers().values().stream()
         //        .filter(queues::isInQueue)
         //        .filter(p -> Instant.now().isAfter(p.getQueueTime().plus(5, ChronoUnit.MINUTES)))
@@ -44,14 +44,27 @@ public class ReadyListener implements Listener
         //            p.removeQueue();
         //            Util.sendFailure(p.getUser().getPrivateChannel().block(), "You've been removed from queue as there are currently no players available for that mode.");
         //        }), 2, 2, TimeUnit.MINUTES);
-        Enigma.SCHEDULER.scheduleAtFixedRate(games::checkForAfkGames, 1, 1, TimeUnit.MINUTES);
-        Enigma.SCHEDULER.scheduleAtFixedRate(() -> instance.getLeaderboardChannel().getMessagesBefore(Snowflake.of(Instant.now()))
+        schedule(games::checkForAfkGames, 1, 1, TimeUnit.MINUTES);
+        schedule(() -> instance.getLeaderboardChannel().getMessagesBefore(Snowflake.of(Instant.now()))
                 .switchIfEmpty(instance.getLeaderboardChannel().createEmbed(e -> e.setTitle("...")))
                 .blockFirst()
                 .edit(MessageEditSpec.builder().addEmbed(Util.leaderboard()
                                 .withFooter(EmbedCreateFields.Footer.of("Updates every 10 minutes.", null)))
                         .build())
                 .subscribe(), 0, 10, TimeUnit.MINUTES);
+    }
+
+    public static void schedule(Runnable task, long delay, long period, TimeUnit unit) {
+        Enigma.SCHEDULER.scheduleAtFixedRate(() -> {
+            try {
+                task.run();
+            } catch (Throwable t) {
+                // This is the "Safety Net"
+                System.err.printf("[%s] Task failed: %s%n",
+                        Thread.currentThread().getName(), t.getMessage());
+                t.printStackTrace();
+            }
+        }, delay, period, unit);
     }
 
     public void onReady(ReadyEvent event)
