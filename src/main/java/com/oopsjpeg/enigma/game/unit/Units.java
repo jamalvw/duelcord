@@ -13,8 +13,8 @@ public enum Units {
     GUNSLINGER("Gunslinger"),
     REAVER("Reaver"),
     DUELIST("Duelist"),
-    HACKER("Hacker"),
-    SHIFTER("Shifter");
+    HACKER("Hacker");
+    //SHIFTER("Shifter");
 
     public static Units fromName(String query)
     {
@@ -45,7 +45,7 @@ public enum Units {
             case REAVER: return new ReaverUnit(member);
             case DUELIST: return new DuelistUnit(member);
             case HACKER: return new HackerUnit(member);
-            case SHIFTER: return new ShifterUnit(member);
+            //case SHIFTER: return new ShifterUnit(member);
             default: throw new IllegalArgumentException();
         }
     }
