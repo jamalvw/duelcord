@@ -316,7 +316,7 @@ public class GameMember
 
     public String win()
     {
-        game.getInstance().endGame(game);
+        game.getInstance().getGameService().destroyGame(game);
         return Emote.VICTORY + getUser().getMention() + ", you have won the game!\n";
     }
 

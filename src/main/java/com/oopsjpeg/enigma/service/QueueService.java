@@ -53,13 +53,10 @@ public class QueueService {
                 LOGGER.debug("Checking if {} can join {} ({} players in queue)", player.getUser().getUsername(), mode.getName(), matchedPlayers.size());
 
                 if (matchedPlayers.size() == mode.getSize()) {
-                    Game game = new Game(Enigma.getInstance(), mode, matchedPlayers);
-
-                    Enigma.getInstance().getGames().add(game);
+                    Game game = Enigma.getInstance().getGameService().createGame(mode, matchedPlayers);
 
                     matchedPlayers.forEach(p ->
                     {
-                        p.setGame(game);
                         playersInQueue.remove(p);
                         registry.remove(p.getId());
                     });

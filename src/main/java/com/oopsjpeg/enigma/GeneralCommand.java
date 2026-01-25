@@ -1,12 +1,10 @@
 package com.oopsjpeg.enigma;
 
-import com.oopsjpeg.enigma.game.Build;
-import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.GameMode;
-import com.oopsjpeg.enigma.game.Tree;
+import com.oopsjpeg.enigma.game.*;
 import com.oopsjpeg.enigma.game.object.Item;
 import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.unit.Units;
+import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.PlayerService;
 import com.oopsjpeg.enigma.service.QueueService;
 import com.oopsjpeg.enigma.storage.Player;
@@ -99,8 +97,9 @@ public enum GeneralCommand implements Command
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
                     Player player = playerService.getOrCreate(author);
                     QueueService queueService = Enigma.getInstance().getQueueService();
+                    GameService gameService = Enigma.getInstance().getGameService();
 
-                    if (player.getGame() != null)
+                    if (gameService.findGame(player) != null)
                         Util.sendFailure(channel, "You're already in a match.");
                     else if (!channel.equals(Enigma.getInstance().getMatchmakingChannel()))
                         Util.sendFailure(channel, "You must be in " + Enigma.getInstance().getMatchmakingChannel().getMention() + " to queue for games.");
@@ -166,6 +165,7 @@ public enum GeneralCommand implements Command
                     MessageChannel channel = message.getChannel().block();
                     User author = message.getAuthor().orElse(null);
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
+                    GameService gameService = Enigma.getInstance().getGameService();
                     Player player = playerService.getOrCreate(author);
 
                     if (player.isSpectating()) {
@@ -174,7 +174,7 @@ public enum GeneralCommand implements Command
                         return;
                     }
 
-                    if (player.isInGame()) {
+                    if (gameService.findGame(player) != null) {
                         Util.sendFailure(channel, "You can't spectate while in a match.");
                         return;
                     }
@@ -210,14 +210,15 @@ public enum GeneralCommand implements Command
                     }
 
                     Player targetPlayer = playerService.get(target);
+                    Game game = gameService.findGame(targetPlayer);
 
-                    if (targetPlayer == null || !targetPlayer.isInGame()) {
+                    if (targetPlayer == null || game == null) {
                         Util.sendFailure(channel, "That player isn't in a match.");
                         return;
                     }
 
                     player.setSpectateId(target.getId().asString());
-                    Util.sendSuccess(channel, "You are now spectating **" + target.getUsername() + "**" + " in " + targetPlayer.getGame().getChannel().getMention() + ".");
+                    Util.sendSuccess(channel, "You are now spectating **" + target.getUsername() + "**" + " in " + game.getChannel().getMention() + ".");
                 }
             },
     ITEM("item")
@@ -225,18 +226,18 @@ public enum GeneralCommand implements Command
                 @Override
                 public void execute(Message message, String[] args)
                 {
-                    GameMember member = Enigma.getGameMemberFromMessage(message);
                     Items query = Items.fromName(String.join(" ", args));
 
                     if (query == null) return;
 
+                    GameService gameService = Enigma.getInstance().getGameService();
+                    PlayerService playerService = Enigma.getInstance().getPlayerService();
+                    GameMember member = gameService.findMember(playerService.get(message.getAuthor().get()));
+
                     Item item = query.create(member);
                     int cost = item.getCost();
-                    User author = message.getAuthor().get();
-                    PlayerService playerService = Enigma.getInstance().getPlayerService();
-                    Player player = playerService.get(author);
 
-                    if (player != null && player.isInGame())
+                    if (member != null)
                     {
                         Build build = item.build(member.getItems());
                         cost -= build.getReduction();

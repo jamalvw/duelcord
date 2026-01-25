@@ -2,38 +2,29 @@ package com.oopsjpeg.enigma;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.oopsjpeg.enigma.game.Game;
-import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.listener.CommandListener;
 import com.oopsjpeg.enigma.listener.ComponentListener;
 import com.oopsjpeg.enigma.listener.ReadyListener;
+import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.PlayerService;
 import com.oopsjpeg.enigma.service.QueueService;
-import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Config;
 import com.oopsjpeg.enigma.util.ConfigException;
 import com.oopsjpeg.enigma.util.Listener;
-import com.oopsjpeg.enigma.util.Util;
 import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.object.entity.Guild;
-import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.TextChannel;
-import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Enigma
 {
@@ -44,7 +35,7 @@ public class Enigma
     private static Enigma instance;
 
     private final ArrayList<Listener> listeners = new ArrayList<>();
-    private final LinkedList<Game> games = new LinkedList<>();
+    private final GameService gameService = new GameService();
     private final PlayerService playerService = new PlayerService();
     private final QueueService queueService = new QueueService();
     //private MongoManager mongo;
@@ -123,64 +114,8 @@ public class Enigma
         LOGGER.info("Removed listener of class '" + listener.getClass().getName() + "'.");
     }
 
-    public static GameMember getGameMemberFromMessage(Message message)
-    {
-        User user = message.getAuthor().get();
-        Player player = Enigma.getInstance().playerService.get(user);
-        if (!player.isInGame()) return null;
-        return player.getGame().getMember(user);
-    }
-
     public QueueService getQueueService() {
         return queueService;
-    }
-
-    public void endGame(Game game)
-    {
-        if (game.getTurnCount() > 7 && game.getMode().isRanked())
-        {
-            GameMember winner = game.getWinner();
-            List<GameMember> losers = game.getDead();
-
-            // Winner
-            winner.getPlayer().win(losers.get(0).getRankedPoints());
-            winner.getPlayer().addGems(Util.nextInt(25, 40));
-            //winner.getPlayer().getUnitData(winner.getUnit().getName()).addPoints(Util.nextInt(160, 200));
-            //mongo.savePlayer(winner.getPlayer());
-
-            removeListener(game.getCommandListener());
-            //game.getMembers().stream().flatMap(m -> getListeners().stream()).forEach(this::removeListener);
-
-            // Losers
-            for (GameMember loser : losers)
-            {
-                loser.getPlayer().lose(winner.getRankedPoints());
-                loser.getPlayer().addGems(Util.nextInt(10, 20));
-                //loser.getPlayer().getUnitData(loser.getUnit().getName()).addPoints(Util.nextInt(80, 100));
-                //mongo.savePlayer(loser.getPlayer());
-            }
-
-            // Send log embed
-            EmbedCreateSpec.Builder logEmbed = EmbedCreateSpec.builder();
-            LocalDateTime now = LocalDateTime.now();
-            logEmbed.color(Color.YELLOW);
-            logEmbed.author("Victory by " + winner.getUsername() + " on " + game.getMode().getName(), null, winner.getUser().getAvatarUrl());
-            //logEmbed.description("Playing as **" + winner.getUnit().getName() + "** (" + winner.getUnitData().getPoints() + " pts)"
-            //        + "\n**" + winner.getPlayer().getWins() + "** wins and **" + winner.getPlayer().getLosses() + "** losses."
-            //        + "\n**" + game.getTurnCount() + "** turns and **" + game.getActions().size() + "** actions."
-            //        + "\nOpponent(s): " + game.getDead().stream()
-            //        .map(loser -> loser.getUsername() + " (" + loser.getUnit().getName() + ")")
-            //        .collect(Collectors.joining(", ")));
-            logEmbed.footer(now.getYear() + "/" + now.getMonthValue() + "/" + now.getDayOfMonth(), null);
-
-            getMatchLogChannel().createMessage(logEmbed.build()).subscribe();
-        }
-
-        game.getPlayers().forEach(Player::removeGame);
-        listeners.remove(game.getCommandListener());
-        games.remove(game);
-
-        SCHEDULER.schedule(() -> game.getChannel().delete().subscribe(), 2, TimeUnit.MINUTES);
     }
 
     public Guild getGuild()
@@ -227,9 +162,8 @@ public class Enigma
         return this.commands;
     }
 
-    public LinkedList<Game> getGames()
-    {
-        return this.games;
+    public GameService getGameService() {
+        return gameService;
     }
 
     public PlayerService getPlayerService() {

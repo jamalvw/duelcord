@@ -1,8 +1,8 @@
 package com.oopsjpeg.enigma.storage;
 
 import com.oopsjpeg.enigma.Enigma;
+import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.PlayerService;
-import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.PermissionOverwrite;
@@ -14,7 +14,6 @@ import discord4j.rest.util.PermissionSet;
 public class Player
 {
     private final String id;
-    private transient Game game;
     private transient String spectateId;
     private int gems;
     private int wins;
@@ -39,16 +38,6 @@ public class Player
     public String getUsername()
     {
         return getUser().getUsername();
-    }
-
-    public boolean isInGame()
-    {
-        return game != null;
-    }
-
-    public void removeGame()
-    {
-        setGame(null);
     }
 
     public boolean isSpectating()
@@ -137,16 +126,6 @@ public class Player
         return this.id;
     }
 
-    public Game getGame()
-    {
-        return this.game;
-    }
-
-    public void setGame(Game game)
-    {
-        this.game = game;
-    }
-
     public String getSpectateId() {
         return spectateId;
     }
@@ -154,13 +133,14 @@ public class Player
     // todo: yuck. make a spectate service
     public void setSpectateId(String spectateId)
     {
-        PlayerService service = Enigma.getInstance().getPlayerService();
+        PlayerService playerService = Enigma.getInstance().getPlayerService();
+        GameService gameService = Enigma.getInstance().getGameService();
 
         if (isSpectating())
         {
-            Player player = service.get(spectateId);
+            Player target = playerService.get(spectateId);
             Snowflake id = Snowflake.of(this.id);
-            player.getGame().getChannel().addMemberOverwrite(id, PermissionOverwrite.forMember(id,
+            gameService.findGame(target).getChannel().addMemberOverwrite(id, PermissionOverwrite.forMember(id,
                     PermissionSet.none(),
                     PermissionSet.none())).subscribe();
         }
@@ -169,9 +149,9 @@ public class Player
 
         if (isSpectating())
         {
-            Player player = service.get(spectateId);
+            Player target = playerService.get(spectateId);
             Snowflake id = Snowflake.of(this.id);
-            player.getGame().getChannel().addMemberOverwrite(id, PermissionOverwrite.forMember(id,
+            gameService.findGame(target).getChannel().addMemberOverwrite(id, PermissionOverwrite.forMember(id,
                     PermissionSet.of(Permission.VIEW_CHANNEL),
                     PermissionSet.of(Permission.SEND_MESSAGES))).subscribe();
         }

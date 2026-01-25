@@ -5,9 +5,11 @@ import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.game.GameAction;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.GameObject;
 import com.oopsjpeg.enigma.game.buff.SilencedDebuff;
 import com.oopsjpeg.enigma.game.unit.Unit;
+import com.oopsjpeg.enigma.service.GameService;
+import com.oopsjpeg.enigma.service.PlayerService;
+import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Cooldown;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.entity.Message;
@@ -64,7 +66,10 @@ public abstract class Skill implements Command, GameAction
     public void execute(Message message, String[] args)
     {
         MessageChannel channel = message.getChannel().block();
-        GameMember actor = Enigma.getGameMemberFromMessage(message);
+        GameService gameService = Enigma.getInstance().getGameService();
+        PlayerService playerService = Enigma.getInstance().getPlayerService();
+        Player player = playerService.get(message.getAuthor().orElse(null));
+        GameMember actor = gameService.findMember(player);
         Game game = actor.getGame();
 
         if (!channel.equals(game.getChannel()) || !actor.equals(game.getCurrentMember()))

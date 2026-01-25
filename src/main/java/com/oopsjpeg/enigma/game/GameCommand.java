@@ -2,6 +2,7 @@ package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.Command;
 import com.oopsjpeg.enigma.Enigma;
+import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.PlayerService;
 import com.oopsjpeg.enigma.game.action.AttackAction;
 import com.oopsjpeg.enigma.game.action.BuyAction;
@@ -32,7 +33,8 @@ public enum GameCommand implements Command
                     User author = message.getAuthor().orElse(null);
                     MessageChannel channel = message.getChannel().block();
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
-                    Game game = playerService.get(author).getGame();
+                    GameService gameService = Enigma.getInstance().getGameService();
+                    Game game = gameService.findGame(playerService.get(author));
                     GameMember member = game.getMember(author);
 
                     if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))
@@ -57,7 +59,8 @@ public enum GameCommand implements Command
                     User author = message.getAuthor().orElse(null);
                     MessageChannel channel = message.getChannel().block();
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
-                    Game game = playerService.get(author).getGame();
+                    GameService gameService = Enigma.getInstance().getGameService();
+                    Game game = gameService.findGame(playerService.get(author));
                     GameMember member = game.getMember(author);
 
                     if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))
@@ -97,7 +100,8 @@ public enum GameCommand implements Command
                     User author = message.getAuthor().orElse(null);
                     MessageChannel channel = message.getChannel().block();
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
-                    Game game = playerService.get(author).getGame();
+                    GameService gameService = Enigma.getInstance().getGameService();
+                    Game game = gameService.findGame(playerService.get(author));
                     GameMember member = game.getMember(author);
 
                     if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))
@@ -118,7 +122,8 @@ public enum GameCommand implements Command
                     User author = message.getAuthor().orElse(null);
                     MessageChannel channel = message.getChannel().block();
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
-                    Game game = playerService.get(author).getGame();
+                    GameService gameService = Enigma.getInstance().getGameService();
+                    Game game = gameService.findGame(playerService.get(author));
 
                     if (channel.equals(game.getChannel()))
                     {
@@ -135,7 +140,8 @@ public enum GameCommand implements Command
                     User author = message.getAuthor().orElse(null);
                     MessageChannel channel = message.getChannel().block();
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
-                    Game game = playerService.get(author).getGame();
+                    GameService gameService = Enigma.getInstance().getGameService();
+                    Game game = gameService.findGame(playerService.get(author.getId().asString()));
                     GameMember member = game.getMember(author);
 
                     if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))
@@ -172,7 +178,8 @@ public enum GameCommand implements Command
                     User author = message.getAuthor().orElse(null);
                     MessageChannel channel = message.getChannel().block();
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
-                    Game game = playerService.get(author).getGame();
+                    GameService gameService = Enigma.getInstance().getGameService();
+                    Game game = gameService.findGame(playerService.get(author));
 
                     if (channel.equals(game.getChannel()))
                     {
@@ -189,7 +196,8 @@ public enum GameCommand implements Command
                     User author = message.getAuthor().orElse(null);
                     MessageChannel channel = message.getChannel().block();
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
-                    Game game = playerService.get(author).getGame();
+                    GameService gameService = Enigma.getInstance().getGameService();
+                    Game game = gameService.findGame(playerService.get(author));
                     GameMember member = game.getMember(author);
 
                     if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))
@@ -218,7 +226,8 @@ public enum GameCommand implements Command
                     User author = message.getAuthor().orElse(null);
                     MessageChannel channel = message.getChannel().block();
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
-                    Game game = playerService.get(author).getGame();
+                    GameService gameService = Enigma.getInstance().getGameService();
+                    Game game = gameService.findGame(playerService.get(author));
                     GameMember member = game.getMember(author);
 
                     if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))

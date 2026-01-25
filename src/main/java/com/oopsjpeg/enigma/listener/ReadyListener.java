@@ -1,6 +1,7 @@
 package com.oopsjpeg.enigma.listener;
 
 import com.oopsjpeg.enigma.Enigma;
+import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.QueueService;
 import com.oopsjpeg.enigma.game.GameState;
 import com.oopsjpeg.enigma.util.Emote;
@@ -32,6 +33,7 @@ public class ReadyListener implements Listener
         //instance.getMongo().loadPlayers();
 
         QueueService queues = instance.getQueueService();
+        GameService games = instance.getGameService();
 
         Enigma.SCHEDULER.scheduleAtFixedRate(queues::refresh, 12, 12, TimeUnit.SECONDS);
         //Enigma.SCHEDULER.scheduleAtFixedRate(() -> instance.getPlayers().values().stream()
@@ -42,16 +44,7 @@ public class ReadyListener implements Listener
         //            p.removeQueue();
         //            Util.sendFailure(p.getUser().getPrivateChannel().block(), "You've been removed from queue as there are currently no players available for that mode.");
         //        }), 2, 2, TimeUnit.MINUTES);
-        Enigma.SCHEDULER.scheduleAtFixedRate(() -> instance.getGames().stream()
-                .filter(g -> g.getGameState() == GameState.PLAYING)
-                .forEach(g ->
-                {
-                    g.getAfkTimer().stack();
-                    if (g.getAfkTimer().getCurrent() == 4)
-                        g.getChannel().createMessage(Emote.WARN + g.getCurrentMember().getMention() + ", you have **" + (g.getAfkTimer().getMax() / 2) + "** minutes to perform an action, otherwise you will **forfeit**.").subscribe();
-                    else if (g.getAfkTimer().isDone())
-                        g.getChannel().createMessage(g.getCurrentMember().lose()).subscribe();
-                }), 1, 1, TimeUnit.MINUTES);
+        Enigma.SCHEDULER.scheduleAtFixedRate(games::checkForAfkGames, 1, 1, TimeUnit.MINUTES);
         Enigma.SCHEDULER.scheduleAtFixedRate(() -> instance.getLeaderboardChannel().getMessagesBefore(Snowflake.of(Instant.now()))
                 .switchIfEmpty(instance.getLeaderboardChannel().createEmbed(e -> e.setTitle("...")))
                 .blockFirst()

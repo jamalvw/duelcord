@@ -21,15 +21,11 @@ import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.oopsjpeg.enigma.game.GameState.*;
 import static com.oopsjpeg.enigma.game.StatType.*;
-import static com.oopsjpeg.enigma.game.Stats.*;
 
 public class Game
 {
@@ -49,7 +45,7 @@ public class Game
     private int turnCount = 0;
     private int turnIndex = -1;
 
-    public Game(Enigma instance, GameMode mode, List<Player> players)
+    public Game(Enigma instance, GameMode mode, Collection<Player> players)
     {
         this.instance = instance;
         this.mode = mode;
@@ -224,6 +220,12 @@ public class Game
     {
         return members.stream()
                 .filter(m -> m.getUser().equals(user))
+                .findAny().orElse(null);
+    }
+
+    public GameMember getMember(Player player) {
+        return members.stream()
+                .filter(m -> m.getPlayer().equals(player))
                 .findAny().orElse(null);
     }
 
