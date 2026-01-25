@@ -14,8 +14,10 @@ import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.core.object.entity.channel.ThreadChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageEditSpec;
+import discord4j.core.spec.StartThreadWithoutMessageSpec;
 import discord4j.core.spec.TextChannelCreateSpec;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
@@ -30,7 +32,7 @@ import static com.oopsjpeg.enigma.game.StatType.*;
 public class Game
 {
     private final Enigma instance;
-    private final TextChannel channel;
+    private final ThreadChannel channel;
     private final Message statusMessage;
     private final GameMode mode;
     private final List<GameMember> members;
@@ -45,18 +47,22 @@ public class Game
     private int turnCount = 0;
     private int turnIndex = -1;
 
-    public Game(Enigma instance, GameMode mode, Collection<Player> players)
-    {
+    public Game(Enigma instance, GameMode mode, Collection<Player> players) {
         this.instance = instance;
         this.mode = mode;
 
-        channel = instance.getGuild().createTextChannel(TextChannelCreateSpec.builder().name("game").build()).block();
+        members = players.stream().map(p -> new GameMember(this, p)).collect(Collectors.toList());
+        Collections.shuffle(members);
 
-        Snowflake roleId = getGuild().getEveryoneRole().block().getId();
-        channel.addRoleOverwrite(roleId, PermissionOverwrite.forRole(roleId,
-                PermissionSet.none(), PermissionSet.of(Permission.VIEW_CHANNEL))).subscribe();
-        players.forEach(p -> channel.addMemberOverwrite(Snowflake.of(p.getId()), PermissionOverwrite.forMember(Snowflake.of(p.getId()),
-                PermissionSet.of(Permission.VIEW_CHANNEL), PermissionSet.none())).subscribe());
+        String threadName = getMembers().get(0).getUsername() + " vs. " + getMembers().get(1).getUsername();
+        channel = instance.getMatchmakingChannel().startPrivateThread(StartThreadWithoutMessageSpec.builder()
+                        .name(threadName)
+                        .invitable(false)
+                        .type(ThreadChannel.Type.GUILD_PRIVATE_THREAD)
+                        .autoArchiveDuration(ThreadChannel.AutoArchiveDuration.DURATION1)
+                        .build())
+                .block();
+        players.forEach(p -> channel.addMember(p.getUser()).subscribe());
 
         statusMessage = channel.createEmbed(EmbedCreateSpec.builder().description("Game status will appear here.").build()).block();
         statusMessage.pin().subscribe();
@@ -66,8 +72,6 @@ public class Game
                 GameCommand.values(), channel);
         instance.addListener(commandListener);
 
-        members = players.stream().map(p -> new GameMember(this, p)).collect(Collectors.toList());
-        Collections.shuffle(members);
 
         channel.createMessage(nextTurn()).subscribe();
     }
@@ -270,7 +274,7 @@ public class Game
         return this.instance;
     }
 
-    public TextChannel getChannel()
+    public ThreadChannel getChannel()
     {
         return this.channel;
     }

@@ -5,11 +5,8 @@ import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.PlayerService;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.common.util.Snowflake;
-import discord4j.core.object.PermissionOverwrite;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.User;
-import discord4j.rest.util.Permission;
-import discord4j.rest.util.PermissionSet;
 
 public class Player
 {
@@ -139,10 +136,7 @@ public class Player
         if (isSpectating())
         {
             Player target = playerService.get(spectateId);
-            Snowflake id = Snowflake.of(this.id);
-            gameService.findGame(target).getChannel().addMemberOverwrite(id, PermissionOverwrite.forMember(id,
-                    PermissionSet.none(),
-                    PermissionSet.none())).subscribe();
+            gameService.findGame(target).getChannel().addMember(target.getUser()).subscribe();
         }
 
         this.spectateId = spectateId;
@@ -150,10 +144,7 @@ public class Player
         if (isSpectating())
         {
             Player target = playerService.get(spectateId);
-            Snowflake id = Snowflake.of(this.id);
-            gameService.findGame(target).getChannel().addMemberOverwrite(id, PermissionOverwrite.forMember(id,
-                    PermissionSet.of(Permission.VIEW_CHANNEL),
-                    PermissionSet.of(Permission.SEND_MESSAGES))).subscribe();
+            gameService.findGame(target).getChannel().addMember(target.getUser()).subscribe();
         }
     }
 

@@ -19,7 +19,7 @@ public class CommandListener implements Listener
     private final Enigma instance;
     private final String prefix;
     private final LinkedList<Command> commands;
-    private TextChannel limit;
+    private MessageChannel limit;
     private User userLimit;
 
     public CommandListener(Enigma instance, String prefix, Command[] commands)
@@ -29,7 +29,7 @@ public class CommandListener implements Listener
         this.commands = new LinkedList<>(Arrays.asList(commands));
     }
 
-    public CommandListener(Enigma instance, String prefix, Command[] commands, TextChannel limit)
+    public CommandListener(Enigma instance, String prefix, Command[] commands, MessageChannel limit)
     {
         this(instance, prefix, commands);
         this.limit = limit;
@@ -98,7 +98,7 @@ public class CommandListener implements Listener
         return this.commands;
     }
 
-    public TextChannel getLimit()
+    public MessageChannel getLimit()
     {
         return this.limit;
     }
