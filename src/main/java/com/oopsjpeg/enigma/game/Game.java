@@ -3,7 +3,10 @@ package com.oopsjpeg.enigma.game;
 import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.game.buff.SilencedDebuff;
 import com.oopsjpeg.enigma.game.item.PotionItem;
-import com.oopsjpeg.enigma.game.object.*;
+import com.oopsjpeg.enigma.game.object.Buff;
+import com.oopsjpeg.enigma.game.object.Distortion;
+import com.oopsjpeg.enigma.game.object.Items;
+import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.listener.CommandListener;
 import com.oopsjpeg.enigma.storage.Player;
@@ -112,7 +115,7 @@ public class Game {
             output.add("Don't know who to play? Try **`" + commandListener.getPrefix() + GameCommand.PICK.getName() + " random`**");
         } else if (gameState == PLAYING) {
             GameMember member = getCurrentMember();
-            member.heal(member.getStats().get(HEALTH_PER_TURN) * (member.isDefensive() ? 2 : 1), null, false);
+            member.addHealth(member.getStats().get(HEALTH_PER_TURN) * (member.isDefensive() ? 2 : 1));
             member.giveGold(mode.handleGold(125 + (turnCount * 5)));
             member.giveGold(member.getStats().getInt(GOLD_PER_TURN));
             member.setEnergy(member.getStats().getInt(MAX_ENERGY));

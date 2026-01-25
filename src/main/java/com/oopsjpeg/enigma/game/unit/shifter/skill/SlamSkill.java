@@ -29,8 +29,9 @@ public class SlamSkill extends Skill {
         e.addDamage(stats.get(StatType.ATTACK_POWER) * DAMAGE_AP_RATIO);
         e.addDamage(stats.get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
         e.proposeEffect(() -> {
-            if (target.hasBuff(WeakenedDebuff.class))
-                e.getOutput().add(target.heal(e.getDamage() * HEAL, "Slam"));
+            if (target.hasBuff(WeakenedDebuff.class)) {
+                e.addHealing(target.getHealth() * HEAL);
+            }
         });
 
         return EventManager.process(e);

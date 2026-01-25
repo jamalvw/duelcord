@@ -181,7 +181,7 @@ public class DamageEvent extends Event {
         getGame().getMode().handleDamage(this);
 
         if (healing > 0)
-            getOutput().add(getActor().heal((int) ceil(healing)));
+            getOutput().add(EventManager.process(new HealEvent(getActor(), healing)));
         if (shielding > 0)
             getOutput().add(getActor().shield((int) ceil(shielding)));
 
@@ -202,7 +202,7 @@ public class DamageEvent extends Event {
         //}
 
         if (damage > 0) {
-            victim.takeHealth(round(damage));
+            victim.subtractHealth(round(damage));
             getOutput().add(0, Util.damageText(this, getActor().getUsername(), victim.getUsername(), getEmote(), getSource()));
         }
     }

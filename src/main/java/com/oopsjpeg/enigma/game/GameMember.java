@@ -257,27 +257,6 @@ public class GameMember {
                 + "**! [**" + getShield() + "**]";
     }
 
-    public String heal(float healAmount) {
-        return heal(healAmount, null, true);
-    }
-
-    public String heal(float healAmount, String source) {
-        return heal(healAmount, source, true);
-    }
-
-    public String heal(float healAmount, String source, boolean message) {
-        for (GameObject o : getData()) healAmount = o.onHeal(healAmount);
-
-        giveHealth(round(healAmount));
-
-        if (message)
-            return Emote.HEAL + "**" + getUsername() + "** healed for **" + round(healAmount) + "**! [**"
-                    + getHealth() + " / " + stats.getInt(MAX_HEALTH) + "**]"
-                    + (source == null ? "" : " (" + source + ")");
-
-        return null;
-    }
-
     public String defend() {
         if (!defensive) {
             defensive = true;
@@ -396,18 +375,16 @@ public class GameMember {
         return health;
     }
 
-    public void setHealth(int healthAmount) {
-        health = Util.limit(healthAmount, 0, stats.getInt(MAX_HEALTH));
+    public void setHealth(int health) {
+        this.health = Util.limit(health, 0, stats.getInt(MAX_HEALTH));
     }
 
-    public int giveHealth(int healthAmount) {
-        setHealth(getHealth() + healthAmount);
-        return getHealth();
+    public void addHealth(float health) {
+        setHealth(getHealth() + round(health));
     }
 
-    public int takeHealth(int healthAmount) {
-        setHealth(getHealth() - healthAmount);
-        return getHealth();
+    public void subtractHealth(float health) {
+        setHealth(getHealth() - round(health));
     }
 
     public boolean hasHealth(int healthAmount) {

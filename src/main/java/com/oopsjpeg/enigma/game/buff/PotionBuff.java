@@ -1,6 +1,8 @@
 package com.oopsjpeg.enigma.game.buff;
 
+import com.oopsjpeg.enigma.game.EventManager;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.HealEvent;
 import com.oopsjpeg.enigma.game.object.Buff;
 
 public class PotionBuff extends Buff {
@@ -10,7 +12,8 @@ public class PotionBuff extends Buff {
 
     @Override
     public String onTurnStart(GameMember member) {
-        return member.heal(getPower() / getTotalTurns(), "Potion");
+        HealEvent e = new HealEvent(member, getPower() / getTotalTurns());
+        return EventManager.process(e);
     }
 
     @Override

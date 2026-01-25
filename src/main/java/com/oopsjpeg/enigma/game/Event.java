@@ -45,6 +45,10 @@ public abstract class Event {
         return source;
     }
 
+    public boolean hasSource() {
+        return source != null && !source.isEmpty();
+    }
+
     public void setSource(String source) {
         this.source = source;
     }

@@ -36,10 +36,6 @@ public abstract class GameObject {
         return null;
     }
 
-    public float onHeal(float healAmount) {
-        return healAmount;
-    }
-
     public float onShield(float shieldAmount) {
         return shieldAmount;
     }

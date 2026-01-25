@@ -51,11 +51,6 @@ public class EventManager {
         if (!event.isCancelled()) {
             LOGGER.debug("Finalizing event");
             event.complete();
-            //event.getOutput().add(attacker.updateStats());
-            //event.getOutput().add(victim.updateStats());
-
-            //if (!event.getVictim().hasHealth())
-            //    event.getOutput().add(event.getVictim().lose());
         }
 
         return Util.joinNonEmpty("\n", event.getOutput());
