@@ -102,8 +102,6 @@ public enum GeneralCommand implements Command {
                 if (mode == null)
                     Util.sendFailure(channel, "Invalid game mode.");
                 else {
-                    if (player.isSpectating())
-                        player.removeSpectate();
                     queueService.addToQueue(player, mode);
                     Util.sendSuccess(channel, "**" + author.getUsername() + "** is in queue for **" + mode.getName() + "**.");
                 }
@@ -153,14 +151,9 @@ public enum GeneralCommand implements Command {
             GameService gameService = Enigma.getInstance().getGameService();
             Player player = playerService.getOrCreate(author);
 
-            if (player.isSpectating()) {
-                player.removeSpectate();
+            if (gameService.isSpectating(player)) {
+                gameService.removeSpectator(player);
                 Util.sendFailure(channel, "You have stopped spectating.");
-                return;
-            }
-
-            if (gameService.findGame(player) != null) {
-                Util.sendFailure(channel, "You can't spectate while in a match.");
                 return;
             }
 
@@ -202,7 +195,7 @@ public enum GeneralCommand implements Command {
                 return;
             }
 
-            player.setSpectateId(target.getId().asString());
+            gameService.addSpectator(game, player);
             Util.sendSuccess(channel, "You are now spectating **" + target.getUsername() + "**" + " in " + game.getChannel().getMention() + ".");
         }
     },

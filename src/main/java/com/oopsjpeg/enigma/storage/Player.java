@@ -1,8 +1,6 @@
 package com.oopsjpeg.enigma.storage;
 
 import com.oopsjpeg.enigma.Enigma;
-import com.oopsjpeg.enigma.service.GameService;
-import com.oopsjpeg.enigma.service.PlayerService;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Member;
@@ -10,7 +8,6 @@ import discord4j.core.object.entity.User;
 
 public class Player {
     private final String id;
-    private transient String spectateId;
     private int gems;
     private int wins;
     private int losses;
@@ -30,14 +27,6 @@ public class Player {
 
     public String getUsername() {
         return getUser().getUsername();
-    }
-
-    public boolean isSpectating() {
-        return spectateId != null;
-    }
-
-    public void removeSpectate() {
-        spectateId = null;
     }
 
     public void addGems(int gems) {
@@ -101,28 +90,6 @@ public class Player {
 
     public String getId() {
         return this.id;
-    }
-
-    public String getSpectateId() {
-        return spectateId;
-    }
-
-    // todo: yuck. make a spectate service
-    public void setSpectateId(String spectateId) {
-        PlayerService playerService = Enigma.getInstance().getPlayerService();
-        GameService gameService = Enigma.getInstance().getGameService();
-
-        if (isSpectating()) {
-            Player target = playerService.get(spectateId);
-            gameService.findGame(target).getChannel().addMember(target.getUser()).subscribe();
-        }
-
-        this.spectateId = spectateId;
-
-        if (isSpectating()) {
-            Player target = playerService.get(spectateId);
-            gameService.findGame(target).getChannel().addMember(target.getUser()).subscribe();
-        }
     }
 
     public int getGems() {

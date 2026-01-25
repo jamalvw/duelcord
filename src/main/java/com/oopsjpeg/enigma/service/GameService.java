@@ -27,6 +27,7 @@ public class GameService {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final List<Game> games = new CopyOnWriteArrayList<>();
     private final Map<String, Game> playerToGameRegistry = new ConcurrentHashMap<>();
+    private final Map<String, Game> spectatorToGameRegistry = new ConcurrentHashMap<>();
 
     public Game findGame(Player player) {
         if (player == null) return null;
@@ -40,6 +41,33 @@ public class GameService {
         return game.getMember(player);
     }
 
+    public void addSpectator(Game gameToSpectate, Player spectator) {
+        if (gameToSpectate == null || spectator == null) return;
+
+        LOGGER.debug("Adding spectator {} to game {}", spectator.getUser().getUsername(), gameToSpectate.getChannel().getId().asString());
+
+        // TODO deny perms to type. also the bot sends a message about the join, which is intrusive
+        gameToSpectate.getChannel().addMember(spectator.getUser()).subscribe();
+        spectatorToGameRegistry.put(spectator.getId(), gameToSpectate);
+    }
+
+    public void removeSpectator(Player spectator) {
+        if (spectator == null) return;
+
+        Game game = spectatorToGameRegistry.get(spectator.getId());
+
+        if (game == null) return;
+
+        game.getChannel().removeMember(spectator.getUser()).subscribe();
+        LOGGER.debug("Removing spectator {} from game {}", spectator.getUser().getUsername(), game.getChannel().getId().asString());
+
+        spectatorToGameRegistry.remove(spectator.getId());
+    }
+
+    public boolean isSpectating(Player player) {
+        return spectatorToGameRegistry.containsKey(player.getId());
+    }
+
     public Game createGame(GameMode mode, Collection<Player> players) {
         LOGGER.debug("Creating game with mode {} and {} players", mode, players.size());
 
@@ -47,8 +75,7 @@ public class GameService {
         players.forEach(player -> playerToGameRegistry.put(player.getId(), game));
         games.add(game);
 
-        // TODO: game IDs
-        LOGGER.debug("Game created with ID {}", "none");
+        LOGGER.debug("Game created with ID {}", game.getChannel().getId().asString());
         return game;
     }
 
