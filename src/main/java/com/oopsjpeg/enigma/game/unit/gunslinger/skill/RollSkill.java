@@ -41,6 +41,11 @@ public class RollSkill extends Skill {
 
     @Override
     public String getDescription() {
-        return "End the turn and gain __" + percent(DODGE) + "__ + __" + percentRaw(SP_RATIO) + " Skill Power__ Dodge until your next turn.";
+        return "End the turn early, gaining __" + percent(DODGE) + "__ + __" + percentRaw(SP_RATIO) + " Skill Power__ Dodge until your next turn.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "End the turn early, gaining bonus __Dodge Chance__ until your next turn.";
     }
 }

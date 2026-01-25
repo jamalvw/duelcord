@@ -42,4 +42,9 @@ public class FirewallSkill extends Skill {
                 + " Attack Power__ + __" + percent(SHIELD_SP_RATIO) + " Skill Power__."
                 + "\nIf the shield breaks, create **2 Bots**.";
     }
+
+    @Override
+    public String getSimpleDescription() {
+        return "End the turn early and gain a shield. If the shield breaks, create **2 Bots**.";
+    }
 }

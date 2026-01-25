@@ -5,12 +5,15 @@ import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.Stats;
+import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.gunslinger.skill.BarrageSkill;
 import com.oopsjpeg.enigma.game.unit.gunslinger.skill.DeadeyeSkill;
 import com.oopsjpeg.enigma.game.unit.gunslinger.skill.RollSkill;
 import discord4j.rest.util.Color;
+
+import java.util.EnumSet;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
@@ -29,6 +32,9 @@ public class GunslingerUnit extends Unit {
 
     public GunslingerUnit(GameMember owner) {
         this.owner = owner;
+
+        roll.getCooldown().start(0);
+        deadeye.getCooldown().start(0);
 
         hook(DamageEvent.class, new Hook<DamageEvent>() {
             @Override
@@ -85,12 +91,22 @@ public class GunslingerUnit extends Unit {
 
     @Override
     public String getDescription() {
-        return "The first Attack per turn always Crits and deals __" + percent(PASSIVE_SP_RATIO) + " Skill Power__ bonus damage.";
+        return "Your first attack each turn always crits and deals __" + percent(PASSIVE_SP_RATIO) + " Skill Power__ bonus damage.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Your first attack each turn always crits and deals bonus damage.";
     }
 
     @Override
     public Skill[] getSkills() {
         return new Skill[]{barrage, roll, deadeye};
+    }
+
+    @Override
+    public EnumSet<Items> getRecommendedBuild() {
+        return EnumSet.of(Items.IRON_SCIMITAR, Items.SOULSTEALER);
     }
 
     @Override

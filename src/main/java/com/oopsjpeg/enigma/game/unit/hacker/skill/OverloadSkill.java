@@ -62,7 +62,14 @@ public class OverloadSkill extends Skill {
     @Override
     public String getDescription() {
         return "Activate and destroy every **Bot**."
-                + "\nEach Bot has a __" + percent(DISARM_CHANCE)+ "__ chance to Disarm."
+                + "\nEach Bot has a __" + percent(DISARM_CHANCE)+ "__ chance to Disarm, preventing the enemy from attacking on their next turn."
                 + "\nIf they’re already Disarmed, deal __" + percent(BONUS_DAMAGE) + "__ bonus damage.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Activate and destroy every **Bot**." +
+                "\nEach Bot has a chance to Disarm, preventing the enemy from attacking on their next turn." +
+                "\nIf they’re already Disarmed, deal bonus damage.";
     }
 }

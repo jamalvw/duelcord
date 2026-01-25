@@ -73,4 +73,9 @@ public class DeadeyeSkill extends Skill {
                 + "__ per Barrage shot hit." + "\nBullseye deals __" + percent(BULLSEYE_RATIO)
                 + "__ of the target's missing health." + "\nDeadeye can crit.";
     }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Deal damage, with a chance to **Bullseye**, dealing more damage based on the enemy's missing health.";
+    }
 }

@@ -35,6 +35,11 @@ public class ExecuteSkill extends Skill {
     }
 
     @Override
+    public String getSimpleDescription() {
+        return "Deal damage based on enemy missing health, increased by each debuff they have.";
+    }
+
+    @Override
     public String act(GameMember actor)
     {
         GameMember target = actor.getGame().getRandomTarget(actor);

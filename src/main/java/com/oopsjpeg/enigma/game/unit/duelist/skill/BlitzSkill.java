@@ -46,4 +46,9 @@ public class BlitzSkill extends Skill {
     public String getDescription() {
         return "Cleanse all debuffs. For the rest of the turn, attacks deal __" + percent(ATTACK_RATIO) + " Damage__ but cost **25** energy. ";
     }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Cleanse all debuffs. For the rest of the turn, attacks deal less damage, but cost **25** energy.";
+    }
 }

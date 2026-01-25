@@ -23,4 +23,9 @@ public class BetSkill extends Skill {
     public String getDescription() {
         return "Both players bet __5% current health__.";
     }
+
+    @Override
+    public String getSimpleDescription() {
+        return "";
+    }
 }

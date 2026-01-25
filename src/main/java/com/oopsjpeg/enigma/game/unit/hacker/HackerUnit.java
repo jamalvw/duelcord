@@ -2,6 +2,7 @@ package com.oopsjpeg.enigma.game.unit.hacker;
 
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.hacker.bot.Bot;
@@ -15,6 +16,7 @@ import com.oopsjpeg.enigma.util.Util;
 import discord4j.rest.util.Color;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,10 @@ public class HackerUnit extends Unit {
 
     public HackerUnit(GameMember owner) {
         this.owner = owner;
+
+        inject.getCooldown().start(0);
+        firewall.getCooldown().start(1);
+        overload.getCooldown().start(0);
 
         hook(DamageEvent.class, new Hook<DamageEvent>() {
             @Override
@@ -83,10 +89,15 @@ public class HackerUnit extends Unit {
 
     @Override
     public String getDescription() {
-        return "When the enemy activates a trap, create a **Bot**, up to **" + BOT_LIMIT + "**." +
-                "\n\nBots deal __" + BOT_DAMAGE + "__ + __" + percent(BOT_DAMAGE_AP_RATIO) + " Attack Power__ + __"
+        return "Certain skills create **Bots**, up to **" + BOT_LIMIT + "**." +
+                "\nBots deal __" + BOT_DAMAGE + "__ + __" + percent(BOT_DAMAGE_AP_RATIO) + " Attack Power__ + __"
                 + percent(BOT_DAMAGE_SP_RATIO) + " Skill Power__ damage and apply On-Hit effects at __"
                 + percent(BOT_ON_HIT_RATIO) + "__ power when activated.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Certain skills create **Bots**.\nBots deal damage when activated by your actions.";
     }
 
     @Override
@@ -132,5 +143,10 @@ public class HackerUnit extends Unit {
     @Override
     public Skill[] getSkills() {
         return new Skill[]{breach, inject, firewall, overload};
+    }
+
+    @Override
+    public EnumSet<Items> getRecommendedBuild() {
+        return EnumSet.of(Items.FAITHBREAKER, Items.SHADOW_REAVER);
     }
 }

@@ -30,6 +30,7 @@ public class GameMember
     private boolean alive = true;
     private boolean defensive = false;
     private TrapType lastTrapType = null;
+    private boolean firstTurnDone = false;
 
     CommandListener commands;
 
@@ -221,16 +222,19 @@ public class GameMember
             stats.addAll(effect.getStats());
         }
 
+        List<String> buffsRemoved = new ArrayList<>();
         for (Buff buff : getBuffs())
         {
             if (buff.shouldRemove())
             {
                 buffs.remove(buff);
                 if (!buff.isSilent())
-                    output.add(Emote.TIME + "**" + getUsername() + "** no longer has **" + buff.getName() + "**.");
+                    buffsRemoved.add("**" + buff.getName() + "**");
             } else
                 stats.addAll(buff.getStats());
         }
+        if (!buffsRemoved.isEmpty())
+            output.add(Emote.TIME + "**" + getUsername() + "** no longer has **" + Util.joinWithAnd(buffsRemoved) + "**.");
 
         for (Summon summon : getSummons())
         {
@@ -638,5 +642,11 @@ public class GameMember
             embed.color(unit.getColor());
         }
         return embed.build();
+    }
+
+    public boolean firstTurn() {
+        if (firstTurnDone) return false;
+        firstTurnDone = true;
+        return true;
     }
 }

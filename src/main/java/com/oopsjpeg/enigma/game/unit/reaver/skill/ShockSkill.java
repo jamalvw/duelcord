@@ -49,4 +49,9 @@ public class ShockSkill extends Skill {
     public String getDescription() {
         return "Shock the enemy, dealing __" + DAMAGE + "__ + __" + percent(DAMAGE_SP_RATIO) + " Skill Power__ damage reducing their energy by 50 on their next turn.";
     }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Shock the enemy, dealing damage and reducing their energy by 50 on their next turn.";
+    }
 }

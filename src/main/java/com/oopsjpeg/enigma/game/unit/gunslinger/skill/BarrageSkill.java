@@ -67,4 +67,9 @@ public class BarrageSkill extends Skill {
                 + " Attack Power__ + __" + percent(SP_RATIO) + " Skill Power__." +
                 "\nShots can crit and apply on-hit effects at __25%__ power.";
     }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Fire " + SHOTS + " shots. Each shot applies On-Hit effects and can crit.";
+    }
 }

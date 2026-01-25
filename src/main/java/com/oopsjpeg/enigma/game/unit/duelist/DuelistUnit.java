@@ -6,6 +6,7 @@ import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.buff.BleedDebuff;
+import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.duelist.skill.BlitzSkill;
@@ -14,6 +15,8 @@ import com.oopsjpeg.enigma.game.unit.duelist.skill.ParrySkill;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Stacker;
 import discord4j.rest.util.Color;
+
+import java.util.EnumSet;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.game.StatType.HEALTH_PER_TURN;
@@ -33,6 +36,10 @@ public class DuelistUnit extends Unit {
 
     public DuelistUnit(GameMember owner) {
         this.owner = owner;
+
+        duel.getCooldown().start(0);
+        blitz.getCooldown().start(0);
+        parry.getCooldown().start(0);
 
         hook(DamageEvent.class, new Hook<DamageEvent>() {
             @Override
@@ -78,7 +85,12 @@ public class DuelistUnit extends Unit {
 
     @Override
     public String getDescription() {
-        return "Every **4** Hits, Bleed for __" + PASSIVE_DAMAGE + "__ + __" + percent(PASSIVE_DAMAGE_HP_RATIO) + " enemy current health__ over 2 turns.";
+        return "Every **4** Hits, apply a Bleed for __" + PASSIVE_DAMAGE + "__ + __" + percent(PASSIVE_DAMAGE_HP_RATIO) + " enemy current health__ damage over 2 turns.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Every **4** Hits, apply a Bleed for 2 turns.";
     }
 
     @Override
@@ -93,5 +105,10 @@ public class DuelistUnit extends Unit {
     @Override
     public Skill[] getSkills() {
         return new Skill[]{duel, blitz, parry};
+    }
+
+    @Override
+    public EnumSet<Items> getRecommendedBuild() {
+        return EnumSet.of(Items.SOULSTEALER, Items.SHADOW_REAVER);
     }
 }

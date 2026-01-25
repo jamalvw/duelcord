@@ -3,12 +3,15 @@ package com.oopsjpeg.enigma.game.unit.shifter;
 import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.*;
 import com.oopsjpeg.enigma.game.buff.WeakenedDebuff;
+import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.shifter.skill.SlamSkill;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Stacker;
 import discord4j.rest.util.Color;
+
+import java.util.EnumSet;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.game.StatType.HEALTH_PER_TURN;
@@ -74,6 +77,11 @@ public class ShifterUnit extends Unit {
     }
 
     @Override
+    public String getSimpleDescription() {
+        return "";
+    }
+
+    @Override
     public Stats getStats() {
         if (form.isDone())
             return new Stats()
@@ -111,5 +119,10 @@ public class ShifterUnit extends Unit {
     @Override
     public Skill[] getSkills() {
         return new Skill[]{slam};
+    }
+
+    @Override
+    public EnumSet<Items> getRecommendedBuild() {
+        return EnumSet.noneOf(Items.class);
     }
 }

@@ -244,10 +244,7 @@ public enum GeneralCommand implements Command
                     }
 
                     MessageChannel channel = message.getChannel().block();
-                    Util.send(channel, item.getName() + " (" + cost + "g)", Util.joinNonEmpty("\n",
-                            item.hasBuild() ? "*Build: " + Arrays.toString(item.getBuild()) + "*\n" : null,
-                            Util.formatStats(item.getStats()),
-                            Util.formatEffects(item.getEffects())));
+                    channel.createMessage(item.embed()).subscribe();
                 }
             },
     UNIT("unit")

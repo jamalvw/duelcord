@@ -1,11 +1,15 @@
 package com.oopsjpeg.enigma.game.object;
 
 import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.util.Util;
+import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.rest.util.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class Item extends GameObject {
     private final GameMember owner;
@@ -114,5 +118,13 @@ public abstract class Item extends GameObject {
     public boolean isBuyable()
     {
         return true;
+    }
+
+    public EmbedCreateSpec embed() {
+        return Util.embed(getName() + " (" + getCost() + "g)", Util.joinNonEmpty("\n\n",
+                "**`>buy " + getName() + "`**",
+                Util.formatStats(getStats()),
+                Util.formatEffects(getEffects()),
+                hasBuild() ? "*Builds from " + Arrays.stream(getBuild()).map(Items::getName).collect(Collectors.joining(" + ")) + "*": null), Color.CYAN);
     }
 }

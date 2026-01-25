@@ -53,7 +53,7 @@ public class GameService {
     }
 
     public void destroyGame(Game game) {
-        LOGGER.debug("Destroy game with ID {}", "none");
+        LOGGER.debug("Destroying game with ID {}", "none");
         if (game.getTurnCount() > 7 && game.getMode().isRanked()) {
             GameMember winner = game.getWinner();
             List<GameMember> losers = game.getDead();

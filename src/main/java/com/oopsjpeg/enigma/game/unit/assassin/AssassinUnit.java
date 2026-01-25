@@ -4,6 +4,7 @@ import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.buff.CrippleDebuff;
+import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.assassin.buff.MarkedDebuff;
@@ -17,6 +18,7 @@ import com.oopsjpeg.enigma.util.Util;
 import discord4j.rest.util.Color;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
@@ -36,6 +38,9 @@ public class AssassinUnit extends Unit {
 
     public AssassinUnit(GameMember owner) {
         this.owner = owner;
+
+        mark.getCooldown().start(0);
+        execute.getCooldown().start(0);
     }
 
     public SlashSkill getSlash() {
@@ -80,14 +85,24 @@ public class AssassinUnit extends Unit {
 
     @Override
     public String getDescription() {
-        return "After using a damaging Skill, your next Attack deals __" + PASSIVE_DAMAGE_BASE + "__ + __"
+        return "After using a damaging skill, your next attack deals __" + PASSIVE_DAMAGE_BASE + "__ + __"
                 + percent(PASSIVE_DAMAGE_SP_RATIO) + " Skill Power__ bonus damage, restores **"
-                + PASSIVE_ENERGY_RESTORE + "** Energy, and resets **Slash** cooldown.";
+                + PASSIVE_ENERGY_RESTORE + "** energy, and resets `**>Slash**` cooldown.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "After using a damaging skill, your next attack deals bonus damage, restores **" + PASSIVE_ENERGY_RESTORE + "** energy, and resets **`>Slash`** cooldown.";
     }
 
     @Override
     public Skill[] getSkills() {
         return new Skill[]{slash, mark, execute, cloak};
+    }
+
+    @Override
+    public EnumSet<Items> getRecommendedBuild() {
+        return EnumSet.of(Items.CRIMSON_MIGHT, Items.DAWN_HAMMER);
     }
 
     @Override

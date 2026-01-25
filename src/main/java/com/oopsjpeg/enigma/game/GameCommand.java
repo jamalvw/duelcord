@@ -1,7 +1,9 @@
 package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.Command;
+import com.oopsjpeg.enigma.ComponentManager;
 import com.oopsjpeg.enigma.Enigma;
+import com.oopsjpeg.enigma.EnigmaComponent;
 import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.PlayerService;
 import com.oopsjpeg.enigma.game.action.AttackAction;
@@ -15,12 +17,20 @@ import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.Units;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Util;
+import discord4j.core.object.component.ActionRow;
+import discord4j.core.object.component.Button;
+import discord4j.core.object.component.TextDisplay;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
+import discord4j.core.spec.MessageCreateSpec;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum GameCommand implements Command
 {
@@ -54,8 +64,7 @@ public enum GameCommand implements Command
     BUY("buy")
             {
                 @Override
-                public void execute(Message message, String[] args)
-                {
+                public void execute(Message message, String[] args) {
                     User author = message.getAuthor().orElse(null);
                     MessageChannel channel = message.getChannel().block();
                     PlayerService playerService = Enigma.getInstance().getPlayerService();
@@ -63,32 +72,62 @@ public enum GameCommand implements Command
                     Game game = gameService.findGame(playerService.get(author));
                     GameMember member = game.getMember(author);
 
-                    if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))
-                    {
+                    if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember())) {
                         message.delete().subscribe();
-                        if (game.getGameState() == GameState.PICKING)
+                        if (game.getGameState() == GameState.PICKING) {
                             Util.sendFailure(channel, "You cannot buy items until the game has started.");
-                        else
-                        {
-                            Items query = Items.fromName(String.join(" ", args));
-                            if (query == null)
-                                Util.sendFailure(channel, "Invalid item. Please try again.");
-                            else {
-                                Item item = query.create(member);
-                                if (!item.isBuyable())
-                                    Util.sendFailure(channel, "That item can't be bought.");
-                                else {
-                                    Build build = item.build(member.getItems());
+                            return;
+                        }
 
-                                    if (!member.hasGold(build.getCost()))
-                                        Util.sendFailure(channel, "You need **" + member.getGoldDifference(build.getCost()) + "** more gold for a(n) **" + item.getName() + "**.");
-                                    else if (build.getPostData().size() >= 5)
-                                        Util.sendFailure(channel, "You do not have enough inventory space for a(n) **" + item.getName() + "**.");
-                                    else
-                                        channel.createMessage(member.act(new BuyAction(build))).subscribe();
+                        if (!game.getCurrentMember().equals(member)) {
+                            Util.sendFailure(channel, "It's not your turn yet.");
+                            return;
+                        }
+
+                        Items query = Items.fromName(String.join(" ", args));
+                        Unit unit = member.getUnit();
+
+                        if (query == null) {
+                            Util.sendFailure(channel, "I can't find an item with that name.\n\nTry one of these items on " + unit.getName() + ": " + unit.getRecommendedBuild().stream().map(Items::getName).collect(Collectors.joining(", ")));
+                            return;
+                        }
+
+                        Item item = query.create(member);
+                        if (!item.isBuyable()) {
+                            Util.sendFailure(channel, item.getName() + " can't be bought.");
+                            return;
+                        }
+
+                        Build build = item.build(member.getItems());
+                        if (!member.hasGold(build.getCost())) {
+                            // TODO: AI made this, CLEAN it
+                            String suggestion = "";
+                            List<Item> buildPath = Arrays.stream(item.getBuild()).map(i -> i.create(null)).collect(Collectors.toList());
+                            List<Item> memberItems = member.getItems();
+
+                            Item cheapestNext = null;
+                            for (Item component : buildPath) {
+                                if (!memberItems.stream().anyMatch(i -> i.getClass().equals(component.getClass()))) {
+                                    if (cheapestNext == null || component.getCost() < cheapestNext.getCost()) {
+                                        cheapestNext = component;
+                                    }
                                 }
                             }
+
+                            if (cheapestNext != null) {
+                                suggestion = "\n\nTry buying **" + cheapestNext.getName() + "** first.";
+                            }
+
+                            Util.sendFailure(channel, "You need **" + member.getGoldDifference(build.getCost()) + "** more gold for **" + item.getName() + "**." + suggestion);
+                            return;
                         }
+
+                        if (build.getPostData().size() >= 5) {
+                            Util.sendFailure(channel, "You do not have enough inventory space for a(n) **" + item.getName() + "**.");
+                            return;
+                        }
+
+                        channel.createMessage(member.act(new BuyAction(build))).subscribe();
                     }
                 }
             },
@@ -103,6 +142,11 @@ public enum GameCommand implements Command
                     GameService gameService = Enigma.getInstance().getGameService();
                     Game game = gameService.findGame(playerService.get(author));
                     GameMember member = game.getMember(author);
+
+                    if (!game.getCurrentMember().equals(member)) {
+                        Util.sendFailure(channel, "It's not your turn yet.");
+                        return;
+                    }
 
                     if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))
                     {
@@ -144,6 +188,11 @@ public enum GameCommand implements Command
                     Game game = gameService.findGame(playerService.get(author.getId().asString()));
                     GameMember member = game.getMember(author);
 
+                    if (!game.getCurrentMember().equals(member)) {
+                        Util.sendFailure(channel, "It's not your turn yet.");
+                        return;
+                    }
+
                     if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))
                     {
                         message.delete().subscribe();
@@ -157,14 +206,34 @@ public enum GameCommand implements Command
                                     : Units.fromName(name);
                             if (type == null)
                                 Util.sendFailure(channel, "Invalid unit.");
-                            else
-                            {
+                            else {
                                 Unit unit = type.create(member);
+
+                                ComponentManager manager = Enigma.getInstance().getComponentManager();
+
+                                EnigmaComponent unitInfo = manager.register(e -> e.reply(InteractionApplicationCommandCallbackSpec.builder()
+                                        .ephemeral(true)
+                                        .embeds(unit.embed())
+                                        .build()).subscribe());
+                                EnigmaComponent unitBuildPath = manager.register(e -> e.reply(InteractionApplicationCommandCallbackSpec.builder()
+                                        .ephemeral(true)
+                                        .content("Typically, **" + unit.getName() + "** should build at least one of these items:")
+                                        .embeds(unit.getRecommendedBuild().stream()
+                                                .map(i -> i.create(null))
+                                                .map(Item::embed)
+                                                .collect(Collectors.toList()))
+                                        .build()).subscribe());
+
+
                                 member.setUnit(unit);
-                                final List<String> output = new ArrayList<>();
-                                output.add(Emote.YES + "**" + author.getUsername() + "** will play as **" + unit.getName() + "**!");
-                                output.add(game.nextTurn());
-                                channel.createMessage(Util.joinNonEmpty("\n", output)).subscribe();
+                                channel.createMessage(MessageCreateSpec.builder()
+                                        .components(
+                                                TextDisplay.of(Emote.YES + "**" + author.getUsername() + "** will play as **" + unit.getName() + "**!"),
+                                                ActionRow.of(
+                                                        Button.secondary(unitInfo.getId(), "What does " + unit.getName() + " do?"),
+                                                        Button.secondary(unitBuildPath.getId(), "What should " + unit.getName() + " buy?")),
+                                                TextDisplay.of(game.nextTurn()))
+                                        .build()).subscribe();
                             }
                         }
                     }
@@ -200,6 +269,11 @@ public enum GameCommand implements Command
                     Game game = gameService.findGame(playerService.get(author));
                     GameMember member = game.getMember(author);
 
+                    if (!game.getCurrentMember().equals(member)) {
+                        Util.sendFailure(channel, "It's not your turn yet.");
+                        return;
+                    }
+
                     if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))
                     {
                         message.delete().subscribe();
@@ -229,6 +303,11 @@ public enum GameCommand implements Command
                     GameService gameService = Enigma.getInstance().getGameService();
                     Game game = gameService.findGame(playerService.get(author));
                     GameMember member = game.getMember(author);
+
+                    if (!game.getCurrentMember().equals(member)) {
+                        Util.sendFailure(channel, "It's not your turn yet.");
+                        return;
+                    }
 
                     if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember()))
                     {

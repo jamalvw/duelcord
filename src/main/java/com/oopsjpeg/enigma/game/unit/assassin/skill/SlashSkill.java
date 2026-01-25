@@ -38,9 +38,14 @@ public class SlashSkill extends Skill {
     public String getDescription()
     {
         return "Deal __" + DAMAGE_BASE + "__ + __" + percent(DAMAGE_AP_RATIO) + " AP__ + __"
-                + percent(DAMAGE_SP_RATIO) + " SP__.\n" + "Has a __" + percent(BLEED_CHANCE)
+                + percent(DAMAGE_SP_RATIO) + " SP__ damage.\n" + "Has a __" + percent(BLEED_CHANCE)
                 + "__ chance to Bleed for __" + percent(BLEED_DAMAGE_RATIO) + "__ of damage dealt over **"
                 + BLEED_TURNS + "** turns.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Deal damage, with a chance to apply a Bleed for " + BLEED_TURNS + " turns.";
     }
 
     @Override

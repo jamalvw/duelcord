@@ -2,10 +2,13 @@ package com.oopsjpeg.enigma.game.unit.gambler;
 
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
+import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.gambler.skill.BetSkill;
 import discord4j.rest.util.Color;
+
+import java.util.EnumSet;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.game.StatType.HEALTH_PER_TURN;
@@ -41,6 +44,11 @@ public class GamblerUnit extends Unit {
     }
 
     @Override
+    public String getSimpleDescription() {
+        return "";
+    }
+
+    @Override
     public Stats getStats() {
         return new Stats()
                 .put(MAX_ENERGY, 150)
@@ -53,5 +61,10 @@ public class GamblerUnit extends Unit {
     @Override
     public Skill[] getSkills() {
         return new Skill[]{bet};
+    }
+
+    @Override
+    public EnumSet<Items> getRecommendedBuild() {
+        return EnumSet.noneOf(Items.class);
     }
 }

@@ -24,7 +24,7 @@ public class CloakSkill extends Skill {
         actor.addBuff(new CloakedBuff(actor, actor, DODGE), Emote.NINJA);
         actor.setEnergy(0);
 
-        return Emote.NINJA + "**" + actor.getUsername() + "** used **Cloak**, gaining __" + percent(DODGE) + "__ Dodge until damaged by a Skill.";
+        return Emote.NINJA + "**" + actor.getUsername() + "** used **Cloak**, gaining __" + percent(DODGE) + " Dodge Chance__ until damaged by a skill.";
     }
 
     @Override
@@ -34,7 +34,12 @@ public class CloakSkill extends Skill {
 
     @Override
     public String getDescription() {
-        return "End the turn early and gain __" + percent(DODGE) + " Dodge__ until your next turn.\n" +
+        return "End the turn early and gain bonus __Dodge Chance__ until your next turn.\n" +
                 "Being damaged by a skill ends this effect.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return getDescription();
     }
 }

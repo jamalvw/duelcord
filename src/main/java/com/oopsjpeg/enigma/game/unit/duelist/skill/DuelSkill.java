@@ -60,6 +60,12 @@ public class DuelSkill extends Skill {
     public String getDescription() {
         return "Strike 3 times. Each strike deals __" + percent(DAMAGE_AP_RATIO) + " Attack Power__ + __"
                 + percent(DAMAGE_SP_RATIO) + " Skill Power__ and applies On-Hit effects at __" + percent(ON_HIT_SCALE) + "__ power." +
-                "\nHas a __" + percent(TAUNT_CHANCE) + "__ chance to Taunt, forcing the enemy to Attack immediately on their next turn.";
+                "\nHas a __" + percent(TAUNT_CHANCE) + "__ chance to Taunt, forcing the enemy to attack at the start of their turn.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Strike 3 times, dealing damage and applying On-Hit effects." +
+                "\nHas a chance to Taunt, forcing the enemy to attack at the start of their turn.";
     }
 }

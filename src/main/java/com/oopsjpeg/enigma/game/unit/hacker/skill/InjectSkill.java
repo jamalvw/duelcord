@@ -28,8 +28,13 @@ public class InjectSkill extends Skill {
 
     @Override
     public String getDescription() {
-        return "Place a trap that creates and activates a **Bot** matching its type."
+        return "Place a trap that creates and activates a **Bot** matching the trap trigger."
                 + "\n\n*Trap trigger could be Attacking, Defending, or Using Skills."
                 + "\nOnce one type of trap is placed, that type will not reappear in the next placement.*";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Place a trap that creates and activates a **Bot** matching the trap trigger.";
     }
 }

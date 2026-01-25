@@ -27,7 +27,12 @@ public class MarkSkill extends Skill {
     @Override
     public String getDescription()
     {
-        return "Mark the enemy. If they're still marked on your next turn, consume the mark to Cripple them by __" + percent(CRIPPLE) + "__.";
+        return "Mark the enemy. If they're still marked on your next turn, consume the mark to deal __" + percent(CRIPPLE) + "__ damage to them during that turn.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Mark the enemy. If they're still marked on your next turn, consume the mark to deal more damage to them during that turn.";
     }
 
     @Override

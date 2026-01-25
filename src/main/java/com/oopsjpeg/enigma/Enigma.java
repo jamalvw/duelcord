@@ -15,6 +15,7 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.domain.interaction.ComponentInteractionEvent;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.channel.TextChannel;
 import org.slf4j.Logger;
@@ -38,6 +39,7 @@ public class Enigma
     private final GameService gameService = new GameService();
     private final PlayerService playerService = new PlayerService();
     private final QueueService queueService = new QueueService();
+    private final ComponentManager componentManager = new ComponentManager();
     //private MongoManager mongo;
     private GatewayDiscordClient client;
     private CommandListener commands;
@@ -79,6 +81,8 @@ public class Enigma
         addListener(new ReadyListener(this));
         addListener(new ComponentListener(this));
         addListener(commands);
+
+        this.client.on(ComponentInteractionEvent.class).subscribe(componentManager::execute);
     }
 
     public void loadConfig() throws IOException, ConfigException
@@ -168,5 +172,9 @@ public class Enigma
 
     public PlayerService getPlayerService() {
         return playerService;
+    }
+
+    public ComponentManager getComponentManager() {
+        return componentManager;
     }
 }

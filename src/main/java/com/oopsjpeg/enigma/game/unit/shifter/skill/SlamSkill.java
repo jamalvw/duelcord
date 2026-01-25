@@ -46,4 +46,9 @@ public class SlamSkill extends Skill {
         return "**Beast**: Deal __" + DAMAGE + "__ + __" + percent(DAMAGE_AP_RATIO) + "__ + __" + percent(DAMAGE_SP_RATIO) + " Skill Power>e__ damage."
                 + "\nIf the enemy is weakened, heal for __" + percent(HEAL) + "__ of the damage dealt.";
     }
+
+    @Override
+    public String getSimpleDescription() {
+        return "";
+    }
 }

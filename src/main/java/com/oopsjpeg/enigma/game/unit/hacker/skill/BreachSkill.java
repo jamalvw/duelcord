@@ -42,4 +42,10 @@ public class BreachSkill extends Skill {
         return "Deal __" + DAMAGE + "__ + __" + percent(DAMAGE_AP_RATIO) + " Attack Power__ + __"
                 + percent(DAMAGE_SP_RATIO) + " Skill Power__ damage directly to the enemy’s health, ignoring shields.";
     }
+
+    @Override
+    public String getSimpleDescription() {
+        return "Deal damage that ignores shields.";
+    }
+
 }

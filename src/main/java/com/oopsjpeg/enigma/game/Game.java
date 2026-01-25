@@ -5,6 +5,7 @@ import com.oopsjpeg.enigma.game.buff.SilencedDebuff;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.game.object.Distortion;
 import com.oopsjpeg.enigma.game.object.Skill;
+import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.listener.CommandListener;
 import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.*;
@@ -37,7 +38,7 @@ public class Game
     private final GameMode mode;
     private final List<GameMember> members;
     private final CommandListener commandListener;
-    private final Stacker afkTimer = new Stacker(10);
+    private final Stacker afkTimer = new Stacker(6);
 
     private List<GameAction> actions = new ArrayList<>();
     private List<Distortion> distortions = new ArrayList<>();
@@ -114,12 +115,12 @@ public class Game
             if (turnIndex == 0)
             {
                 String playerList = getPlayers().stream().map(Player::getUsername).collect(Collectors.joining(", "));
-                output.add("## " + mode.getName());
+                output.add("## Welcome to " + mode.getName());
                 output.add("featuring **" + getMembers().get(0).getUsername() + "** vs. **" + getMembers().get(1).getUsername() + "**!");
             }
-            output.add("### " + getCurrentMember().getMention() + "'s Pick");
-            output.add("Check " + instance.getUnitsChannel().getMention() + " to view units, then pick with one with `"
-                    + commandListener.getPrefix() + GameCommand.PICK.getName() + "`.");
+            output.add("# " + getCurrentMember().getMention() + "'s Pick");
+            output.add("Choose a unit with **`" + commandListener.getPrefix() + GameCommand.PICK.getName() + " [unit]`**");
+            output.add("Don't know who to play? Try **`" + commandListener.getPrefix() + GameCommand.PICK.getName() + " random`**");
         } else if (gameState == PLAYING)
         {
             GameMember member = getCurrentMember();
@@ -162,10 +163,12 @@ public class Game
             output.add("### " + member.getMention() + "'s Turn - " + member.getGold() + " Gold");
             output.add("Open this channel's pinned messages to see your stats.");
 
+            Unit unit = member.getUnit();
+
             // On turn start
             output.addAll(member.getData().stream().map(e -> e.onTurnStart(member)).collect(Collectors.toList()));
             // Count skill cooldowns
-            List<String> readiedSkills = Arrays.stream(member.getUnit().getSkills())
+            List<String> readiedSkills = Arrays.stream(unit.getSkills())
                     .filter(Skill::hasCooldown)
                     .filter(skill ->
                     {

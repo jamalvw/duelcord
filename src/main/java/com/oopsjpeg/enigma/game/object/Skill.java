@@ -52,6 +52,8 @@ public abstract class Skill implements Command, GameAction
         return cooldown != null;
     }
 
+    public abstract String getSimpleDescription();
+
     @Override
     public int getCost(GameMember actor) {
         return cost;

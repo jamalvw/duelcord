@@ -32,7 +32,13 @@ public class ParrySkill extends Skill {
 
     @Override
     public String getDescription() {
-        return "End the turn early, gaining __" + percent(SKILL_RESIST) + "__ Skill Resist. When attacked, __"
-        + percent(BLOCK_CHANCE) + "__ chance to block it and gain 25 bonus energy next turn.";
+        return "End the turn early, gaining __" + percent(SKILL_RESIST) + "__ Skill Resist and __" + percent(BLOCK_CHANCE) + " Block Chance__." +
+                "\nIf you block an attack, gain 25 bonus energy next turn and end this effect.";
+    }
+
+    @Override
+    public String getSimpleDescription() {
+        return "End the turn early, gaining bonus __Skill Resist__ and __Block Chance__." +
+                "\nIf you block an attack, gain 25 bonus energy next turn and end this effect.";
     }
 }
