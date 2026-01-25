@@ -19,7 +19,7 @@ import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class GunslingerUnit extends Unit {
-    public static final float PASSIVE_SP_RATIO = .6f;
+    public static final float PASSIVE_SP_RATIO = .75f;
 
     private final GameMember owner;
 
@@ -84,7 +84,7 @@ public class GunslingerUnit extends Unit {
         return new Stats()
                 .put(MAX_ENERGY, 125)
                 .put(MAX_HEALTH, 1325)
-                .put(ATTACK_POWER, 16)
+                .put(ATTACK_POWER, 19)
                 .put(HEALTH_PER_TURN, 17);
     }
 
@@ -112,5 +112,9 @@ public class GunslingerUnit extends Unit {
     public String onTurnStart(GameMember member) {
         attackedThisRound = false;
         return null;
+    }
+
+    public BarrageSkill getBarrage() {
+        return barrage;
     }
 }

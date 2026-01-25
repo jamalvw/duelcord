@@ -10,7 +10,7 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 public class BreachSkill extends Skill {
     public static final int DAMAGE = 10;
     public static final float DAMAGE_AP_RATIO = 0.3f;
-    public static final float DAMAGE_SP_RATIO = 0.7f;
+    public static final float DAMAGE_SP_RATIO = 0.75f;
 
     public BreachSkill(Unit unit) {
         super(unit, 50);

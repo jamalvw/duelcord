@@ -14,7 +14,7 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 public class FirewallSkill extends Skill {
     public static final int SHIELD = 35;
     public static final float SHIELD_AP_RATIO = 0.1f;
-    public static final float SHIELD_SP_RATIO = 0.4f;
+    public static final float SHIELD_SP_RATIO = 0.45f;
 
     public FirewallSkill(Unit unit) {
         super(unit, 25, 3);

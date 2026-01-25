@@ -15,7 +15,7 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class DuelSkill extends Skill {
     public static final float DAMAGE_AP_RATIO = 0.6f;
-    public static final float DAMAGE_SP_RATIO = 0.6f;
+    public static final float DAMAGE_SP_RATIO = 0.65f;
     public static final float ON_HIT_SCALE = 0.5f;
     public static final float TAUNT_CHANCE = 0.5f;
 

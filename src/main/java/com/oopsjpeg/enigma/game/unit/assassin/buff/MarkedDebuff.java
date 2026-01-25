@@ -6,8 +6,8 @@ import com.oopsjpeg.enigma.game.object.Buff;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class MarkedDebuff extends Buff {
-    public MarkedDebuff(GameMember owner, GameMember source) {
-        super(owner, source, "Mark", true, 2, false, 0);
+    public MarkedDebuff(GameMember owner, GameMember source, float power) {
+        super(owner, source, "Mark", true, 2, false, power);
     }
 
     @Override

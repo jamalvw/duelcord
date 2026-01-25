@@ -5,7 +5,7 @@ import com.oopsjpeg.enigma.game.object.Buff;
 
 public class PotionBuff extends Buff {
     public PotionBuff(GameMember owner, GameMember source, int totalTurns, float power) {
-        super(owner, source, "Potion Healing", false, totalTurns - 1, false, power);
+        super(owner, source, "Potion Healing", false, totalTurns - 1, false, power / 2);
     }
 
     @Override

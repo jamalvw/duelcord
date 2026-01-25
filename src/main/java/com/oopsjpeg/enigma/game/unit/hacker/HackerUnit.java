@@ -26,7 +26,7 @@ public class HackerUnit extends Unit {
     public static final int BOT_LIMIT = 6;
     public static final int BOT_DAMAGE = 5;
     public static final float BOT_DAMAGE_AP_RATIO = 0.12f;
-    public static final float BOT_DAMAGE_SP_RATIO = 0.25f;
+    public static final float BOT_DAMAGE_SP_RATIO = 0.35f;
     public static final float BOT_ON_HIT_RATIO = 0.25f;
 
     private final GameMember owner;
@@ -41,7 +41,7 @@ public class HackerUnit extends Unit {
     public HackerUnit(GameMember owner) {
         this.owner = owner;
 
-        inject.getCooldown().start(0);
+        inject.getCooldown().start(1);
         firewall.getCooldown().start(1);
         overload.getCooldown().start(0);
 
@@ -109,7 +109,7 @@ public class HackerUnit extends Unit {
     public Stats getStats() {
         return new Stats()
                 .put(StatType.MAX_ENERGY, 125)
-                .put(StatType.ATTACK_POWER, 22)
+                .put(StatType.ATTACK_POWER, 25)
                 .put(StatType.HEALTH_PER_TURN, 10)
                 .put(StatType.MAX_HEALTH, 1310);
     }

@@ -34,7 +34,7 @@ public class MarkSkill extends Skill {
     @Override
     public String act(GameMember actor) {
         GameMember target = actor.getGame().getRandomTarget(actor);
-        target.addBuff(new MarkedDebuff(target, actor), ":bangbang: ");
+        target.addBuff(new MarkedDebuff(target, actor, CRIPPLE), ":bangbang: ");
         return ":bangbang: **" + actor.getUsername() + "** used **Mark** on **" + target.getUsername() + "**.";
     }
 }

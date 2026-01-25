@@ -19,7 +19,7 @@ import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class ReaverUnit extends Unit {
-    public static final float PASSIVE_SP_RATIO = 0.15f;
+    public static final float PASSIVE_SP_RATIO = 0.2f;
 
     private final GameMember owner;
     private final InfiniteSkill infinite = new InfiniteSkill(this);
@@ -91,7 +91,7 @@ public class ReaverUnit extends Unit {
         return new Stats()
                 .put(MAX_ENERGY, 125)
                 .put(MAX_HEALTH, 1390)
-                .put(ATTACK_POWER, 22)
+                .put(ATTACK_POWER, 25)
                 .put(HEALTH_PER_TURN, 10);
     }
 

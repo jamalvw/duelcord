@@ -26,7 +26,7 @@ import static com.oopsjpeg.enigma.util.Util.percent;
 
 public class AssassinUnit extends Unit {
     public static final int PASSIVE_DAMAGE_BASE = 15;
-    public static final float PASSIVE_DAMAGE_SP_RATIO = 0.55f;
+    public static final float PASSIVE_DAMAGE_SP_RATIO = 0.6f;
     public static final int PASSIVE_ENERGY_RESTORE = 25;
 
     private final GameMember owner;
@@ -79,7 +79,7 @@ public class AssassinUnit extends Unit {
         return new Stats()
                 .put(MAX_ENERGY, 100)
                 .put(MAX_HEALTH, 1260)
-                .put(ATTACK_POWER, 18)
+                .put(ATTACK_POWER, 21)
                 .put(HEALTH_PER_TURN, 17);
     }
 
