@@ -3,6 +3,7 @@ package com.oopsjpeg.enigma;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.rest.util.PermissionSet;
+import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 
@@ -13,7 +14,7 @@ public interface Command {
                 .findAny().orElse(null);
     }
 
-    void execute(Message message, String[] args);
+    Mono<?> execute(Message message, String[] args);
 
     String getName();
 

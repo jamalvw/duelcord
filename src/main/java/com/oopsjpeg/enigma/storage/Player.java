@@ -12,6 +12,7 @@ public class Player {
     private int wins;
     private int losses;
     private int rp;
+    private boolean hasPlayedBefore;
 
     public Player(String id) {
         this.id = id;
@@ -114,5 +115,13 @@ public class Player {
 
     public void setLosses(int losses) {
         this.losses = losses;
+    }
+
+    public boolean hasPlayedBefore() {
+        return hasPlayedBefore;
+    }
+
+    public void setHasPlayedBefore(boolean hasPlayedBefore) {
+        this.hasPlayedBefore = hasPlayedBefore;
     }
 }

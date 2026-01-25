@@ -1,6 +1,7 @@
 package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.Enigma;
+import com.oopsjpeg.enigma.Guides;
 import com.oopsjpeg.enigma.TrapType;
 import com.oopsjpeg.enigma.game.object.*;
 import com.oopsjpeg.enigma.game.unit.Unit;
@@ -43,9 +44,14 @@ public class GameMember {
 
     private Stats stats = new Stats();
 
+    private Items queuedItem;
+    private Guides guides;
+
     public GameMember(Game game, Player player) {
         this.game = game;
         this.player = player;
+
+        if (!player.hasPlayedBefore()) guides = new Guides();
     }
 
     public User getUser() {
@@ -115,12 +121,16 @@ public class GameMember {
 
     public String addBuff(Buff buff, String emote) {
         final List<String> output = new ArrayList<>();
+        String message = "received";
 
         // If the member already has this buff, replace it
-        if (hasBuff(buff.getClass())) buffs.removeIf(b -> b.getClass().equals(buff.getClass()));
+        if (hasBuff(buff.getClass())) {
+            buffs.removeIf(b -> b.getClass().equals(buff.getClass()));
+            message = "refreshed";
+        }
 
         buffs.add(buff);
-        output.add(emote + "**" + getUsername() + "** received **" + buff.getName() + "**" +
+        output.add(emote + "**" + getUsername() + "** " + message + " **" + buff.getName() + "**" +
                 (buff.hasPower() ? " (" + buff.formatPower() + ")" : "") +
                 (buff.getTotalTurns() > 1 ? " for **" + buff.getTotalTurns() + "** turns" : "") + "!");
         output.add(updateStats());
@@ -203,7 +213,7 @@ public class GameMember {
                 stats.addAll(buff.getStats());
         }
         if (!buffsRemoved.isEmpty())
-            output.add(Emote.TIME + "**" + getUsername() + "** no longer has **" + Util.joinWithAnd(buffsRemoved) + "**.");
+            output.add(Emote.TIME + "**" + getUsername() + "** no longer has " + Util.joinWithAnd(buffsRemoved) + ".");
 
         for (Summon summon : getSummons()) {
             if (summon.shouldRemove()) {
@@ -562,5 +572,33 @@ public class GameMember {
         if (firstTurnDone) return false;
         firstTurnDone = true;
         return true;
+    }
+
+    public Items getQueuedItem() {
+        return queuedItem;
+    }
+
+    public void setQueuedItem(Items queuedItem) {
+        this.queuedItem = queuedItem;
+    }
+
+    public boolean hasQueuedItem() {
+        return queuedItem != null;
+    }
+
+    public void removeQueuedItem() {
+        queuedItem = null;
+    }
+
+    public Guides getGuides() {
+        return guides;
+    }
+
+    public void setGuides(Guides guides) {
+        this.guides = guides;
+    }
+
+    public boolean hasGuides() {
+        return guides != null;
     }
 }

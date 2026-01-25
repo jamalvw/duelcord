@@ -9,12 +9,16 @@ import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.TextChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
 public class CommandListener implements Listener {
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final Enigma instance;
     private final String prefix;
     private final LinkedList<Command> commands;
@@ -40,39 +44,33 @@ public class CommandListener implements Listener {
 
     @Override
     public void register(GatewayDiscordClient client) {
-        client.on(MessageCreateEvent.class).subscribe(this::onMessage);
+        client.on(MessageCreateEvent.class, this::onMessageCreate).subscribe();
     }
 
-    private void onMessage(MessageCreateEvent event) {
+    private Mono<?> onMessageCreate(MessageCreateEvent event) {
         GatewayDiscordClient client = event.getClient();
         Message message = event.getMessage();
         User author = message.getAuthor().orElse(null);
         String content = message.getContent();
         MessageChannel channel = message.getChannel().block();
 
-        if (author != null && channel != null
-                && (limit == null || channel.equals(limit))
-                && !author.equals(client.getSelf().block())
-                && content.toLowerCase().startsWith(prefix.toLowerCase())) {
-            if (userLimit != null && !author.equals(userLimit)) return;
+        if (author == null || channel == null
+                || (limit != null && !channel.equals(limit))
+                || (userLimit != null && !author.equals(userLimit))
+                || author.getId().equals(client.getSelfId())
+                || !content.toLowerCase().startsWith(prefix.toLowerCase()))
+            return Mono.empty();
 
-            String pat = Pattern.quote(prefix);
+        String[] split = content.split(" ");
+        String alias = split[0].replaceFirst(prefix, "");
+        String[] args = Arrays.copyOfRange(split, 1, split.length);
+        Command command = Command.get(commands, author, alias);
 
-            // Split multiple commands into chunks
-            String[] chunks = content.replaceFirst(pat, "").split(pat);
+        if (command == null) return Mono.empty();
 
-            // Loop chunks and execute each command
-            for (String cmdChunk : chunks) {
-                String[] split = cmdChunk.split(" ");
-                String alias = split[0].replaceFirst(pat, "");
-                String[] args = Arrays.copyOfRange(split, 1, split.length);
-                Command command = Command.get(commands, author, alias);
+        LOGGER.debug("{} issued command {} with args {}", author.getUsername(), alias, Arrays.toString(args));
 
-                if (command == null) continue;
-
-                command.execute(message, args);
-            }
-        }
+        return command.execute(message, args);
     }
 
     public Enigma getInstance() {

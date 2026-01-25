@@ -5,9 +5,11 @@ import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Effect;
+import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
+import reactor.core.publisher.Mono;
 
 import java.text.DecimalFormat;
 import java.time.Duration;
@@ -174,27 +176,27 @@ public class Util {
                 .build();
     }
 
-    public static void send(MessageChannel channel, String content) {
-        channel.createMessage(embed("", content, Color.CYAN)).subscribe();
+    public static Mono<Message> send(MessageChannel channel, String content) {
+        return channel.createMessage(embed("", content, Color.CYAN));
     }
 
-    public static void send(MessageChannel channel, String title, String content) {
-        channel.createMessage(embed(title, content, Color.CYAN)).subscribe();
+    public static Mono<Message> send(MessageChannel channel, String title, String content) {
+        return channel.createMessage(embed(title, content, Color.CYAN));
     }
 
-    public static void sendFailure(MessageChannel channel, String content) {
-        channel.createMessage(embed("", Emote.NO + content, COLOR_FAILURE)).subscribe();
+    public static Mono<Message> sendFailure(MessageChannel channel, String content) {
+        return channel.createMessage(embed("", Emote.NO + content, COLOR_FAILURE));
     }
 
-    public static void sendFailure(MessageChannel channel, String title, String content) {
-        channel.createMessage(embed(title, Emote.NO + content, COLOR_FAILURE)).subscribe();
+    public static Mono<Message> sendFailure(MessageChannel channel, String title, String content) {
+        return channel.createMessage(embed(title, Emote.NO + content, COLOR_FAILURE));
     }
 
-    public static void sendSuccess(MessageChannel channel, String content) {
-        channel.createMessage(embed("", Emote.YES + content, COLOR_SUCCESS)).subscribe();
+    public static Mono<Message> sendSuccess(MessageChannel channel, String content) {
+        return channel.createMessage(embed("", Emote.YES + content, COLOR_SUCCESS));
     }
 
-    public static void sendSuccess(MessageChannel channel, String title, String content) {
-        channel.createMessage(embed(title, Emote.YES + content, COLOR_SUCCESS)).subscribe();
+    public static Mono<Message> sendSuccess(MessageChannel channel, String title, String content) {
+        return channel.createMessage(embed(title, Emote.YES + content, COLOR_SUCCESS));
     }
 }

@@ -15,6 +15,7 @@ import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.Units;
 import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.PlayerService;
+import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.component.ActionRow;
@@ -25,6 +26,7 @@ import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.core.spec.MessageCreateSpec;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +36,7 @@ public enum GameCommand implements Command {
     // TODO Energy costs should be found dynamically somehow - changing energy costs of system commands requires changing values in multiple locations
     ATTACK("attack") {
         @Override
-        public void execute(Message message, String[] args) {
+        public Mono<?> execute(Message message, String[] args) {
             User author = message.getAuthor().orElse(null);
             MessageChannel channel = message.getChannel().block();
             PlayerService playerService = Enigma.getInstance().getPlayerService();
@@ -42,22 +44,24 @@ public enum GameCommand implements Command {
             Game game = gameService.findGame(playerService.get(author));
             GameMember member = game.getMember(author);
 
-            if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember())) {
-                message.delete().subscribe();
-                if (game.getGameState() == GameState.PICKING)
-                    Util.sendFailure(channel, "You cannot attack until the game has started.");
-                else if (member.hasBuff(DisarmDebuff.class))
-                    Util.sendFailure(channel, "You are currently disarmed and cannot attack.");
-                else if (member.getEnergy() < 50 + member.getStats().get(StatType.ATTACK_COST))
-                    Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + 50 + "** energy. You have **" + member.getEnergy() + "**.");
-                else
-                    channel.createMessage(member.act(new AttackAction(game.getRandomTarget(member)))).subscribe();
-            }
+            if (!channel.equals(game.getChannel()) || !member.equals(game.getCurrentMember()))
+                return Mono.empty();
+
+            message.delete().subscribe();
+
+            if (game.getGameState() == GameState.PICKING)
+                return Util.sendFailure(channel, "You cannot attack until the game has started.");
+            if (member.hasBuff(DisarmDebuff.class))
+                return Util.sendFailure(channel, "You are currently disarmed and cannot attack.");
+            if (member.getEnergy() < 50 + member.getStats().get(StatType.ATTACK_COST))
+                return Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + 50 + "** energy. You have **" + member.getEnergy() + "**.");
+
+            return channel.createMessage(member.act(new AttackAction(game.getRandomTarget(member))));
         }
     },
     BUY("buy") {
         @Override
-        public void execute(Message message, String[] args) {
+        public Mono<?> execute(Message message, String[] args) {
             User author = message.getAuthor().orElse(null);
             MessageChannel channel = message.getChannel().block();
             PlayerService playerService = Enigma.getInstance().getPlayerService();
@@ -65,68 +69,63 @@ public enum GameCommand implements Command {
             Game game = gameService.findGame(playerService.get(author));
             GameMember member = game.getMember(author);
 
-            if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember())) {
-                message.delete().subscribe();
-                if (game.getGameState() == GameState.PICKING) {
-                    Util.sendFailure(channel, "You cannot buy items until the game has started.");
-                    return;
-                }
+            if (!channel.equals(game.getChannel()) || !member.equals(game.getCurrentMember()))
+                return Mono.empty();
 
-                if (!game.getCurrentMember().equals(member)) {
-                    Util.sendFailure(channel, "It's not your turn yet.");
-                    return;
-                }
+            message.delete().subscribe();
 
-                Items query = Items.fromName(String.join(" ", args));
-                Unit unit = member.getUnit();
+            if (game.getGameState() == GameState.PICKING)
+                return Util.sendFailure(channel, "You cannot buy items until the game has started.");
 
-                if (query == null) {
-                    Util.sendFailure(channel, "I can't find an item with that name.\n\nTry one of these items on " + unit.getName() + ": " + unit.getRecommendedBuild().stream().map(Items::getName).collect(Collectors.joining(", ")));
-                    return;
-                }
+            Items query = Items.fromName(String.join(" ", args));
+            Unit unit = member.getUnit();
 
-                Item item = query.create(member);
-                if (!item.isBuyable()) {
-                    Util.sendFailure(channel, item.getName() + " can't be bought.");
-                    return;
-                }
+            if (query == null)
+                return Util.sendFailure(channel, "I can't find an item with that name.\n\nTry one of these items on **" + unit.getName() + "**:\n\n" + unit.getRecommendedBuild().stream().map(i -> "**`>buy " + i.getName() + "`**").collect(Collectors.joining("\n")));
 
-                Build build = item.build(member.getItems());
-                if (!member.hasGold(build.getCost())) {
-                    // TODO: AI made this, CLEAN it
-                    String suggestion = "";
-                    List<Item> buildPath = Arrays.stream(item.getBuild()).map(i -> i.create(null)).collect(Collectors.toList());
-                    List<Item> memberItems = member.getItems();
+            Item item = query.create(member);
+            if (!item.isBuyable())
+                return Util.sendFailure(channel, item.getName() + " can't be bought.");
 
-                    Item cheapestNext = null;
-                    for (Item component : buildPath) {
-                        if (!memberItems.stream().anyMatch(i -> i.getClass().equals(component.getClass()))) {
-                            if (cheapestNext == null || component.getCost() < cheapestNext.getCost()) {
-                                cheapestNext = component;
-                            }
+            Build build = item.build(member.getItems());
+
+            if (!member.hasGold(build.getCost())) {
+                // TODO: AI made this, CLEAN it
+                String suggestion = "";
+                List<Item> buildPath = Arrays.stream(item.getBuild()).map(i -> i.create(null)).collect(Collectors.toList());
+                List<Item> memberItems = member.getItems();
+
+                Item cheapestNext = null;
+                for (Item component : buildPath) {
+                    if (!memberItems.stream().anyMatch(i -> i.getClass().equals(component.getClass()))) {
+                        if (cheapestNext == null || component.getCost() < cheapestNext.getCost()) {
+                            cheapestNext = component;
                         }
                     }
-
-                    if (cheapestNext != null) {
-                        suggestion = "\n\nTry buying **" + cheapestNext.getName() + "** first.";
-                    }
-
-                    Util.sendFailure(channel, "You need **" + member.getGoldDifference(build.getCost()) + "** more gold for **" + item.getName() + "**." + suggestion);
-                    return;
                 }
 
-                if (build.getPostData().size() >= 5) {
-                    Util.sendFailure(channel, "You do not have enough inventory space for a(n) **" + item.getName() + "**.");
-                    return;
+                if (cheapestNext != null) {
+                    suggestion = "\n\nTry building this first: **`>buy " + cheapestNext.getName() + "`**";
                 }
 
-                channel.createMessage(member.act(new BuyAction(build))).subscribe();
+                if (query.getTree() == Tree.COMPLETE)
+                    member.setQueuedItem(query);
+
+                return Util.sendFailure(channel, "You need **" + member.getGoldDifference(build.getCost()) + "** more gold for **" + item.getName() + "**." + suggestion);
             }
+
+            if (build.getPostData().size() >= 5)
+                return Util.sendFailure(channel, "You do not have enough inventory space for a(n) **" + item.getName() + "**.");
+
+            if (query.getTree() == Tree.COMPLETE)
+                member.removeQueuedItem();
+
+            return channel.createMessage(member.act(new BuyAction(build)));
         }
     },
     END("end") {
         @Override
-        public void execute(Message message, String[] args) {
+        public Mono<?> execute(Message message, String[] args) {
             User author = message.getAuthor().orElse(null);
             MessageChannel channel = message.getChannel().block();
             PlayerService playerService = Enigma.getInstance().getPlayerService();
@@ -134,38 +133,37 @@ public enum GameCommand implements Command {
             Game game = gameService.findGame(playerService.get(author));
             GameMember member = game.getMember(author);
 
-            if (!game.getCurrentMember().equals(member)) {
-                Util.sendFailure(channel, "It's not your turn yet.");
-                return;
-            }
+            if (!channel.equals(game.getChannel()) || !member.equals(game.getCurrentMember()))
+                return Mono.empty();
 
-            if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember())) {
-                message.delete().subscribe();
-                if (game.getGameState() == GameState.PICKING)
-                    Util.sendFailure(channel, "You cannot end your turn until the game has started.");
-                else
-                    channel.createMessage(game.nextTurn()).subscribe();
-            }
+            message.delete().subscribe();
+
+            if (game.getGameState() == GameState.PICKING)
+                return Util.sendFailure(channel, "You cannot end your turn until the game has started.");
+
+            return channel.createMessage(game.nextTurn());
         }
     },
     FORFEIT("ff") {
         @Override
-        public void execute(Message message, String[] args) {
+        public Mono<?> execute(Message message, String[] args) {
             User author = message.getAuthor().orElse(null);
             MessageChannel channel = message.getChannel().block();
             PlayerService playerService = Enigma.getInstance().getPlayerService();
             GameService gameService = Enigma.getInstance().getGameService();
             Game game = gameService.findGame(playerService.get(author));
 
-            if (channel.equals(game.getChannel())) {
-                message.delete().subscribe();
-                channel.createMessage(game.getMember(author).lose()).subscribe();
-            }
+            if (!channel.equals(game.getChannel()))
+                return Mono.empty();
+
+            message.delete().subscribe();
+
+            return channel.createMessage(game.getMember(author).lose());
         }
     },
     PICK("pick") {
         @Override
-        public void execute(Message message, String[] args) {
+        public Mono<?> execute(Message message, String[] args) {
             User author = message.getAuthor().orElse(null);
             MessageChannel channel = message.getChannel().block();
             PlayerService playerService = Enigma.getInstance().getPlayerService();
@@ -173,73 +171,72 @@ public enum GameCommand implements Command {
             Game game = gameService.findGame(playerService.get(author.getId().asString()));
             GameMember member = game.getMember(author);
 
-            if (!game.getCurrentMember().equals(member)) {
-                Util.sendFailure(channel, "It's not your turn yet.");
-                return;
-            }
+            if (!channel.equals(game.getChannel()) || !member.equals(game.getCurrentMember()))
+                return Mono.empty();
 
-            if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember())) {
-                message.delete().subscribe();
-                if (game.getGameState() == GameState.PLAYING)
-                    Util.sendFailure(channel, "You cannot pick a unit after the game has started.");
-                else {
-                    String name = String.join(" ", args).toLowerCase();
-                    Units type = name.equals("random")
-                            ? Util.pickRandom(Units.values())
-                            : Units.fromName(name);
-                    if (type == null)
-                        Util.sendFailure(channel, "Invalid unit.");
-                    else {
-                        Unit unit = type.create(member);
+            message.delete().subscribe();
 
-                        ComponentManager manager = Enigma.getInstance().getComponentManager();
+            if (game.getGameState() == GameState.PLAYING)
+                return Util.sendFailure(channel, "You cannot pick a unit after the game has started.");
 
-                        EnigmaComponent unitInfo = manager.register(e -> e.reply(InteractionApplicationCommandCallbackSpec.builder()
-                                .ephemeral(true)
-                                .embeds(unit.embed())
-                                .build()).subscribe());
-                        EnigmaComponent unitBuildPath = manager.register(e -> e.reply(InteractionApplicationCommandCallbackSpec.builder()
-                                .ephemeral(true)
-                                .content("Typically, **" + unit.getName() + "** should build at least one of these items:")
-                                .embeds(unit.getRecommendedBuild().stream()
-                                        .map(i -> i.create(null))
-                                        .map(Item::embed)
-                                        .collect(Collectors.toList()))
-                                .build()).subscribe());
+            String name = String.join(" ", args).toLowerCase();
+            Units type = name.equals("random")
+                    ? Util.pickRandom(Units.values())
+                    : Units.fromName(name);
+            if (name.equals("random") && member.hasGuides())
+                type = Units.GUNSLINGER;
+            if (type == null)
+                return Util.sendFailure(channel, "Invalid unit.");
 
+            Unit unit = type.create(member);
 
-                        member.setUnit(unit);
-                        channel.createMessage(MessageCreateSpec.builder()
-                                .components(
-                                        TextDisplay.of(Emote.YES + "**" + author.getUsername() + "** will play as **" + unit.getName() + "**!"),
-                                        ActionRow.of(
-                                                Button.secondary(unitInfo.getId(), "What does " + unit.getName() + " do?"),
-                                                Button.secondary(unitBuildPath.getId(), "What should " + unit.getName() + " buy?")),
-                                        TextDisplay.of(game.nextTurn()))
-                                .build()).subscribe();
-                    }
-                }
-            }
+            ComponentManager manager = Enigma.getInstance().getComponentManager();
+
+            EnigmaComponent unitInfo = manager.register(e -> e.reply(InteractionApplicationCommandCallbackSpec.builder()
+                    .ephemeral(true)
+                    .embeds(unit.embed())
+                    .build()).subscribe());
+            EnigmaComponent unitBuildPath = manager.register(e -> e.reply(InteractionApplicationCommandCallbackSpec.builder()
+                    .ephemeral(true)
+                    .content("Typically, **" + unit.getName() + "** should build at least one of these items:")
+                    .embeds(unit.getRecommendedBuild().stream()
+                            .map(i -> i.create(null))
+                            .map(Item::embed)
+                            .collect(Collectors.toList()))
+                    .build()).subscribe());
+
+            member.setUnit(unit);
+            return channel.createMessage(MessageCreateSpec.builder()
+                    .components(
+                            TextDisplay.of(Emote.YES + "**" + author.getUsername() + "** will play as **" + unit.getName() + "**!"),
+                            ActionRow.of(
+                                    Button.secondary(unitInfo.getId(), "What does " + unit.getName() + " do?"),
+                                    Button.secondary(unitBuildPath.getId(), "What should " + unit.getName() + " buy?")),
+                            TextDisplay.of(game.nextTurn()))
+                    .build());
         }
     },
     REFRESH("refresh") {
         @Override
-        public void execute(Message message, String[] args) {
+        public Mono<?> execute(Message message, String[] args) {
             User author = message.getAuthor().orElse(null);
             MessageChannel channel = message.getChannel().block();
             PlayerService playerService = Enigma.getInstance().getPlayerService();
             GameService gameService = Enigma.getInstance().getGameService();
             Game game = gameService.findGame(playerService.get(author));
 
-            if (channel.equals(game.getChannel())) {
-                message.delete().subscribe();
-                game.updateStatus();
-            }
+            if (!channel.equals(game.getChannel()))
+                return Mono.empty();
+
+            message.delete().subscribe();
+            game.updateStatus();
+
+            return Mono.empty();
         }
     },
     SELL("sell") {
         @Override
-        public void execute(Message message, String[] args) {
+        public Mono<?> execute(Message message, String[] args) {
             User author = message.getAuthor().orElse(null);
             MessageChannel channel = message.getChannel().block();
             PlayerService playerService = Enigma.getInstance().getPlayerService();
@@ -247,30 +244,26 @@ public enum GameCommand implements Command {
             Game game = gameService.findGame(playerService.get(author));
             GameMember member = game.getMember(author);
 
-            if (!game.getCurrentMember().equals(member)) {
-                Util.sendFailure(channel, "It's not your turn yet.");
-                return;
-            }
+            if (!channel.equals(game.getChannel()) || !member.equals(game.getCurrentMember()))
+                return Mono.empty();
 
-            if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember())) {
-                message.delete().subscribe();
-                if (game.getGameState() == GameState.PICKING)
-                    Util.sendFailure(channel, "You cannot sell items until the game has started.");
-                else {
-                    Item item = member.getItem(String.join(" ", args));
-                    if (item == null)
-                        Util.sendFailure(channel, "Invalid item.");
-                    else if (!member.getData().contains(item))
-                        Util.sendFailure(channel, "You don't have a(n) **" + item.getName() + "**.");
-                    else
-                        channel.createMessage(member.act(new SellAction(item))).subscribe();
-                }
-            }
+            message.delete().subscribe();
+
+            if (game.getGameState() == GameState.PICKING)
+                return Util.sendFailure(channel, "You cannot sell items until the game has started.");
+
+            Item item = member.getItem(String.join(" ", args));
+            if (item == null)
+                return Util.sendFailure(channel, "Invalid item.");
+            if (!member.getData().contains(item))
+                return Util.sendFailure(channel, "You don't have a(n) **" + item.getName() + "**.");
+
+            return channel.createMessage(member.act(new SellAction(item)));
         }
     },
     USE("use") {
         @Override
-        public void execute(Message message, String[] args) {
+        public Mono<?> execute(Message message, String[] args) {
             User author = message.getAuthor().orElse(null);
             MessageChannel channel = message.getChannel().block();
             PlayerService playerService = Enigma.getInstance().getPlayerService();
@@ -278,29 +271,41 @@ public enum GameCommand implements Command {
             Game game = gameService.findGame(playerService.get(author));
             GameMember member = game.getMember(author);
 
-            if (!game.getCurrentMember().equals(member)) {
-                Util.sendFailure(channel, "It's not your turn yet.");
-                return;
-            }
+            if (!channel.equals(game.getChannel()) || !member.equals(game.getCurrentMember()))
+                return Mono.empty();
 
-            if (channel.equals(game.getChannel()) && member.equals(game.getCurrentMember())) {
-                message.delete().subscribe();
-                if (game.getGameState() == GameState.PICKING)
-                    Util.sendFailure(channel, "You cannot use items until the game has started.");
-                else {
-                    Item item = member.getItem(String.join(" ", args));
-                    if (item == null)
-                        Util.sendFailure(channel, "Invalid item.");
-                    else if (!member.getData().contains(item))
-                        Util.sendFailure(channel, "You don't have a(n) **" + item.getName() + "**.");
-                    else if (!item.canUse(member))
-                        Util.sendFailure(channel, "**" + item.getName() + "** can't be used.");
-                    else if (member.getEnergy() < 25)
-                        Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + 25 + "** energy. You have **" + member.getEnergy() + "**.");
-                    else
-                        channel.createMessage(member.act(new UseAction(item))).subscribe();
-                }
-            }
+            message.delete().subscribe();
+
+            if (game.getGameState() == GameState.PICKING)
+                return Util.sendFailure(channel, "You cannot use items until the game has started.");
+
+            Item item = member.getItem(String.join(" ", args));
+            if (item == null)
+                return Util.sendFailure(channel, "Invalid item.");
+            if (!member.getData().contains(item))
+                return Util.sendFailure(channel, "You don't have a(n) **" + item.getName() + "**.");
+            if (!item.canUse(member))
+                return Util.sendFailure(channel, "**" + item.getName() + "** can't be used.");
+            if (member.getEnergy() < 25)
+                return Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + 25 + "** energy. You have **" + member.getEnergy() + "**.");
+
+            return channel.createMessage(member.act(new UseAction(item)));
+        }
+    },
+    GUIDES("guides") {
+        @Override
+        public Mono<?> execute(Message message, String[] args) {
+            User author = message.getAuthor().get();
+            PlayerService playerService = Enigma.getInstance().getPlayerService();
+            GameService gameService = Enigma.getInstance().getGameService();
+            Player player = playerService.get(author);
+            GameMember member = gameService.findMember(player);
+
+            if (!member.hasGuides())
+                return Mono.empty();
+
+            member.setGuides(null);
+            return Util.sendSuccess(message.getChannel().block(), "Disabled guides for **" + player.getUsername() + "**.");
         }
     };
 

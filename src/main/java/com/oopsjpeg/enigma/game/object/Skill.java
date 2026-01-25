@@ -14,6 +14,7 @@ import com.oopsjpeg.enigma.util.Cooldown;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public abstract class Skill implements Command, GameAction {
     }
 
     @Override
-    public void execute(Message message, String[] args) {
+    public Mono<?> execute(Message message, String[] args) {
         MessageChannel channel = message.getChannel().block();
         GameService gameService = Enigma.getInstance().getGameService();
         PlayerService playerService = Enigma.getInstance().getPlayerService();
@@ -68,30 +69,30 @@ public abstract class Skill implements Command, GameAction {
         Game game = actor.getGame();
 
         if (!channel.equals(game.getChannel()) || !actor.equals(game.getCurrentMember()))
-            return;
+            return Mono.empty();
 
         message.delete().subscribe();
 
-        if (actor.hasBuff(SilencedDebuff.class)) {
-            Util.sendFailure(channel, "You can't use skills while silenced.");
-            return;
-        }
+        if (actor.hasBuff(SilencedDebuff.class))
+            return Util.sendFailure(channel, "You can't use skills while silenced.");
 
-        if (hasCooldown() && !cooldown.isDone()) {
-            Util.sendFailure(channel, "**`>" + getName() + "`** will be ready in **" + cooldown.getCurrent() + "** turns.");
-            return;
-        }
+        if (hasCooldown() && !cooldown.isDone())
+            return Util.sendFailure(channel, "**`>" + getName() + "`** will be ready in **" + cooldown.getCurrent() + "** turns.");
 
-        if (hasCost(actor) && actor.getEnergy() < getCost(actor)) {
-            Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + cost + "** energy. You have **" + actor.getEnergy() + "**.");
-            return;
-        }
+        message.delete().subscribe();
+
+        if (hasCost(actor) && actor.getEnergy() < getCost(actor))
+            return Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + cost + "** energy. You have **" + actor.getEnergy() + "**.");
+
+        if (hasCost(actor) && actor.getEnergy() < getCost(actor))
+            return Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + cost + "** energy. You have **" + actor.getEnergy() + "**.");
 
         List<String> output = new ArrayList<>();
-        actor.getData().forEach(o -> output.add(o.onSkillUsed(actor)));
-        output.add(actor.act(this));
         if (hasCooldown())
             cooldown.start(actor.getStats().getInt(COOLDOWN_REDUCTION));
-        channel.createMessage(Util.joinNonEmpty("\n", output)).subscribe();
+        actor.getData().forEach(o -> output.add(o.onSkillUsed(actor)));
+        output.add(actor.act(this));
+
+        return channel.createMessage(Util.joinNonEmpty("\n", output));
     }
 }

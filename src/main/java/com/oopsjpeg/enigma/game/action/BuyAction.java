@@ -31,6 +31,13 @@ public class BuyAction implements GameAction {
         output.add(0, Emote.GOLD + "**" + actor.getUsername() + "** purchased **"
                 + item.getName() + "** for __" + build.getCost() + "__ gold.");
 
+        if (actor.hasGuides() && !actor.getGuides().hasPurchasedAnItem()) {
+            actor.getGuides().purchasedAnItem();
+
+            if (!actor.getGuides().hasAttacked())
+                output.add("*Now, try attacking the enemy with **`>attack`**.*");
+        }
+
         return Util.joinNonEmpty("\n", output);
     }
 

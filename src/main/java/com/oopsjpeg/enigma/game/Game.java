@@ -2,9 +2,8 @@ package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.game.buff.SilencedDebuff;
-import com.oopsjpeg.enigma.game.object.Buff;
-import com.oopsjpeg.enigma.game.object.Distortion;
-import com.oopsjpeg.enigma.game.object.Skill;
+import com.oopsjpeg.enigma.game.item.PotionItem;
+import com.oopsjpeg.enigma.game.object.*;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.listener.CommandListener;
 import com.oopsjpeg.enigma.storage.Player;
@@ -105,6 +104,8 @@ public class Game {
                 String playerList = getPlayers().stream().map(Player::getUsername).collect(Collectors.joining(", "));
                 output.add("## Welcome to " + mode.getName());
                 output.add("featuring **" + getMembers().get(0).getUsername() + "** vs. **" + getMembers().get(1).getUsername() + "**!");
+                if (getPlayers().stream().anyMatch(p -> !p.hasPlayedBefore()))
+                    output.add("\n*One or more players in this match haven't played before, so guides have been enabled.*");
             }
             output.add("# " + getCurrentMember().getMention() + "'s Pick");
             output.add("Choose a unit with **`" + commandListener.getPrefix() + GameCommand.PICK.getName() + " [unit]`**");
@@ -150,10 +151,27 @@ public class Game {
             output.add("### " + member.getMention() + "'s Turn - " + member.getGold() + " Gold");
             output.add("Open this channel's pinned messages to see your stats.");
 
-            if (member.firstTurn())
-                output.add("Don't forget to **`>buy`** your first item.");
-
             Unit unit = member.getUnit();
+
+            // Guides
+            if (member.hasGuides()) {
+                // Item purchasing
+                if (!member.getGuides().hasPurchasedAnItem()) {
+                    Items recommended = unit.getRecommendedBuild().stream().findAny().orElse(Items.IRON_SCIMITAR);
+                    output.add("*Try buying your first item with **`>buy " + recommended.getName() + "`**.*");
+                }
+                // Attacking
+                else if (!member.getGuides().hasAttacked())
+                    output.add("*Try attacking the enemy with **`>attack`**.*");
+
+                // Second turn
+                if (member.getGuides().newTurn() == 2)
+                    output.add("*Your energy is restored to full each turn. You now have **" + member.getStats().getInt(MAX_ENERGY) + "**.*");
+
+                // Low health with potion still unused
+                if (member.getHealthPercentage() <= 0.5f && member.getItems().stream().anyMatch(i -> i instanceof PotionItem) && !member.getGuides().hasUsedPotion())
+                    output.add("*You're low on health! Try using your potion with **`>use Potion`**.*");
+            }
 
             // On turn start
             output.addAll(member.getData().stream().map(e -> e.onTurnStart(member)).collect(Collectors.toList()));
@@ -179,6 +197,10 @@ public class Game {
             // Low health warning
             if (member.getHealthPercentage() < 0.2f)
                 output.add(Emote.WARN + "**" + member.getUsername() + "** is critically low on health.");
+            // Queued item can be afforded reminder
+            if (member.hasQueuedItem() && member.getGold() >= member.getQueuedItem().create(null).build(member.getItems()).getCost())
+                output.add("You can afford to **`>buy " + member.getQueuedItem().getName() + "`** now.");
+
             // Update current member's stats
             output.add(getCurrentMember().updateStats());
         }
