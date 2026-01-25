@@ -163,6 +163,9 @@ public class Game
             output.add("### " + member.getMention() + "'s Turn - " + member.getGold() + " Gold");
             output.add("Open this channel's pinned messages to see your stats.");
 
+            if (member.firstTurn())
+                output.add("Don't forget to **`>buy`** your first item.");
+
             Unit unit = member.getUnit();
 
             // On turn start
