@@ -34,10 +34,7 @@ public class MagicalMasteryEffect extends Effect
                 if (event.getActor() != getOwner()) return;
                 if (!event.isSkill()) return;
 
-                System.out.println("WHY IS THIS NOT FIRING");
-
                 event.proposeEffect(() -> {
-                    System.out.println("Magical Mastery effect triggered");
                     if (skillCount.stack())
                     {
                         event.addDamage(event.getVictim().getStats().get(MAX_HEALTH) * getPower());

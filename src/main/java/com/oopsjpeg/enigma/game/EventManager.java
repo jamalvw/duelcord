@@ -1,8 +1,9 @@
 package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import static com.oopsjpeg.enigma.game.StatType.ATTACK_POWER;
 import static java.lang.Math.round;
 
 public class EventManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventManager.class);
+
     public static DamageEvent attack(GameMember attacker, GameMember victim) {
         DamageEvent event = new DamageEvent(attacker, victim);
         event.setIsAttack(true);
@@ -41,13 +44,13 @@ public class EventManager {
 
         // Execute the pipeline
         for (Hook<? extends Event> hook : pipeline) {
-            System.out.println("Dispatching event to " + hook.getClass().getSimpleName());
+            LOGGER.debug("Dispatching event to hook {}", hook.getClass().getName());
             event.dispatchTo(hook);
         }
 
         // Final damage application
         if (!event.isCancelled()) {
-            System.out.println("Completing event");
+            LOGGER.debug("Finalizing event");
             event.complete();
             //event.getOutput().add(attacker.updateStats());
             //event.getOutput().add(victim.updateStats());

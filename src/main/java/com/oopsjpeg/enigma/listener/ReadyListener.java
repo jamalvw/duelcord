@@ -12,12 +12,14 @@ import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.spec.EmbedCreateFields;
 import discord4j.core.spec.MessageEditSpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
-public class ReadyListener implements Listener
-{
+public class ReadyListener implements Listener {
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final Enigma instance;
 
     public ReadyListener(Enigma instance)
@@ -69,7 +71,7 @@ public class ReadyListener implements Listener
 
     public void onReady(ReadyEvent event)
     {
-        Enigma.LOGGER.info("Enigma is ready.");
+        LOGGER.info("Enigma is ready.");
     }
 
     public Enigma getInstance()

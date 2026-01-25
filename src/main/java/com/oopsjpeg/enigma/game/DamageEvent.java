@@ -2,6 +2,8 @@ package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,8 @@ import static java.lang.Math.ceil;
 import static java.lang.Math.round;
 
 public class DamageEvent extends Event {
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
     private final GameMember victim;
     private float damage;
     private boolean blocked = false;
@@ -186,7 +190,7 @@ public class DamageEvent extends Event {
             getOutput().add(getActor().shield((int) ceil(shielding)));
 
         for (PendingAction action : getEffects()) {
-            System.out.println("Executing pending action: " + action.getClass().getSimpleName());
+            LOGGER.debug("Executing pending action {}", action.getClass().getSimpleName());
             action.execute();
             getOutput().add(getActor().updateStats());
             getOutput().add(victim.updateStats());

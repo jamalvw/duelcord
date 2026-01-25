@@ -80,7 +80,6 @@ public class GameMember
         data.addAll(getItems());
         data.addAll(getEffects());
         data.addAll(getBuffs());
-        System.out.println("Buffs: " + getBuffs());
         data.addAll(getSummons());
         return data;
     }

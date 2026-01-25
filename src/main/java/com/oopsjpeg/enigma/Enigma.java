@@ -28,7 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class Enigma
 {
-    public static final Logger LOGGER = LoggerFactory.getLogger(Enigma.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     public static final Gson GSON = new GsonBuilder().create();
     public static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() + 1);
 
