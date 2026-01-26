@@ -20,7 +20,7 @@ public class FaithbreakerItem extends Item {
 
     @Override
     public Effect[] generateEffects() {
-        return new Effect[]{new KorasWillEffect(getOwner(), 12, .5f)};
+        return new Effect[]{new KorasWillEffect(getOwner(), 20, .4f)};
     }
 
     @Override
