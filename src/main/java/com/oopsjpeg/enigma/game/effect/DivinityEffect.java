@@ -1,6 +1,8 @@
 package com.oopsjpeg.enigma.game.effect;
 
+import com.oopsjpeg.enigma.game.EventManager;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.ShieldEvent;
 import com.oopsjpeg.enigma.game.object.Effect;
 
 import static com.oopsjpeg.enigma.game.StatType.SKILL_POWER;
@@ -24,7 +26,8 @@ public class DivinityEffect extends Effect {
 
     @Override
     public String onDefend(GameMember member) {
-        return member.shield(getTotalPower(member.getStats().get(SKILL_POWER)));
+        ShieldEvent e = new ShieldEvent(member, getTotalPower(member.getStats().get(SKILL_POWER)));
+        return EventManager.process(e);
     }
 
     @Override

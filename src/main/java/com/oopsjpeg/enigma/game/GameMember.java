@@ -248,15 +248,6 @@ public class GameMember {
         return Util.joinNonEmpty("\n", output);
     }
 
-    public String shield(float shieldAmount) {
-        for (GameObject o : getData()) shieldAmount = o.onShield(shieldAmount);
-
-        giveShield(round(shieldAmount));
-
-        return Emote.SHIELD + "**" + getUsername() + "** shielded for **" + round(shieldAmount)
-                + "**! [**" + getShield() + "**]";
-    }
-
     public String defend() {
         if (!defensive) {
             defensive = true;
@@ -392,7 +383,7 @@ public class GameMember {
     }
 
     public boolean hasHealth() {
-        return health >= 1;
+        return health > 0;
     }
 
     public float getHealthPercentage() {
@@ -463,18 +454,16 @@ public class GameMember {
         shield = round(max(shieldAmount, 0));
     }
 
-    public float giveShield(float shieldAmount) {
-        setShield(getShield() + shieldAmount);
-        return getShield();
+    public void addShield(float amount) {
+        setShield(getShield() + amount);
     }
 
-    public float takeShield(float shieldAmount) {
-        setShield(getShield() - shieldAmount);
-        return getShield();
+    public void subtractShield(float amount) {
+        setShield(getShield() - amount);
     }
 
     public boolean hasShield() {
-        return getShield() > 0;
+        return shield > 0;
     }
 
     public Stats getStats() {

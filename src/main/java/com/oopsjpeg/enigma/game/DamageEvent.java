@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Math.ceil;
 import static java.lang.Math.round;
 
 public class DamageEvent extends Event {
@@ -183,7 +182,7 @@ public class DamageEvent extends Event {
         if (healing > 0)
             getOutput().add(EventManager.process(new HealEvent(getActor(), healing)));
         if (shielding > 0)
-            getOutput().add(getActor().shield((int) ceil(shielding)));
+            getOutput().add(EventManager.process(new ShieldEvent(getActor(), shielding)));
 
         for (PendingAction action : getEffects()) {
             LOGGER.debug("Executing pending action {}", action.getClass().getSimpleName());

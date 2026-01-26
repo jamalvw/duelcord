@@ -36,10 +36,6 @@ public abstract class GameObject {
         return null;
     }
 
-    public float onShield(float shieldAmount) {
-        return shieldAmount;
-    }
-
     public String onShieldBreak(GameMember member) {
         return null;
     }

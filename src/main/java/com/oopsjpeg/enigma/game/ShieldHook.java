@@ -26,7 +26,7 @@ public class ShieldHook implements Hook<DamageEvent> {
             event.subtractDamage(damageToShield);
 
             event.proposeEffect(() -> {
-                victim.takeShield(damageToShield);
+                victim.subtractShield(damageToShield);
 
                 if (victim.hasShield())
                     event.getOutput().add(0, Util.damageText(event, attacker.getUsername(), victim.getUsername() + "'s Shield", event.getEmote(), event.getSource()));
