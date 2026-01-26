@@ -36,6 +36,7 @@ public class DuelSkill extends Skill {
             e.setSource("Duel");
             e.setEmote(Emote.ATTACK);
             e.setIsOnHit(true);
+            e.setIsSkill(true);
             e.setOnHitScale(ON_HIT_SCALE);
             e.addDamage(stats.get(StatType.ATTACK_POWER) * DAMAGE_AP_RATIO);
             e.addDamage(stats.get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);

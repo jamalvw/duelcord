@@ -20,6 +20,7 @@ public class BleedDebuff extends Buff {
     public String onTurnStart(GameMember member) {
         DamageEvent e = new DamageEvent(getSource(), member);
         e.setEmote(Emote.BLEED);
+        e.setIsDoT(true);
         e.setSource("Bleed");
         e.setDamage(getPower());
         return EventManager.process(e);

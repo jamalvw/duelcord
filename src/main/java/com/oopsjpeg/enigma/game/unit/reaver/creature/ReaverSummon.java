@@ -28,6 +28,7 @@ public class ReaverSummon extends Summon {
 
                 DamageEvent summonStrikeEvent = new DamageEvent(getOwner(), e.getVictim());
                 summonStrikeEvent.setIsSkill(true);
+                summonStrikeEvent.setIsDoT(true);
                 summonStrikeEvent.setEmote(Emote.SUMMON);
                 summonStrikeEvent.setSource(getName());
                 summonStrikeEvent.addDamage(damage);
