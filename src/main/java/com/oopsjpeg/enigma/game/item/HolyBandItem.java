@@ -20,7 +20,7 @@ public class HolyBandItem extends Item {
 
     @Override
     public Effect[] generateEffects() {
-        return new Effect[]{new DivinityEffect(getOwner(), 20)};
+        return new Effect[]{new DivinityEffect(getOwner(), 25)};
     }
 
     @Override
