@@ -19,6 +19,7 @@ public enum Items {
     BLOODLUST_BLADE(Tree.ADVANCED, "Bloodlust Blade"),
     BRONZE_CUTLASS(Tree.ADVANCED, "Bronze Cutlass"),
     MIDNIGHT_DAGGER(Tree.ADVANCED, "Midnight Dagger"),
+    SPIRIT_GAUNTLET(Tree.ADVANCED, "Spirit Gauntlet"),
 
     FAITHBREAKER(Tree.COMPLETE, "Faithbreaker"),
     CRIMSON_MIGHT(Tree.COMPLETE, "Crimson Might"),
@@ -26,7 +27,8 @@ public enum Items {
     WOLFS_FANG(Tree.COMPLETE, "Wolf's Fang"),
     SOULSTEALER(Tree.COMPLETE, "Soulstealer"),
     IRON_SCIMITAR(Tree.COMPLETE, "Iron Scimitar"),
-    SHADOW_REAVER(Tree.COMPLETE, "Shadow Reaver");
+    SHADOW_REAVER(Tree.COMPLETE, "Shadow Reaver"),
+    HAND_OF_GOD(Tree.COMPLETE, "Hand of God");
 
     private final Tree tree;
     private final String name;
@@ -71,6 +73,8 @@ public enum Items {
                 return new BronzeCutlassItem(member);
             case MIDNIGHT_DAGGER:
                 return new MidnightDaggerItem(member);
+            case SPIRIT_GAUNTLET:
+                return new SpiritGauntletItem(member);
 
             case FAITHBREAKER:
                 return new FaithbreakerItem(member);
@@ -86,6 +90,8 @@ public enum Items {
                 return new IronScimitarItem(member);
             case SHADOW_REAVER:
                 return new ShadowReaverItem(member);
+            case HAND_OF_GOD:
+                return new HandOfGodItem(member);
 
             default:
                 throw new IllegalArgumentException();

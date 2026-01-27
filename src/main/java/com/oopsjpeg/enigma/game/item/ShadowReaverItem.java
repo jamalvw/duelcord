@@ -24,6 +24,11 @@ public class ShadowReaverItem extends Item {
     }
 
     @Override
+    public String getDescription() {
+        return "The people spoke of his peaceful posture—well mannered, and foolhardy. But night must always fall.";
+    }
+
+    @Override
     public Stats getStats() {
         return new Stats()
                 .put(StatType.ATTACK_POWER, 40)

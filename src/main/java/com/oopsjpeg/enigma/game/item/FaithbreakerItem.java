@@ -30,6 +30,11 @@ public class FaithbreakerItem extends Item {
     }
 
     @Override
+    public String getDescription() {
+        return "Thus, their instruments of faith became the weapons of Gods.";
+    }
+
+    @Override
     public String getTip() {
         return "More skill damage";
     }

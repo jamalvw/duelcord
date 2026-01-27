@@ -60,6 +60,10 @@ public abstract class Item extends GameObject {
         return null;
     }
 
+    public boolean hasDescription() {
+        return getDescription() != null && !getDescription().isEmpty();
+    }
+
     public String getTip() {
         return null;
     }
@@ -115,10 +119,17 @@ public abstract class Item extends GameObject {
     }
 
     public EmbedCreateSpec embed() {
-        return Util.embed(getName() + " (" + getCost() + "g)", Util.joinNonEmpty("\n\n",
-                "**`>buy " + getName() + "`**",
-                Util.formatStats(getStats()),
-                Util.formatEffects(getEffects()),
-                hasBuild() ? "*Builds from " + Arrays.stream(getBuild()).map(Items::getName).collect(Collectors.joining(" + ")) + "*" : null), Color.CYAN);
+        EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder()
+                .color(Color.CYAN)
+                .title(getName() + " (" + getCost() + "g)")
+                .description(Util.joinNonEmpty("\n\n",
+                        Util.formatStats(getStats()),
+                        Util.formatEffects(getEffects()),
+                        hasDescription() ? "> *" + getDescription() + "*" : null));
+
+        if (hasBuild())
+            builder.footer("Builds from " + Arrays.stream(getBuild()).map(Items::getName).collect(Collectors.joining(" + ")), null);
+
+        return builder.build();
     }
 }

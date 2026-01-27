@@ -69,7 +69,7 @@ public class Util {
 
     public static String formatEffects(List<Effect> effects) {
         return effects.stream()
-                .map(e -> "**" + e.getName() + "**: " + e.getDescription())
+                .map(e -> "[" + e.getName() + "] " + e.getDescription())
                 .collect(Collectors.joining("\n"));
     }
 
