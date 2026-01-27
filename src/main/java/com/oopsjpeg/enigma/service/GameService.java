@@ -9,6 +9,7 @@ import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.core.spec.ThreadChannelEditSpec;
 import discord4j.rest.util.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,7 +121,7 @@ public class GameService {
 
         Enigma.getInstance().removeListener(game.getCommandListener());
 
-        SCHEDULER.schedule(() -> game.getChannel().delete().subscribe(), 2, TimeUnit.MINUTES);
+        SCHEDULER.schedule(() -> game.getChannel().edit(ThreadChannelEditSpec.builder().locked(true).build()).subscribe(), 2, TimeUnit.MINUTES);
 
         playerToGameRegistry.values().remove(game);
         games.remove(game);
