@@ -23,12 +23,12 @@ public class ShieldEvent extends Event {
         super(actor, Emote.SHIELD);
     }
 
-    public void setAmount(float amount) {
-        this.amount = amount;
-    }
-
     public float getAmount() {
         return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
     }
 
     public void addAmount(float amount) {

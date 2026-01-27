@@ -46,24 +46,24 @@ public abstract class Event {
         return source;
     }
 
-    public boolean hasSource() {
-        return source != null && !source.isEmpty();
-    }
-
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public boolean hasSource() {
+        return source != null && !source.isEmpty();
     }
 
     public String getEmote() {
         return emote;
     }
 
-    public boolean hasEmote() {
-        return emote != null && !emote.isEmpty();
-    }
-
     public void setEmote(String emote) {
         this.emote = emote;
+    }
+
+    public boolean hasEmote() {
+        return emote != null && !emote.isEmpty();
     }
 
     public boolean isCancelled() {

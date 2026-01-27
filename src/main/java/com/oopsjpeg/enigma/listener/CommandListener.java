@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.regex.Pattern;
 
 public class CommandListener implements Listener {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
