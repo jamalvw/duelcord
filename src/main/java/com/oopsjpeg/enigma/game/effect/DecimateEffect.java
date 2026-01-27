@@ -30,7 +30,7 @@ public class DecimateEffect extends Effect {
 
     @Override
     public String getDescription() {
-        return "Every **" + critCount.getMax() + "** Crits, **Cripple** the target by __" + percent(getPower()) + "__ until their next turn.";
+        return "Every __" + critCount.getMax() + "__ crits, __Cripple__ the enemy by __" + percent(getPower()) + "__ until their next turn.";
     }
 
     @Override

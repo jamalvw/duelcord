@@ -37,6 +37,6 @@ public class DivinityEffect extends Effect {
 
     @Override
     public String getDescription() {
-        return "Defending shields for **" + getPower() + "** " + (spRatio > 0 ? "+ __" + percent(spRatio) + " Skill Power__" : "") + ".";
+        return "Defending shields for __" + getPower() + "__ " + (spRatio > 0 ? "+ __" + percent(spRatio) + " Skill Power__" : "") + ".";
     }
 }

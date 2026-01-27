@@ -45,7 +45,7 @@ public class BloodWellEffect extends Effect {
 
     @Override
     public String getDescription() {
-        return "Attacks shield for __" + percent(getPower()) + "__ of damage dealt, up to **" + maxShield + "**.";
+        return "Attacks shield for __" + percent(getPower()) + "__ of damage dealt, up to __" + maxShield + "__.";
     }
 
     @Override

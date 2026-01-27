@@ -30,7 +30,7 @@ public class KorasWillEffect extends Effect {
 
     @Override
     public String getDescription() {
-        return "Skills do **" + Math.round(getPower()) + "** " + (spRatio > 0 ? "+ __" + percent(spRatio) + " Skill Power__ " : "") + "more damage.";
+        return "Skills deal __" + Math.round(getPower()) + "__ " + (spRatio > 0 ? "+ __" + percent(spRatio) + " Skill Power__ " : "") + "more damage.";
     }
 
     @Override

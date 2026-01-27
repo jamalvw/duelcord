@@ -125,7 +125,7 @@ public abstract class Item extends GameObject {
                 .description(Util.joinNonEmpty("\n\n",
                         Util.formatStats(getStats()),
                         Util.formatEffects(getEffects()),
-                        hasDescription() ? "> *" + getDescription() + "*" : null));
+                        hasDescription() ? "*" + getDescription() + "*" : null));
 
         if (hasBuild())
             builder.footer("Builds from " + Arrays.stream(getBuild()).map(Items::getName).collect(Collectors.joining(" + ")), null);

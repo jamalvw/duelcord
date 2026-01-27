@@ -17,6 +17,6 @@ public class GodsMightEffect extends Effect {
 
     @Override
     public String getDescription() {
-        return "Your Skills can crit.";
+        return "Skills can critically strike.";
     }
 }

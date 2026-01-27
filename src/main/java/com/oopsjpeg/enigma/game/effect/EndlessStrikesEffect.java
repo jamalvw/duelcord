@@ -29,7 +29,7 @@ public class EndlessStrikesEffect extends Effect {
 
     @Override
     public String getDescription() {
-        return "Each Hit deals __" + percent(getPower()) + "__ more than the last for this turn.";
+        return "Each hit increases damage dealt by __" + percent(getPower()) + "__ more damage for the rest of the turn.";
     }
 
     @Override

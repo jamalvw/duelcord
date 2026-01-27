@@ -30,7 +30,7 @@ public class LifewasterEffect extends Effect {
 
     @Override
     public String getDescription() {
-        return "Every " + hitCount.getMax() + " Hits, **Wound** the target by __" + percent(getPower()) + "__ on their next turn.";
+        return "Every __" + hitCount.getMax() + "__ hits, __Wound__ the target by __" + percent(getPower()) + "__ on their next turn.";
     }
 
     @Override

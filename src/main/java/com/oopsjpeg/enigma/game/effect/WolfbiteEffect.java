@@ -30,7 +30,7 @@ public class WolfbiteEffect extends Effect {
 
     @Override
     public String getDescription() {
-        return "Every **" + attackCount.getMax() + "** Attacks, **Weaken** the target by __" + percent(getPower()) + "__ on their next turn.";
+        return "Every __" + attackCount.getMax() + "__ Attacks, __Weaken__ the target by __" + percent(getPower()) + "__ on their next turn.";
     }
 
     @Override

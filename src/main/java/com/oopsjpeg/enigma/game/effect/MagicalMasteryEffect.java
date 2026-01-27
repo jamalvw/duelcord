@@ -33,8 +33,8 @@ public class MagicalMasteryEffect extends Effect {
 
     @Override
     public String getDescription() {
-        return "Skills recharge **" + cdReduction + "** turns faster." +
-                "\nEvery **" + skillCount.getMax() + "** damaging Skills, deal __" + percent(getPower()) + "__ of the target's max health.";
+        return "Skills recharge __" + cdReduction + "__ turn faster." +
+                "\nEvery __" + skillCount.getMax() + "__ damaging Skills, deal __" + percent(getPower()) + "__ of the enemy's max health as damage.";
     }
 
     @Override

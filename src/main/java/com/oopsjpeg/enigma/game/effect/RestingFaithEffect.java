@@ -19,7 +19,7 @@ public class RestingFaithEffect extends Effect {
 
     @Override
     public String getDescription() {
-        return "Defending grants **" + Math.round(getPower()) + "** bonus energy on the next turn." +
+        return "Defending grants __" + Math.round(getPower()) + "__ bonus energy on the next turn." +
                 "\nCan't be activated while already in use.";
     }
 }
