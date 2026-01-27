@@ -1,15 +1,11 @@
 package com.oopsjpeg.enigma.game.effect;
 
-import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.buff.WeakenedDebuff;
-import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Stacker;
-
-import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
@@ -20,7 +16,7 @@ public class WolfbiteEffect extends Effect {
         super(owner, "Wolfbite", power, null);
         this.attackCount = new Stacker(attackLimit);
 
-        hook(EventType.DAMAGE_DEALT, Priority.PRE_CALCULATION, (Consumer<DamageEvent>) e -> {
+        onDamageDealt(Priority.PRE_CALCULATION, e -> {
             if (!e.isAttack()) return;
 
             e.queueAction(() -> {

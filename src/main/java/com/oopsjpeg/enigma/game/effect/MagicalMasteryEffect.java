@@ -1,14 +1,10 @@
 package com.oopsjpeg.enigma.game.effect;
 
-import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.Stats;
-import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.util.Stacker;
-
-import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.game.StatType.COOLDOWN_REDUCTION;
 import static com.oopsjpeg.enigma.game.StatType.MAX_HEALTH;
@@ -23,7 +19,7 @@ public class MagicalMasteryEffect extends Effect {
         this.cdReduction = cdReduction;
         this.skillCount = new Stacker(skillLimit);
 
-        hook(EventType.DAMAGE_DEALT, Priority.PRE_CALCULATION, (Consumer<DamageEvent>) event -> {
+        onDamageDealt(Priority.PRE_CALCULATION, event -> {
             if (!event.isSkill()) return;
 
             event.queueAction(() -> {

@@ -18,7 +18,6 @@ import discord4j.rest.util.Color;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
@@ -46,8 +45,7 @@ public class HackerUnit extends Unit {
         firewall.getCooldown().start(1);
         overload.getCooldown().start(0);
 
-        hook(EventType.DAMAGE_DEALT, Priority.SUMMONS, (Consumer<DamageEvent>) e -> {
-            if (e.getActor() != getOwner()) return;
+        onDamageDealt(Priority.SUMMONS, e -> {
             if (!e.isAttack()) return;
 
             e.queueAction(() -> getBots(BotType.ATTACK).forEach(bot -> {

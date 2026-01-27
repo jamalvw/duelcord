@@ -1,11 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.duelist;
 
-import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.buff.BleedDebuff;
-import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
@@ -17,7 +15,6 @@ import com.oopsjpeg.enigma.util.Stacker;
 import discord4j.rest.util.Color;
 
 import java.util.EnumSet;
-import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
@@ -41,8 +38,7 @@ public class DuelistUnit extends Unit {
         blitz.getCooldown().start(0);
         parry.getCooldown().start(0);
 
-        hook(EventType.DAMAGE_DEALT, Priority.PRE_CALCULATION, (Consumer<DamageEvent>) e -> {
-            if (e.getActor() != getOwner()) return;
+        onDamageDealt(Priority.PRE_CALCULATION, e -> {
             if (!e.isOnHit()) return;
 
             e.queueAction(() -> {

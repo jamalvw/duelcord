@@ -1,14 +1,10 @@
 package com.oopsjpeg.enigma.game.unit.reaver.buff;
 
-import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.StatType;
-import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.util.Emote;
-
-import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.game.unit.reaver.skill.InfiniteSkill.DAMAGE;
 import static com.oopsjpeg.enigma.game.unit.reaver.skill.InfiniteSkill.DAMAGE_SP_RATIO;
@@ -22,8 +18,7 @@ public class InfiniteBuff extends Buff {
         super(owner, source, "Infinite", false, totalTurns, true, power);
         this.chance = chance;
 
-        hook(EventType.DAMAGE_DEALT, Priority.POST_DAMAGE, (Consumer<DamageEvent>) e -> {
-            if (e.getActor() != getOwner()) return;
+        onDamageDealt(Priority.POST_DAMAGE, e -> {
             if (e.isDoT()) return;
 
             float damage = DAMAGE + (getOwner().getStats().get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);

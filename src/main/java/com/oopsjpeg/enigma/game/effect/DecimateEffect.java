@@ -1,15 +1,11 @@
 package com.oopsjpeg.enigma.game.effect;
 
-import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.buff.CrippleDebuff;
-import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Stacker;
-
-import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
@@ -20,8 +16,7 @@ public class DecimateEffect extends Effect {
         super(owner, "Decimate", power, null);
         this.critCount = new Stacker(critLimit);
 
-        hook(EventType.DAMAGE_DEALT, Priority.POST_DAMAGE, (Consumer<DamageEvent>) event -> {
-            if (event.getActor() != getOwner()) return;
+        onDamageDealt(Priority.POST_DAMAGE, event -> {
             if (!event.isGoingToCrit()) return;
 
             event.queueAction(() -> {

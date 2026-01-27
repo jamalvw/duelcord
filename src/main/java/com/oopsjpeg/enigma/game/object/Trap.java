@@ -1,12 +1,8 @@
 package com.oopsjpeg.enigma.game.object;
 
 import com.oopsjpeg.enigma.TrapType;
-import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Priority;
-import com.oopsjpeg.enigma.game.event.DamageEvent;
-
-import java.util.function.Consumer;
 
 public abstract class Trap extends Buff {
     private final TrapType type;
@@ -15,7 +11,7 @@ public abstract class Trap extends Buff {
         super(owner, source, name, true, totalTurns, true, power);
         this.type = type;
 
-        hook(EventType.DAMAGE_DEALT, Priority.POST_DAMAGE, (Consumer<DamageEvent>) e -> {
+        onDamageDealt(Priority.POST_DAMAGE, e -> {
             if (type != TrapType.ATTACK) return;
             if (!e.isAttack()) return;
 

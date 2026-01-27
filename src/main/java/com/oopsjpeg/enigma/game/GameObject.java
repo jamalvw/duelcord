@@ -1,6 +1,7 @@
 package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.game.event.DamageEvent;
+import com.oopsjpeg.enigma.game.event.HealEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.function.Consumer;
 public abstract class GameObject {
     private final Map<EventType, List<Hook<? extends Event>>> hooks = new HashMap<>();
 
-    protected void hook(EventType type, Priority priority, Consumer<? extends Event> action) {
+    private void hook(EventType type, Priority priority, Consumer<? extends Event> action) {
         hooks.computeIfAbsent(type, k -> new ArrayList<>()).add(new Hook<>(type, priority, action));
     }
 
@@ -21,6 +22,10 @@ public abstract class GameObject {
 
     protected void onDamageReceived(Priority priority, Consumer<? extends DamageEvent> action) {
         hook(EventType.DAMAGE_RECEIVED, priority, action);
+    }
+
+    protected void onHealReceived(Priority priority, Consumer<? extends HealEvent> action) {
+        hook(EventType.HEAL_RECEIVED, priority, action);
     }
 
     public List<Hook<? extends Event>> getHooks(EventType type) {

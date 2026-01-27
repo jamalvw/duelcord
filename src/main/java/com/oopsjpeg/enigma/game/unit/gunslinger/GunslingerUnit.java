@@ -1,10 +1,8 @@
 package com.oopsjpeg.enigma.game.unit.gunslinger;
 
-import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.Stats;
-import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
@@ -14,7 +12,6 @@ import com.oopsjpeg.enigma.game.unit.gunslinger.skill.RollSkill;
 import discord4j.rest.util.Color;
 
 import java.util.EnumSet;
-import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
@@ -37,7 +34,7 @@ public class GunslingerUnit extends Unit {
         roll.getCooldown().start(0);
         deadeye.getCooldown().start(0);
 
-        hook(EventType.DAMAGE_DEALT, Priority.PRE_CALCULATION, (Consumer<DamageEvent>) event -> {
+        onDamageDealt(Priority.PRE_CALCULATION, event -> {
             if (!event.isAttack()) return;
             if (attackedThisRound) return;
 

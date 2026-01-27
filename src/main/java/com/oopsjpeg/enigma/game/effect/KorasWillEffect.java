@@ -1,6 +1,7 @@
 package com.oopsjpeg.enigma.game.effect;
 
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.object.Effect;
 
 import static com.oopsjpeg.enigma.game.StatType.SKILL_POWER;
@@ -16,6 +17,11 @@ public class KorasWillEffect extends Effect {
     public KorasWillEffect(GameMember owner, float power, float spRatio) {
         super(owner, "Kora's Will", power, null);
         this.spRatio = spRatio;
+
+        onDamageDealt(Priority.PRE_CALCULATION, event -> {
+            if (!event.isSkill()) return;
+            event.addDamage(getTotalPower(event.getActor().getStats().get(SKILL_POWER)));
+        });
     }
 
     private float getTotalPower(float sp) {
