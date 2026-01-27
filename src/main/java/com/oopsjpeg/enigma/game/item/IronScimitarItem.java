@@ -20,7 +20,7 @@ public class IronScimitarItem extends Item {
 
     @Override
     public Effect[] generateEffects() {
-        return new Effect[]{new DecimateEffect(getOwner(), 3, .12f)};
+        return new Effect[]{new DecimateEffect(getOwner(), 4, .8f)};
     }
 
     @Override
@@ -32,6 +32,6 @@ public class IronScimitarItem extends Item {
 
     @Override
     public String getTip() {
-        return "Crits cripple enemy";
+        return "Crits apply Cripple";
     }
 }

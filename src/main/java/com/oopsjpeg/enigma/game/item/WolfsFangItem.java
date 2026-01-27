@@ -35,6 +35,6 @@ public class WolfsFangItem extends Item {
 
     @Override
     public String getTip() {
-        return "Attacks weaken enemy";
+        return "Attacks apply Weaken";
     }
 }
