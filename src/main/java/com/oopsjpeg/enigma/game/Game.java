@@ -168,7 +168,7 @@ public class Game {
                     output.add("> Try attacking the enemy with **`>attack`**.");
 
                 // Second turn
-                if (member.getGuides().newTurn() == 2)
+                if (member.getGuides().newTurn() == 1)
                     output.add("> Your energy gets restored each turn. You now have **" + member.getStats().getInt(MAX_ENERGY) + "**.");
 
                 // Low health with potion still unused
