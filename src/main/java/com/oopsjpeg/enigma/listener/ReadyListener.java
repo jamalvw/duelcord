@@ -63,6 +63,7 @@ public class ReadyListener implements Listener {
                                 .withFooter(EmbedCreateFields.Footer.of("Updates every 10 minutes.", null)))
                         .build())
                 .subscribe(), 0, 10, TimeUnit.MINUTES);
+        schedule(instance.getComponentManager()::purgeExpired, 1, 1, TimeUnit.HOURS);
     }
 
     public void onReady(ReadyEvent event) {

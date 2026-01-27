@@ -4,6 +4,8 @@ import discord4j.core.event.domain.interaction.ComponentInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,5 +30,10 @@ public class ComponentManager {
             LOGGER.debug("Executing component with ID: {}", event.getCustomId());
             component.getCallback().accept(event);
         }
+    }
+
+    public void purgeExpired() {
+        components.entrySet().removeIf(entry ->
+                entry.getValue().getRegisteredAt().isBefore(Instant.now().minus(30, ChronoUnit.HOURS)));
     }
 }
