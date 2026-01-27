@@ -31,6 +31,6 @@ public class HolyBandItem extends Item {
 
     @Override
     public String getTip() {
-        return "Shield when defending";
+        return "Shield when Defending";
     }
 }

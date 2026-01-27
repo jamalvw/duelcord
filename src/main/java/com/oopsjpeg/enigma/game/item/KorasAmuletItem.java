@@ -31,6 +31,6 @@ public class KorasAmuletItem extends Item {
 
     @Override
     public String getTip() {
-        return "More skill damage";
+        return "More Skill damage";
     }
 }
