@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.item;
 
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.HealEvent;
 import com.oopsjpeg.enigma.game.buff.PotionBuff;
+import com.oopsjpeg.enigma.game.event.HealEvent;
 import com.oopsjpeg.enigma.game.object.Item;
 import com.oopsjpeg.enigma.util.Emote;
 
@@ -32,7 +32,7 @@ public class PotionItem extends Item {
         int heal = HEAL / TURNS;
         HealEvent e = new HealEvent(member, heal);
         e.setSource("Potion");
-        return EventManager.process(e);
+        return EventDispatcher.dispatch(e);
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.gunslinger.skill;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.gunslinger.GunslingerUnit;
@@ -58,7 +58,7 @@ public class DeadeyeSkill extends Skill {
             jackpot = true;
         }
 
-        output.add(EventManager.process(event));
+        output.add(EventDispatcher.dispatch(event));
         output.add(0, Emote.SKILL + "**" + actor.getUsername() + "** used **Deadeye**!" + (jackpot ? " **BULLSEYE**!" : ""));
 
         return Util.joinNonEmpty("\n", output);

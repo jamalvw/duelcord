@@ -1,5 +1,7 @@
 package com.oopsjpeg.enigma.game;
 
+import com.oopsjpeg.enigma.game.event.DamageEvent;
+
 import java.util.Arrays;
 
 public enum GameMode {

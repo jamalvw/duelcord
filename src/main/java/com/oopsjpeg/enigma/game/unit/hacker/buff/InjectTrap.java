@@ -1,7 +1,7 @@
 package com.oopsjpeg.enigma.game.unit.hacker.buff;
 
 import com.oopsjpeg.enigma.TrapType;
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.object.Trap;
 import com.oopsjpeg.enigma.game.unit.hacker.HackerUnit;
@@ -41,7 +41,7 @@ public class InjectTrap extends Trap {
         hacker.getBots().add(bot);
 
         BotDamageEvent botStrike = new BotDamageEvent(bot, getSource(), getOwner());
-        return Util.joinNonEmpty("\n", Emote.BUFF + "**" + getSource().getUsername() + "'s Trap** activated and created **" + bot.getType().getName() + "**!", EventManager.process(botStrike));
+        return Util.joinNonEmpty("\n", Emote.BUFF + "**" + getSource().getUsername() + "'s Trap** activated and created **" + bot.getType().getName() + "**!", EventDispatcher.dispatch(botStrike));
     }
 
     @Override

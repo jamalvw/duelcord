@@ -1,7 +1,11 @@
 package com.oopsjpeg.enigma.game.unit.duelist.skill;
 
-import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.EventDispatcher;
+import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.StatType;
+import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.buff.TauntDebuff;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.util.Emote;
@@ -40,7 +44,7 @@ public class DuelSkill extends Skill {
             e.setOnHitScale(ON_HIT_SCALE);
             e.addDamage(stats.get(StatType.ATTACK_POWER) * DAMAGE_AP_RATIO);
             e.addDamage(stats.get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
-            output.add(EventManager.process(e));
+            output.add(EventDispatcher.dispatch(e));
         }
 
         float random = RANDOM.nextFloat();

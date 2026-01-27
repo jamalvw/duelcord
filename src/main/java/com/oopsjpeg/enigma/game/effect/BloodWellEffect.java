@@ -1,11 +1,13 @@
 package com.oopsjpeg.enigma.game.effect;
 
-import com.oopsjpeg.enigma.DamagePhase;
-import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.Hook;
+import com.oopsjpeg.enigma.game.Priority;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.util.Util;
+
+import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
@@ -18,25 +20,16 @@ public class BloodWellEffect extends Effect {
         super(owner, "Blood Well", power, null);
         this.maxShield = maxShield;
 
-        hook(DamageEvent.class, new Hook<DamageEvent>() {
-            @Override
-            public DamagePhase getPhase() {
-                return DamagePhase.POST_DAMAGE;
-            }
+        hook(EventType.DAMAGE_DEALT, Priority.POST_DAMAGE, (Consumer<DamageEvent>) event -> {
+            if (!event.isAttack()) return;
 
-            @Override
-            public void execute(DamageEvent event) {
-                if (event.getActor() != getOwner()) return;
-                if (!event.isAttack()) return;
+            float shieldAmount = event.getDamage() * getPower();
 
-                float shieldAmount = event.getDamage() * getPower();
+            shieldAmount = Util.limit(shieldAmount, 0, maxShield - currentShield);
 
-                shieldAmount = Util.limit(shieldAmount, 0, maxShield - currentShield);
+            currentShield += shieldAmount;
 
-                currentShield += shieldAmount;
-
-                event.addShielding(shieldAmount);
-            }
+            event.addShielding(shieldAmount);
         });
     }
 

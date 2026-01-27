@@ -163,9 +163,9 @@ public class GameMember {
         return Util.joinNonEmpty("\n", output);
     }
 
-    public List<Hook<?>> getHooks(Class<? extends Event> eventClass) {
+    public List<Hook<? extends Event>> getHooks(EventType type) {
         return getData().stream()
-                .flatMap(o -> o.getHooks(eventClass).stream())
+                .flatMap(o -> o.getHooks(type).stream())
                 .collect(Collectors.toList());
     }
 

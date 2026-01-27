@@ -1,6 +1,6 @@
 package com.oopsjpeg.enigma.game.unit.hacker.skill;
 
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.buff.DisarmDebuff;
 import com.oopsjpeg.enigma.game.object.Skill;
@@ -38,7 +38,7 @@ public class OverloadSkill extends Skill {
             float rand = RANDOM.nextFloat();
             if (rand < DISARM_CHANCE) {
                 if (!target.hasBuff(DisarmDebuff.class)) {
-                    e.proposeEffect(() -> {
+                    e.queueAction(() -> {
                         DisarmDebuff debuff = new DisarmDebuff(target, actor, 1);
                         e.getOutput().add(target.addBuff(debuff, Emote.ANGER));
                     });
@@ -46,7 +46,7 @@ public class OverloadSkill extends Skill {
                     e.multiplyDamage(1 + BONUS_DAMAGE);
                 }
             }
-            output.add(EventManager.process(e));
+            output.add(EventDispatcher.dispatch(e));
         }
 
         unit.getBots().clear();

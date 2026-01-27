@@ -1,9 +1,11 @@
 package com.oopsjpeg.enigma.game.unit.duelist.buff;
 
-import com.oopsjpeg.enigma.DamagePhase;
 import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.util.Emote;
+
+import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
@@ -14,24 +16,16 @@ public class ParryBuff extends Buff {
         super(owner, source, "Parry", false, totalTurns, false, skillResist);
         this.blockChance = blockChance;
 
-        hook(DamageEvent.class, new Hook<DamageEvent>() {
-            @Override
-            public DamagePhase getPhase() {
-                return DamagePhase.POST_DAMAGE;
-            }
+        hook(EventType.DAMAGE_RECEIVED, Priority.POST_DAMAGE, (Consumer<DamageEvent>) e -> {
+            if (e.getVictim() != getOwner()) return;
+            if (!e.isBlocked()) return;
 
-            @Override
-            public void execute(DamageEvent e) {
-                if (e.getVictim() != getOwner()) return;
-                if (!e.isBlocked()) return;
-
-                e.proposeEffect(() -> {
-                    EnGardeBuff buff = new EnGardeBuff(getOwner(), e.getActor(), 1, 25);
-                    getOwner().addBuff(buff, Emote.BUFF);
-                    e.getOutput().add(Emote.BUFF + "**" + getOwner().getUsername() + "** parried and will gain __25 bonus energy__ next turn.");
-                    remove(true);
-                });
-            }
+            e.queueAction(() -> {
+                EnGardeBuff buff = new EnGardeBuff(getOwner(), e.getActor(), 1, 25);
+                getOwner().addBuff(buff, Emote.BUFF);
+                e.getOutput().add(Emote.BUFF + "**" + getOwner().getUsername() + "** parried and will gain __25 bonus energy__ next turn.");
+                remove(true);
+            });
         });
     }
 

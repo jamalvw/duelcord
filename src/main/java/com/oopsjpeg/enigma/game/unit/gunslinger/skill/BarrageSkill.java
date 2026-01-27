@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.gunslinger.skill;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.gunslinger.GunslingerUnit;
@@ -46,11 +46,11 @@ public class BarrageSkill extends Skill {
                 event.setOnHitScale(.4f);
                 event.addDamage(stats.get(ATTACK_POWER) * AP_RATIO);
                 event.addDamage(stats.get(SKILL_POWER) * SP_RATIO);
-                event.proposeEffect(() -> {
+                event.queueAction(() -> {
                     if (getUnit() instanceof GunslingerUnit)
                         ((GunslingerUnit) getUnit()).barrageShot();
                 });
-                output.add(EventManager.process(event));
+                output.add(EventDispatcher.dispatch(event));
             }
         }
 

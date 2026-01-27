@@ -1,10 +1,10 @@
 package com.oopsjpeg.enigma.game.unit.reaver.skill;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.StatType;
 import com.oopsjpeg.enigma.game.buff.ShockDebuff;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.util.Emote;
@@ -36,9 +36,9 @@ public class ShockSkill extends Skill {
         e.setSource("Shock");
         e.setIsSkill(true);
         e.setDamage(DAMAGE + actor.getStats().get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
-        e.proposeEffect(() -> e.getOutput().add(target.addBuff(new ShockDebuff(target, actor, 1, 50), Emote.ZAP)));
+        e.queueAction(() -> e.getOutput().add(target.addBuff(new ShockDebuff(target, actor, 1, 50), Emote.ZAP)));
 
-        output.add(EventManager.process(e));
+        output.add(EventDispatcher.dispatch(e));
 
         return Util.joinNonEmpty("\n", output);
     }

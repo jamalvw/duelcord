@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.hacker.skill;
 
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.ShieldEvent;
 import com.oopsjpeg.enigma.game.Stats;
+import com.oopsjpeg.enigma.game.event.ShieldEvent;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.hacker.buff.FirewallBuff;
@@ -32,7 +32,7 @@ public class FirewallSkill extends Skill {
         e.setSource("Firewall");
         e.addAmount(stats.get(ATTACK_POWER) * SHIELD_AP_RATIO);
         e.addAmount(stats.get(SKILL_POWER) * SHIELD_SP_RATIO);
-        return EventManager.process(e);
+        return EventDispatcher.dispatch(e);
     }
 
     @Override

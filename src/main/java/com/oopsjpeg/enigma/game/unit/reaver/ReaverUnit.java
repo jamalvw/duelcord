@@ -1,10 +1,10 @@
 package com.oopsjpeg.enigma.game.unit.reaver;
 
-import com.oopsjpeg.enigma.DamagePhase;
-import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.Hook;
+import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.Stats;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
@@ -14,6 +14,7 @@ import com.oopsjpeg.enigma.game.unit.reaver.skill.SummonSkill;
 import discord4j.rest.util.Color;
 
 import java.util.EnumSet;
+import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
 import static com.oopsjpeg.enigma.util.Util.percent;
@@ -33,7 +34,13 @@ public class ReaverUnit extends Unit {
         shock.getCooldown().start(0);
         summon.getCooldown().start(0);
 
-        hook(DamageEvent.class, new PassiveDamageHook());
+        hook(EventType.DAMAGE_DEALT, Priority.PRE_CALCULATION, (Consumer<DamageEvent>) event -> {
+            if (event.getActor() != owner) return;
+            if (!event.isAttack()) return;
+
+            Stats stats = owner.getStats();
+            event.addDamage(stats.get(SKILL_POWER) * PASSIVE_SP_RATIO);
+        });
     }
 
     public int getVoidPower() {
@@ -103,21 +110,5 @@ public class ReaverUnit extends Unit {
     @Override
     public EnumSet<Items> getRecommendedBuild() {
         return EnumSet.of(Items.FAITHBREAKER, Items.CRIMSON_MIGHT);
-    }
-
-    public class PassiveDamageHook implements Hook<DamageEvent> {
-        @Override
-        public DamagePhase getPhase() {
-            return DamagePhase.PRE_CALCULATION;
-        }
-
-        @Override
-        public void execute(DamageEvent event) {
-            if (event.getActor() != owner) return;
-            if (!event.isAttack()) return;
-
-            Stats stats = owner.getStats();
-            event.addDamage(stats.get(SKILL_POWER) * PASSIVE_SP_RATIO);
-        }
     }
 }

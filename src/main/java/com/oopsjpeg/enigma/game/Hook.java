@@ -1,9 +1,27 @@
 package com.oopsjpeg.enigma.game;
 
-import com.oopsjpeg.enigma.DamagePhase;
+import java.util.function.Consumer;
 
-public interface Hook<T extends Event> {
-    DamagePhase getPhase();
+public class Hook<T extends Event> {
+    private final Priority priority;
+    private final EventType eventType;
+    private final Consumer<T> action;
 
-    void execute(T event);
+    public Hook(EventType eventType, Priority priority, Consumer<T> action) {
+        this.eventType = eventType;
+        this.priority = priority;
+        this.action = action;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void execute(T event) {
+        action.accept(event);
+    }
 }

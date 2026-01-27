@@ -1,19 +1,30 @@
 package com.oopsjpeg.enigma.game;
 
+import com.oopsjpeg.enigma.game.event.DamageEvent;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public abstract class GameObject {
-    private final Map<Class<? extends Event>, List<Hook<?>>> hooks = new HashMap<>();
+    private final Map<EventType, List<Hook<? extends Event>>> hooks = new HashMap<>();
 
-    protected <T extends Event> void hook(Class<T> eventClass, Hook<T> hook) {
-        hooks.computeIfAbsent(eventClass, k -> new ArrayList<>()).add(hook);
+    protected void hook(EventType type, Priority priority, Consumer<? extends Event> action) {
+        hooks.computeIfAbsent(type, k -> new ArrayList<>()).add(new Hook<>(type, priority, action));
     }
 
-    public List<Hook<?>> getHooks(Class<? extends Event> eventClass) {
-        return new ArrayList<>(hooks.getOrDefault(eventClass, new ArrayList<>()));
+    protected void onDamageDealt(Priority priority, Consumer<? extends DamageEvent> action) {
+        hook(EventType.DAMAGE_DEALT, priority, action);
+    }
+
+    protected void onDamageReceived(Priority priority, Consumer<? extends DamageEvent> action) {
+        hook(EventType.DAMAGE_RECEIVED, priority, action);
+    }
+
+    public List<Hook<? extends Event>> getHooks(EventType type) {
+        return hooks.getOrDefault(type, new ArrayList<>());
     }
 
     public String getStatus(GameMember member) {

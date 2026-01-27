@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.game.unit.hacker.bot;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.StatType;
 import com.oopsjpeg.enigma.game.Stats;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.util.Emote;
 
 import static com.oopsjpeg.enigma.game.unit.hacker.HackerUnit.*;

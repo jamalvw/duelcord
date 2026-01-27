@@ -1,20 +1,26 @@
 package com.oopsjpeg.enigma.game;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Event {
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
     private final GameMember actor;
     private final List<String> output = new ArrayList<>();
-    private final List<PendingAction> effects = new ArrayList<>();
+    private final List<Runnable> successTasks = new ArrayList<>();
+
+    private String source;
+    private String emote;
 
     private boolean cancelled = false;
 
-    private String source = "";
-    private String emote = "";
-
-    public Event(GameMember actor) {
+    public Event(GameMember actor, String emote) {
         this.actor = actor;
+        this.emote = emote;
     }
 
     public GameMember getActor() {
@@ -25,20 +31,15 @@ public abstract class Event {
         return output;
     }
 
-    public List<Hook<?>> createPipeline() {
-        return new ArrayList<>();
+    public List<Runnable> getSuccessTasks() {
+        return successTasks;
     }
 
-    public List<PendingAction> getEffects() {
-        return effects;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    public void cancel() {
-        this.cancelled = true;
+    /**
+     * Queues an action to run only if this event is not canceled
+     */
+    public void queueAction(Runnable task) {
+        successTasks.add(task);
     }
 
     public String getSource() {
@@ -57,22 +58,36 @@ public abstract class Event {
         return emote;
     }
 
+    public boolean hasEmote() {
+        return emote != null && !emote.isEmpty();
+    }
+
     public void setEmote(String emote) {
         this.emote = emote;
     }
 
-    public void proposeEffect(PendingAction action) {
-        this.effects.add(action);
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void cancel() {
+        this.cancelled = true;
     }
 
     public Game getGame() {
         return actor.getGame();
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Event> void dispatchTo(Hook<T> hook) {
-        hook.execute((T) this);
-    }
+    public abstract List<Hook<? extends Event>> createPipeline();
 
     public abstract void complete();
+
+    public void finish() {
+        complete();
+
+        getSuccessTasks().forEach(task -> {
+            LOGGER.debug("Executing success task {}", task.getClass().getSimpleName());
+            task.run();
+        });
+    }
 }

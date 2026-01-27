@@ -1,11 +1,7 @@
 package com.oopsjpeg.enigma.game.unit.shifter;
 
-import com.oopsjpeg.enigma.DamagePhase;
-import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.Hook;
 import com.oopsjpeg.enigma.game.Stats;
-import com.oopsjpeg.enigma.game.buff.WeakenedDebuff;
 import com.oopsjpeg.enigma.game.object.Items;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
@@ -17,7 +13,6 @@ import discord4j.rest.util.Color;
 import java.util.EnumSet;
 
 import static com.oopsjpeg.enigma.game.StatType.*;
-import static com.oopsjpeg.enigma.util.Util.RANDOM;
 import static com.oopsjpeg.enigma.util.Util.percent;
 
 // GNAR
@@ -35,25 +30,25 @@ public class ShifterUnit extends Unit {
     public ShifterUnit(GameMember owner) {
         this.owner = owner;
 
-        hook(DamageEvent.class, new Hook<DamageEvent>() {
-            @Override
-            public DamagePhase getPhase() {
-                return DamagePhase.POST_DAMAGE;
-            }
-
-            @Override
-            public void execute(DamageEvent e) {
-                if (e.getActor() != getOwner()) return;
-                if (!e.isAttack() && !e.isSkill()) return;
-                if (!form.isDone()) return;
-
-                if (RANDOM.nextFloat() < PASSIVE_WEAKEN_CHANCE)
-                    e.proposeEffect(() -> {
-                        if (!e.getVictim().hasBuff(WeakenedDebuff.class))
-                            e.getOutput().add(e.getVictim().addBuff(new WeakenedDebuff(e.getVictim(), e.getActor(), 1, 0.45f), Emote.WEAKEN));
-                    });
-            }
-        });
+        //hook(DamageEvent.class, new Hook<DamageEvent>() {
+        //    @Override
+        //    public DamagePhase getPhase() {
+        //        return DamagePhase.POST_DAMAGE;
+        //    }
+//
+        //    @Override
+        //    public void execute(DamageEvent e) {
+        //        if (e.getActor() != getOwner()) return;
+        //        if (!e.isAttack() && !e.isSkill()) return;
+        //        if (!form.isDone()) return;
+//
+        //        if (RANDOM.nextFloat() < PASSIVE_WEAKEN_CHANCE)
+        //            e.proposeEffect(() -> {
+        //                if (!e.getVictim().hasBuff(WeakenedDebuff.class))
+        //                    e.getOutput().add(e.getVictim().addBuff(new WeakenedDebuff(e.getVictim(), e.getActor(), 1, 0.45f), Emote.WEAKEN));
+        //            });
+        //    }
+        //});
     }
 
     @Override

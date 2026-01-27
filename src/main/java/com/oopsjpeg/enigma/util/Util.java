@@ -1,9 +1,9 @@
 package com.oopsjpeg.enigma.util;
 
 import com.oopsjpeg.enigma.Enigma;
-import com.oopsjpeg.enigma.game.DamageEvent;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Effect;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
@@ -134,7 +134,7 @@ public class Util {
                 //+ (event.bonus > 0 ? " (+" + Math.round(event.bonus) + ")" : "")
                 + "!" + (event.isGoingToCrit() ? " **CRIT**!" : "") + (event.isBlocked() ? " **BLOCK**!" : "")
                 + " [**" + (victimM.hasShield() && !event.isIgnoreShield() ? victimM.getShield() : victimM.getHealth() + " **/** " + stats.getInt(MAX_HEALTH)) + "**]"
-                + (!source.isEmpty() ? " (" + source + ")" : "");
+                + (source != null && !source.isEmpty() ? " (" + source + ")" : "");
     }
 
     public static String timeDiff(LocalDateTime date1, LocalDateTime date2) {

@@ -1,8 +1,8 @@
 package com.oopsjpeg.enigma.game.unit.assassin.skill;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
@@ -54,6 +54,6 @@ public class ExecuteSkill extends Skill {
                 .filter(Buff::isDebuff)
                 .forEach(debuff -> e.addDamage(DAMAGE_PER_DEBUFF * target.getMissingHealth()));
 
-        return Emote.SKILL + "**" + actor.getUsername() + "** used **Execute**!\n" + EventManager.process(e);
+        return Emote.SKILL + "**" + actor.getUsername() + "** used **Execute**!\n" + EventDispatcher.dispatch(e);
     }
 }

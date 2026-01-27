@@ -1,6 +1,6 @@
-package com.oopsjpeg.enigma;
+package com.oopsjpeg.enigma.game;
 
-public enum DamagePhase {
+public enum Priority {
     VALIDATION,
     PRE_CALCULATION,
     RESISTANCE,

@@ -1,8 +1,8 @@
 package com.oopsjpeg.enigma.game.buff;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.util.Emote;
 
@@ -23,6 +23,6 @@ public class BleedDebuff extends Buff {
         e.setIsDoT(true);
         e.setSource("Bleed");
         e.setDamage(getPower());
-        return EventManager.process(e);
+        return EventDispatcher.dispatch(e);
     }
 }

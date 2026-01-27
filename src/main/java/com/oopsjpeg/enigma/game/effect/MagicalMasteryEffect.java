@@ -1,12 +1,14 @@
 package com.oopsjpeg.enigma.game.effect;
 
-import com.oopsjpeg.enigma.DamagePhase;
-import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.Hook;
+import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.Stats;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.util.Stacker;
+
+import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.game.StatType.COOLDOWN_REDUCTION;
 import static com.oopsjpeg.enigma.game.StatType.MAX_HEALTH;
@@ -21,24 +23,15 @@ public class MagicalMasteryEffect extends Effect {
         this.cdReduction = cdReduction;
         this.skillCount = new Stacker(skillLimit);
 
-        hook(DamageEvent.class, new Hook<DamageEvent>() {
-            @Override
-            public DamagePhase getPhase() {
-                return DamagePhase.PRE_CALCULATION;
-            }
+        hook(EventType.DAMAGE_DEALT, Priority.PRE_CALCULATION, (Consumer<DamageEvent>) event -> {
+            if (!event.isSkill()) return;
 
-            @Override
-            public void execute(DamageEvent event) {
-                if (event.getActor() != getOwner()) return;
-                if (!event.isSkill()) return;
-
-                event.proposeEffect(() -> {
-                    if (skillCount.stack()) {
-                        event.addDamage(event.getVictim().getStats().get(MAX_HEALTH) * getPower());
-                        skillCount.reset();
-                    }
-                });
-            }
+            event.queueAction(() -> {
+                if (skillCount.stack()) {
+                    event.addDamage(event.getVictim().getStats().get(MAX_HEALTH) * getPower());
+                    skillCount.reset();
+                }
+            });
         });
     }
 

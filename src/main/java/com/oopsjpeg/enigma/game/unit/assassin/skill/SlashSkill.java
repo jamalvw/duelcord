@@ -1,10 +1,10 @@
 package com.oopsjpeg.enigma.game.unit.assassin.skill;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.buff.BleedDebuff;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.util.Emote;
@@ -64,7 +64,7 @@ public class SlashSkill extends Skill {
         e.addDamage(DAMAGE_BASE);
         e.addDamage(stats.get(ATTACK_POWER) * DAMAGE_AP_RATIO);
         e.addDamage(stats.get(SKILL_POWER) * DAMAGE_SP_RATIO);
-        e.proposeEffect(() -> {
+        e.queueAction(() -> {
             float rand = Util.RANDOM.nextFloat();
             if (rand <= BLEED_CHANCE) {
                 float bleedDamage = e.getDamage() * BLEED_DAMAGE_RATIO;
@@ -72,7 +72,7 @@ public class SlashSkill extends Skill {
             }
         });
 
-        output.add(EventManager.process(e));
+        output.add(EventDispatcher.dispatch(e));
 
         return Util.joinNonEmpty("\n", output);
     }

@@ -1,7 +1,11 @@
 package com.oopsjpeg.enigma.game.unit.shifter.skill;
 
-import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.EventDispatcher;
+import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.StatType;
+import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.buff.WeakenedDebuff;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Skill;
 import com.oopsjpeg.enigma.game.unit.Unit;
 
@@ -28,13 +32,13 @@ public class SlamSkill extends Skill {
         e.addDamage(DAMAGE);
         e.addDamage(stats.get(StatType.ATTACK_POWER) * DAMAGE_AP_RATIO);
         e.addDamage(stats.get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
-        e.proposeEffect(() -> {
+        e.queueAction(() -> {
             if (target.hasBuff(WeakenedDebuff.class)) {
                 e.addHealing(target.getHealth() * HEAL);
             }
         });
 
-        return EventManager.process(e);
+        return EventDispatcher.dispatch(e);
     }
 
     @Override

@@ -161,20 +161,22 @@ public class Game {
                 // Item purchasing
                 if (!member.getGuides().hasPurchasedAnItem()) {
                     Items recommended = unit.getRecommendedBuild().stream().findAny().orElse(Items.IRON_SCIMITAR);
-                    output.add("*Try buying your first item with **`>buy " + recommended.getName() + "`**.*");
+                    output.add("> Try buying your first item with **`>buy " + recommended.getName() + "`**.");
                 }
                 // Attacking
                 else if (!member.getGuides().hasAttacked())
-                    output.add("*Try attacking the enemy with **`>attack`**.*");
+                    output.add("> Try attacking the enemy with **`>attack`**.");
 
                 // Second turn
                 if (member.getGuides().newTurn() == 2)
-                    output.add("*Your energy is restored to full each turn. You now have **" + member.getStats().getInt(MAX_ENERGY) + "**.*");
+                    output.add("> Your energy gets restored each turn. You now have **" + member.getStats().getInt(MAX_ENERGY) + "**.");
 
                 // Low health with potion still unused
                 if (member.getHealthPercentage() <= 0.5f && member.getItems().stream().anyMatch(i -> i instanceof PotionItem) && !member.getGuides().hasUsedPotion())
-                    output.add("*You're low on health! Try using your potion with **`>use Potion`**.*");
+                    output.add("> You're low on health! Try using your potion with **`>use Potion`**.");
             }
+
+            output.add("");
 
             // On turn start
             output.addAll(member.getData().stream().map(e -> e.onTurnStart(member)).collect(Collectors.toList()));

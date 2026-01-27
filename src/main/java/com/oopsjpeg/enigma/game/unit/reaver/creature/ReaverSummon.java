@@ -1,12 +1,14 @@
 package com.oopsjpeg.enigma.game.unit.reaver.creature;
 
-import com.oopsjpeg.enigma.DamagePhase;
-import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
+import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.Hook;
+import com.oopsjpeg.enigma.game.Priority;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Summon;
 import com.oopsjpeg.enigma.util.Emote;
+
+import java.util.function.Consumer;
 
 public class ReaverSummon extends Summon {
     private final float damage;
@@ -15,41 +17,25 @@ public class ReaverSummon extends Summon {
         super("Creature", owner, health, false);
         this.damage = damage;
 
-        hook(DamageEvent.class, new Hook<DamageEvent>() {
-            @Override
-            public DamagePhase getPhase() {
-                return DamagePhase.PRE_CALCULATION;
-            }
+        hook(EventType.DAMAGE_DEALT, Priority.PRE_CALCULATION, (Consumer<DamageEvent>) e -> {
+            if (e.getActor() != getOwner()) return;
+            if (!e.isAttack()) return;
 
-            @Override
-            public void execute(DamageEvent e) {
-                if (e.getActor() != getOwner()) return;
-                if (!e.isAttack()) return;
+            DamageEvent summonStrikeEvent = new DamageEvent(getOwner(), e.getVictim());
+            summonStrikeEvent.setIsSkill(true);
+            summonStrikeEvent.setIsDoT(true);
+            summonStrikeEvent.setEmote(Emote.SUMMON);
+            summonStrikeEvent.setSource(getName());
+            summonStrikeEvent.addDamage(damage);
 
-                DamageEvent summonStrikeEvent = new DamageEvent(getOwner(), e.getVictim());
-                summonStrikeEvent.setIsSkill(true);
-                summonStrikeEvent.setIsDoT(true);
-                summonStrikeEvent.setEmote(Emote.SUMMON);
-                summonStrikeEvent.setSource(getName());
-                summonStrikeEvent.addDamage(damage);
-
-                e.proposeEffect(() -> e.getOutput().add(EventManager.process(summonStrikeEvent)));
-            }
+            e.queueAction(() -> e.getOutput().add(EventDispatcher.dispatch(summonStrikeEvent)));
         });
-        hook(DamageEvent.class, new Hook<DamageEvent>() {
-            @Override
-            public DamagePhase getPhase() {
-                return DamagePhase.SUMMONS;
-            }
+        hook(EventType.DAMAGE_DEALT, Priority.SUMMONS, (Consumer<DamageEvent>) event -> {
+            if (event.getVictim() != getOwner()) return;
 
-            @Override
-            public void execute(DamageEvent event) {
-                if (event.getVictim() != getOwner()) return;
-
-                takeHealth(event.getDamage());
-                if (getHealth() <= 0) {
-                    remove();
-                }
+            takeHealth(event.getDamage());
+            if (getHealth() <= 0) {
+                remove();
             }
         });
     }

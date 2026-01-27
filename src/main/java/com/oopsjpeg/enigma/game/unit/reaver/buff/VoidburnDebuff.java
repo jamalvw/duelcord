@@ -1,8 +1,8 @@
 package com.oopsjpeg.enigma.game.unit.reaver.buff;
 
-import com.oopsjpeg.enigma.game.DamageEvent;
-import com.oopsjpeg.enigma.game.EventManager;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.util.Emote;
 
@@ -19,7 +19,7 @@ public class VoidburnDebuff extends Buff {
         event.setIsDoT(true);
         event.setSource(getName());
         event.setDamage(getPower());
-        return EventManager.process(event);
+        return EventDispatcher.dispatch(event);
     }
 
     @Override

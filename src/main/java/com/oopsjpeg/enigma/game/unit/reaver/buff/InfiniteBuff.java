@@ -1,12 +1,14 @@
 package com.oopsjpeg.enigma.game.unit.reaver.buff;
 
-import com.oopsjpeg.enigma.DamagePhase;
-import com.oopsjpeg.enigma.game.DamageEvent;
+import com.oopsjpeg.enigma.game.EventType;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.Hook;
+import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.StatType;
+import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.util.Emote;
+
+import java.util.function.Consumer;
 
 import static com.oopsjpeg.enigma.game.unit.reaver.skill.InfiniteSkill.DAMAGE;
 import static com.oopsjpeg.enigma.game.unit.reaver.skill.InfiniteSkill.DAMAGE_SP_RATIO;
@@ -20,33 +22,25 @@ public class InfiniteBuff extends Buff {
         super(owner, source, "Infinite", false, totalTurns, true, power);
         this.chance = chance;
 
-        hook(DamageEvent.class, new Hook<DamageEvent>() {
-            @Override
-            public DamagePhase getPhase() {
-                return DamagePhase.POST_DAMAGE;
-            }
+        hook(EventType.DAMAGE_DEALT, Priority.POST_DAMAGE, (Consumer<DamageEvent>) e -> {
+            if (e.getActor() != getOwner()) return;
+            if (e.isDoT()) return;
 
-            @Override
-            public void execute(DamageEvent e) {
-                if (e.getActor() != getOwner()) return;
-                if (e.isDoT()) return;
+            float damage = DAMAGE + (getOwner().getStats().get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
 
-                float damage = DAMAGE + (getOwner().getStats().get(StatType.SKILL_POWER) * DAMAGE_SP_RATIO);
-
-                if (RANDOM.nextFloat() < chance) {
-                    e.proposeEffect(() -> {
-                        GameMember victim = e.getVictim();
-                        if (!victim.hasBuff(VoidburnDebuff.class)) {
-                            VoidburnDebuff burn = new VoidburnDebuff(victim, e.getActor(), 2, damage);
-                            e.getOutput().add(victim.addBuff(burn, Emote.VOIDBURN));
-                        } else {
-                            VoidburnDebuff burn = (VoidburnDebuff) victim.getBuff(VoidburnDebuff.class);
-                            burn.setPower(burn.getPower() + damage);
-                            burn.reset();
-                            e.getOutput().add(Emote.VOIDBURN + "**Voidburn**'s damage increased to **" + burn.formatPower() + "**!");
-                        }
-                    });
-                }
+            if (RANDOM.nextFloat() < chance) {
+                e.queueAction(() -> {
+                    GameMember victim = e.getVictim();
+                    if (!victim.hasBuff(VoidburnDebuff.class)) {
+                        VoidburnDebuff burn = new VoidburnDebuff(victim, e.getActor(), 2, damage);
+                        e.getOutput().add(victim.addBuff(burn, Emote.VOIDBURN));
+                    } else {
+                        VoidburnDebuff burn = (VoidburnDebuff) victim.getBuff(VoidburnDebuff.class);
+                        burn.setPower(burn.getPower() + damage);
+                        burn.reset();
+                        e.getOutput().add(Emote.VOIDBURN + "**Voidburn**'s damage increased to **" + burn.formatPower() + "**!");
+                    }
+                });
             }
         });
     }

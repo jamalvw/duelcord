@@ -34,8 +34,10 @@ public class BuyAction implements GameAction {
         if (actor.hasGuides() && !actor.getGuides().hasPurchasedAnItem()) {
             actor.getGuides().purchasedAnItem();
 
-            if (!actor.getGuides().hasAttacked())
-                output.add("*Now, try attacking the enemy with **`>attack`**.*");
+            if (!actor.getGuides().hasAttacked()) {
+                output.add("> Keep buying items throughout the game to get stronger!");
+                output.add("> Now, try attacking the enemy with **`>attack`**.");
+            }
         }
 
         return Util.joinNonEmpty("\n", output);

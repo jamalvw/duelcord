@@ -1,9 +1,9 @@
-package com.oopsjpeg.enigma.game;
+package com.oopsjpeg.enigma.game.event;
 
+import com.oopsjpeg.enigma.game.*;
+import com.oopsjpeg.enigma.game.hook.*;
 import com.oopsjpeg.enigma.util.Emote;
 import com.oopsjpeg.enigma.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,6 @@ import java.util.List;
 import static java.lang.Math.round;
 
 public class DamageEvent extends Event {
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
     private final GameMember victim;
     private float damage;
     private boolean blocked = false;
@@ -31,9 +29,8 @@ public class DamageEvent extends Event {
     private boolean ignoreShield;
 
     public DamageEvent(GameMember attacker, GameMember victim) {
-        super(attacker);
+        super(attacker, Emote.ATTACK);
         this.victim = victim;
-        setEmote(Emote.ATTACK);
     }
 
     public GameMember getVictim() {
@@ -41,18 +38,19 @@ public class DamageEvent extends Event {
     }
 
     @Override
-    public List<Hook<?>> createPipeline() {
-        List<Hook<?>> pipeline = new ArrayList<>((getActor().getHooks(this.getClass())));
-        pipeline.addAll(victim.getHooks(this.getClass()));
-
-        pipeline.add(new CriticalStrikeHook());
-        pipeline.add(new ResistanceHook());
-        pipeline.add(new ShieldHook());
-        pipeline.add(new LifeStealHook());
-        pipeline.add(new DodgeHook());
-        pipeline.add(new BlockHook());
-
-        return pipeline;
+    public List<Hook<? extends Event>> createPipeline() {
+        List<Hook<? extends Event>> hooks = new ArrayList<>();
+        hooks.addAll(getActor().getHooks(EventType.DAMAGE_ALL));
+        hooks.addAll(getActor().getHooks(EventType.DAMAGE_DEALT));
+        hooks.addAll(victim.getHooks(EventType.DAMAGE_ALL));
+        hooks.addAll(victim.getHooks(EventType.DAMAGE_RECEIVED));
+        hooks.add(new BlockHook());
+        hooks.add(new CriticalStrikeHook());
+        hooks.add(new DodgeHook());
+        hooks.add(new LifeStealHook());
+        hooks.add(new ResistanceHook());
+        hooks.add(new ShieldHook());
+        return hooks;
     }
 
     public float getDamage() {
@@ -180,16 +178,9 @@ public class DamageEvent extends Event {
         getGame().getMode().handleDamage(this);
 
         if (healing > 0)
-            getOutput().add(EventManager.process(new HealEvent(getActor(), healing)));
+            getOutput().add(EventDispatcher.dispatch(new HealEvent(getActor(), healing)));
         if (shielding > 0)
-            getOutput().add(EventManager.process(new ShieldEvent(getActor(), shielding)));
-
-        for (PendingAction action : getEffects()) {
-            LOGGER.debug("Executing pending action {}", action.getClass().getSimpleName());
-            action.execute();
-            getOutput().add(getActor().updateStats());
-            getOutput().add(victim.updateStats());
-        }
+            getOutput().add(EventDispatcher.dispatch(new ShieldEvent(getActor(), shielding)));
 
         // Summon damaging
         //if (event.target.hasBlockingSummon())
