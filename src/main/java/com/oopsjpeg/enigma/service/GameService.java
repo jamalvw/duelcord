@@ -123,7 +123,9 @@ public class GameService {
 
         SCHEDULER.schedule(() -> game.getChannel().edit(ThreadChannelEditSpec.builder().locked(true).build()).subscribe(), 2, TimeUnit.MINUTES);
 
-        playerToGameRegistry.values().remove(game);
+        for (Player player : game.getPlayers())
+            playerToGameRegistry.remove(player.getId());
+
         games.remove(game);
 
         LOGGER.debug("Game destroyed with ID {}", "none");
