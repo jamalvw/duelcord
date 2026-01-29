@@ -321,7 +321,15 @@ public class GameMember {
         setHealth(stats.getInt(MAX_HEALTH));
         setGold(game.getMode().handleGold(175 + (100 * game.getAlive().indexOf(this))));
 
-        commands = new CommandListener(Enigma.getInstance(), ">", unit.getSkills());
+        List<Skill> skills = new ArrayList<>(Arrays.asList(unit.getSkills()));
+        if (unit.hasForms())
+            skills.addAll(Arrays.stream(unit.getForms())
+                    .flatMap(form -> Arrays.stream(form.getSkills()))
+                    .collect(Collectors.toList()));
+
+        Skill[] skillsArray = skills.toArray(new Skill[0]);
+
+        commands = new CommandListener(Enigma.getInstance(), ">", skillsArray);
         commands.setUserLimit(getUser());
         Enigma.getInstance().addListener(commands);
 
@@ -497,7 +505,11 @@ public class GameMember {
             String unitStatus = getUnit().getStatus(this);
 
             // Skill statuses
-            List<String> skillStatuses = Arrays.stream(getUnit().getSkills())
+            List<Skill> skills = new ArrayList<>(Arrays.asList(getUnit().getSkills()));
+            if (getUnit().hasForms())
+                skills.addAll(Arrays.asList(getUnit().getForm().getSkills()));
+
+            List<String> skillStatuses = skills.stream()
                     .map(skill -> skill.getStatus(this))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());

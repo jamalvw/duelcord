@@ -20,7 +20,7 @@ public class IronScimitarItem extends Item {
 
     @Override
     public Effect[] generateEffects() {
-        return new Effect[]{new DecimateEffect(getOwner(), 4, .8f)};
+        return new Effect[]{new DecimateEffect(getOwner(), 4, .08f)};
     }
 
     @Override

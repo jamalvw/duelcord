@@ -3,6 +3,7 @@ package com.oopsjpeg.enigma;
 import com.oopsjpeg.enigma.game.*;
 import com.oopsjpeg.enigma.game.object.Item;
 import com.oopsjpeg.enigma.game.object.Items;
+import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.game.unit.Units;
 import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.PlayerService;
@@ -10,6 +11,7 @@ import com.oopsjpeg.enigma.service.QueueService;
 import com.oopsjpeg.enigma.storage.Player;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.object.component.ActionRow;
+import discord4j.core.object.component.Button;
 import discord4j.core.object.component.SelectMenu;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
@@ -17,6 +19,7 @@ import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.core.spec.InteractionApplicationCommandCallbackSpec;
 import discord4j.core.spec.MessageCreateSpec;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
@@ -216,14 +219,32 @@ public enum GeneralCommand implements Command {
     UNIT("unit") {
         @Override
         public Mono<?> execute(Message message, String[] args) {
-            Units unit = Units.fromName(String.join(" ", args));
+            Units query = Units.fromName(String.join(" ", args));
 
-            if (unit == null) return Mono.empty();
+            if (query == null) return Mono.empty();
+
+            Unit unit = query.create(null);
 
             MessageChannel channel = message.getChannel().block();
-            return channel.createMessage(MessageCreateSpec.builder()
-                    .addEmbed(unit.create(null).embed())
-                    .build());
+            MessageCreateSpec.Builder builder = MessageCreateSpec.builder();
+            ComponentManager manager = Enigma.getInstance().getComponentManager();
+
+            builder.addEmbed(unit.embed());
+
+            if (unit.hasForms()) {
+                for (int i = 1; i < unit.getForms().length; i++) {
+                    int finalI = i;
+                    String id = manager.register(e -> {
+                        e.reply(InteractionApplicationCommandCallbackSpec.builder()
+                                .ephemeral(true)
+                                .embeds(unit.getForms()[finalI].embed())
+                                .build()).subscribe();
+                    }).getId();
+                    builder.addComponent(ActionRow.of(Button.primary(id, unit.getForms()[i].getName())));
+                }
+            }
+
+            return channel.createMessage(builder.build());
         }
     };
 

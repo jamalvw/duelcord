@@ -21,7 +21,7 @@ public class BoneSpearItem extends Item {
 
     @Override
     public Effect[] generateEffects() {
-        return new Effect[]{new LifewasterEffect(getOwner(), 5, 0.75f)};
+        return new Effect[]{new LifewasterEffect(getOwner(), 3, 0.6f)};
     }
 
     @Override

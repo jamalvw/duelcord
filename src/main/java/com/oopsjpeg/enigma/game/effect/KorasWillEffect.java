@@ -20,7 +20,12 @@ public class KorasWillEffect extends Effect {
 
         onDamageDealt(Priority.PRE_CALCULATION, event -> {
             if (!event.isSkill()) return;
-            event.addDamage(getTotalPower(event.getActor().getStats().get(SKILL_POWER)));
+
+            float p = getTotalPower(event.getActor().getStats().get(SKILL_POWER));
+
+            if (event.isDoT()) p /= 2;
+
+            event.addDamage(p);
         });
     }
 

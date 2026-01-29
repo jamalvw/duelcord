@@ -23,8 +23,8 @@ public class DeadeyeSkill extends Skill {
     public static final int COST = 50;
     public static final float BULLSEYE_BARRAGE_INCREASE = 0.025f;
     public static final float CHANCE = 0.15f;
-    public static final int DAMAGE = 10;
-    public static final float AP_RATIO = 0.75f;
+    public static final int DAMAGE = 25;
+    public static final float AP_RATIO = 0.7f;
     public static final float BULLSEYE_RATIO = 0.2f;
 
     public DeadeyeSkill(Unit unit) {

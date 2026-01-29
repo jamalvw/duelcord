@@ -14,6 +14,8 @@ public class TracingBuff extends Buff {
         super(owner, source, "Tracing", false, 1, true, 0);
 
         onDamageDealt(Priority.PRE_CALCULATION, e -> {
+            if (!e.isAttack()) return;
+
             GameMember actor = e.getActor();
 
             Stats stats = actor.getStats();

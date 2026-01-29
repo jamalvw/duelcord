@@ -84,9 +84,6 @@ public abstract class Skill implements Command, GameAction {
         if (hasCost(actor) && actor.getEnergy() < getCost(actor))
             return Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + cost + "** energy. You have **" + actor.getEnergy() + "**.");
 
-        if (hasCost(actor) && actor.getEnergy() < getCost(actor))
-            return Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + cost + "** energy. You have **" + actor.getEnergy() + "**.");
-
         List<String> output = new ArrayList<>();
         if (hasCooldown())
             cooldown.start(actor.getStats().getInt(COOLDOWN_REDUCTION));

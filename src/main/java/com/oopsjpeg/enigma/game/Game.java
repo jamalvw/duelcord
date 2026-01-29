@@ -115,12 +115,6 @@ public class Game {
             output.add("Don't know who to play? Try **`" + commandListener.getPrefix() + GameCommand.PICK.getName() + " random`**");
         } else if (gameState == PLAYING) {
             GameMember member = getCurrentMember();
-            member.addHealth(member.getStats().get(HEALTH_PER_TURN) * (member.isDefensive() ? 2 : 1));
-            member.giveGold(mode.handleGold(125 + (turnCount * 5)));
-            member.giveGold(member.getStats().getInt(GOLD_PER_TURN));
-            member.setEnergy(member.getStats().getInt(MAX_ENERGY));
-            member.setShield(0);
-            member.setDefensive(false);
 
             turnCount++;
 
@@ -151,8 +145,9 @@ public class Game {
                 }
             }
 
-            output.add("### " + member.getMention() + "'s Turn - " + member.getGold() + " Gold");
-            output.add("Open this channel's pinned messages to see your stats.");
+            List<String> mainDisplay = new ArrayList<>();
+            mainDisplay.add("### " + member.getMention() + "'s Turn - " + member.getGold() + " Gold");
+            mainDisplay.add("> Open this channel's pinned messages to see your stats.");
 
             Unit unit = member.getUnit();
 
@@ -161,27 +156,41 @@ public class Game {
                 // Item purchasing
                 if (!member.getGuides().hasPurchasedAnItem()) {
                     Items recommended = unit.getRecommendedBuild().stream().findAny().orElse(Items.IRON_SCIMITAR);
-                    output.add("> Try buying your first item with **`>buy " + recommended.getName() + "`**.");
+                    mainDisplay.add("> Try buying your first item with **`>buy " + recommended.getName() + "`**.");
                 }
                 // Attacking
                 else if (!member.getGuides().hasAttacked())
-                    output.add("> Try attacking the enemy with **`>attack`**.");
+                    mainDisplay.add("> Try attacking the enemy with **`>attack`**.");
 
                 // Second turn
                 if (member.getGuides().newTurn() == 1)
-                    output.add("> Your energy gets restored each turn. You now have **" + member.getStats().getInt(MAX_ENERGY) + "**.");
+                    mainDisplay.add("> Your energy gets restored each turn. You now have **" + member.getStats().getInt(MAX_ENERGY) + "**.");
+
+                // Third turn
+                if (member.getGuides().newTurn() == 2)
+                    mainDisplay.add("> As the game goes on, ");
 
                 // Low health with potion still unused
                 if (member.getHealthPercentage() <= 0.5f && member.getItems().stream().anyMatch(i -> i instanceof PotionItem) && !member.getGuides().hasUsedPotion())
-                    output.add("> You're low on health! Try using your potion with **`>use Potion`**.");
+                    mainDisplay.add("> You're low on health! Try using your potion with **`>use Potion`**.");
             }
-
-            output.add("");
 
             // On turn start
             output.addAll(member.getData().stream().map(e -> e.onTurnStart(member)).collect(Collectors.toList()));
+
+            member.addHealth(member.getStats().get(HEALTH_PER_TURN) * (member.isDefensive() ? 2 : 1));
+            member.giveGold(mode.handleGold(125 + (turnCount * 5)));
+            member.giveGold(member.getStats().getInt(GOLD_PER_TURN));
+            member.setEnergy(member.getStats().getInt(MAX_ENERGY));
+            member.setShield(0);
+            member.setDefensive(false);
+
             // Count skill cooldowns
-            List<String> readiedSkills = Arrays.stream(unit.getSkills())
+            List<Skill> skills = new ArrayList<>(Arrays.asList(unit.getSkills()));
+            if (unit.hasForms())
+                skills.addAll(Arrays.asList(unit.getForm().getSkills()));
+
+            List<String> readiedSkills = skills.stream()
                     .filter(Skill::hasCooldown)
                     .filter(skill ->
                     {
@@ -196,18 +205,20 @@ public class Game {
                     .forEach(Buff::turn);
 
             if (readiedSkills.size() == 1)
-                output.add(Emote.REFRESH + readiedSkills.get(0) + " is ready to use.");
-            else if (readiedSkills.size() >= 1)
-                output.add(Emote.REFRESH + Util.joinWithAnd(readiedSkills) + " are ready to use.");
+                mainDisplay.add("> " + readiedSkills.get(0) + " is ready to use.");
+            else if (!readiedSkills.isEmpty())
+                mainDisplay.add("> " + Util.joinWithAnd(readiedSkills) + " are ready to use.");
             // Low health warning
             if (member.getHealthPercentage() < 0.2f)
                 output.add(Emote.WARN + "**" + member.getUsername() + "** is critically low on health.");
             // Queued item can be afforded reminder
             if (member.hasQueuedItem() && member.getGold() >= member.getQueuedItem().create(null).build(member.getItems()).getCost())
-                output.add("You can afford to **`>buy " + member.getQueuedItem().getName() + "`** now.");
+                mainDisplay.add("> You can afford to **`>buy " + member.getQueuedItem().getName() + "`** now.");
 
             // Update current member's stats
             output.add(getCurrentMember().updateStats());
+
+            output.addAll(mainDisplay);
         }
 
         updateStatus();

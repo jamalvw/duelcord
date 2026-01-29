@@ -100,7 +100,7 @@ public class HackerUnit extends Unit {
     public Stats getStats() {
         return new Stats()
                 .put(StatType.MAX_ENERGY, 125)
-                .put(StatType.ATTACK_POWER, 25)
+                .put(StatType.ATTACK_POWER, 35)
                 .put(StatType.HEALTH_PER_TURN, 10)
                 .put(StatType.MAX_HEALTH, 1310);
     }

@@ -14,20 +14,20 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.List;
 
 public class CommandListener implements Listener {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final Enigma instance;
     private final String prefix;
-    private final LinkedList<Command> commands;
+    private final List<Command> commands;
     private MessageChannel limit;
     private User userLimit;
 
     public CommandListener(Enigma instance, String prefix, Command[] commands) {
         this.instance = instance;
         this.prefix = prefix;
-        this.commands = new LinkedList<>(Arrays.asList(commands));
+        this.commands = Arrays.asList(commands);
     }
 
     public CommandListener(Enigma instance, String prefix, Command[] commands, MessageChannel limit) {
@@ -35,7 +35,7 @@ public class CommandListener implements Listener {
         this.limit = limit;
     }
 
-    public CommandListener(Enigma instance, String prefix, LinkedList<Command> commands) {
+    public CommandListener(Enigma instance, String prefix, List<Command> commands) {
         this.instance = instance;
         this.prefix = prefix;
         this.commands = commands;
@@ -80,7 +80,7 @@ public class CommandListener implements Listener {
         return this.prefix;
     }
 
-    public LinkedList<Command> getCommands() {
+    public List<Command> getCommands() {
         return this.commands;
     }
 

@@ -87,6 +87,10 @@ public abstract class Buff extends GameObject {
         this.currentTurns = currentTurns;
     }
 
+    public void extend(int turns) {
+        currentTurns += turns;
+    }
+
     public boolean shouldRemove() {
         return shouldRemove || currentTurns == 0;
     }
@@ -111,6 +115,9 @@ public abstract class Buff extends GameObject {
     public Stats getStats() {
         return new Stats();
     }
+
+    @Override
+    public abstract String getStatus(GameMember member);
 
     @Override
     public String toString() {

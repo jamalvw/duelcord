@@ -2,6 +2,7 @@ package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.game.event.DamageEvent;
 import com.oopsjpeg.enigma.game.event.HealEvent;
+import com.oopsjpeg.enigma.game.event.ShieldEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +27,14 @@ public abstract class GameObject {
 
     protected void onHealReceived(Priority priority, Consumer<? extends HealEvent> action) {
         hook(EventType.HEAL_RECEIVED, priority, action);
+    }
+
+    protected void onHealSeen(Priority priority, Consumer<? extends HealEvent> action) {
+        hook(EventType.HEAL_SEEN, priority, action);
+    }
+
+    protected void onShieldSeen(Priority priority, Consumer<? extends ShieldEvent> action) {
+        hook(EventType.SHIELD_SEEN, priority, action);
     }
 
     public List<Hook<? extends Event>> getHooks(EventType type) {

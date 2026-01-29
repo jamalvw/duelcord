@@ -94,7 +94,7 @@ public class ReaverUnit extends Unit {
         return new Stats()
                 .put(MAX_ENERGY, 125)
                 .put(MAX_HEALTH, 1390)
-                .put(ATTACK_POWER, 25)
+                .put(ATTACK_POWER, 35)
                 .put(HEALTH_PER_TURN, 10);
     }
 

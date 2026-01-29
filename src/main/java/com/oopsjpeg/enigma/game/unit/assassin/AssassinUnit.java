@@ -79,7 +79,7 @@ public class AssassinUnit extends Unit {
         return new Stats()
                 .put(MAX_ENERGY, 100)
                 .put(MAX_HEALTH, 1260)
-                .put(ATTACK_POWER, 21)
+                .put(ATTACK_POWER, 34)
                 .put(HEALTH_PER_TURN, 17);
     }
 

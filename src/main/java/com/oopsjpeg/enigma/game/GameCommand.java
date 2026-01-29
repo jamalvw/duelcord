@@ -183,8 +183,8 @@ public enum GameCommand implements Command {
             Units type = name.equals("random")
                     ? Util.pickRandom(Units.values())
                     : Units.fromName(name);
-            if (name.equals("random") && member.hasGuides())
-                type = Units.GUNSLINGER;
+            //if (name.equals("random") && member.hasGuides())
+            //    type = Units.GUNSLINGER;
             if (type == null)
                 return Util.sendFailure(channel, "Invalid unit.");
 

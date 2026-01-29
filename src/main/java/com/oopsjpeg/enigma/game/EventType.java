@@ -6,6 +6,8 @@ public enum EventType {
     DAMAGE_RECEIVED,
     HEAL_ALL,
     HEAL_RECEIVED,
+    HEAL_SEEN,
     SHIELD_ALL,
     SHIELD_RECEIVED,
+    SHIELD_SEEN
 }

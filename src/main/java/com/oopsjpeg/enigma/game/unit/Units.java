@@ -6,14 +6,15 @@ import com.oopsjpeg.enigma.game.unit.duelist.DuelistUnit;
 import com.oopsjpeg.enigma.game.unit.gunslinger.GunslingerUnit;
 import com.oopsjpeg.enigma.game.unit.hacker.HackerUnit;
 import com.oopsjpeg.enigma.game.unit.reaver.ReaverUnit;
+import com.oopsjpeg.enigma.game.unit.shifter.ShifterUnit;
 
 public enum Units {
     ASSASSIN("Assassin"),
     GUNSLINGER("Gunslinger"),
     REAVER("Reaver"),
     DUELIST("Duelist"),
-    HACKER("Hacker");
-    //SHIFTER("Shifter");
+    HACKER("Hacker"),
+    SHIFTER("Shifter");
 
     private final String name;
 
@@ -47,7 +48,8 @@ public enum Units {
                 return new DuelistUnit(member);
             case HACKER:
                 return new HackerUnit(member);
-            //case SHIFTER: return new ShifterUnit(member);
+            case SHIFTER:
+                return new ShifterUnit(member);
             default:
                 throw new IllegalArgumentException();
         }

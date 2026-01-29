@@ -56,6 +56,15 @@ public class BarrageSkill extends Skill {
 
         output.add(0, Emote.SKILL + "**" + actor.getUsername() + "** used **Barrage**!");
 
+        if (actor.hasGuides() && !actor.getGuides().hasUsedBarrage()) {
+            actor.getGuides().usedBarrage();
+
+            if (actor.getEnergy() >= 50)
+                output.add("> You still have **" + actor.getEnergy() + "** energy left! Try using **`>attack`** one more time.");
+            else
+                output.add("> Use **`>end`** to end your turn early and defend.");
+        }
+
         return Util.joinNonEmpty("\n", output);
     }
 

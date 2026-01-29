@@ -4,6 +4,7 @@ public class Guides {
     private boolean purchasedAnItem = false;
     private boolean attacked = false;
     private boolean usedPotion = false;
+    private boolean usedBarrage = false;
     private int turnCount;
 
     public boolean hasPurchasedAnItem() {
@@ -28,6 +29,14 @@ public class Guides {
 
     public void usedPotion() {
         usedPotion = true;
+    }
+
+    public boolean hasUsedBarrage() {
+        return usedBarrage;
+    }
+
+    public void usedBarrage() {
+        usedBarrage = true;
     }
 
     public int newTurn() {

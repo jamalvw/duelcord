@@ -29,6 +29,11 @@ public class HealEvent extends Event {
         var pipeline = new ArrayList<Hook<? extends Event>>();
         pipeline.addAll(getActor().getHooks(EventType.HEAL_ALL));
         pipeline.addAll(getActor().getHooks(EventType.HEAL_RECEIVED));
+
+        GameMember observer = getGame().getRandomTarget(getActor());
+        pipeline.addAll(observer.getHooks(EventType.HEAL_ALL));
+        pipeline.addAll(observer.getHooks(EventType.HEAL_SEEN));
+
         return pipeline;
     }
 
