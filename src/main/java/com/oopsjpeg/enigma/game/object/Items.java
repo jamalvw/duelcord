@@ -28,7 +28,8 @@ public enum Items {
     SOULSTEALER(Tree.COMPLETE, "Soulstealer"),
     IRON_SCIMITAR(Tree.COMPLETE, "Iron Scimitar"),
     SHADOW_REAVER(Tree.COMPLETE, "Shadow Reaver"),
-    HAND_OF_GOD(Tree.COMPLETE, "Hand of God");
+    HAND_OF_GOD(Tree.COMPLETE, "Hand of God"),
+    DARK_SCYTHE(Tree.COMPLETE, "Dark Scythe");
 
     private final Tree tree;
     private final String name;
@@ -92,6 +93,8 @@ public enum Items {
                 return new ShadowReaverItem(member);
             case HAND_OF_GOD:
                 return new HandOfGodItem(member);
+            case DARK_SCYTHE:
+                return new DarkScytheItem(member);
 
             default:
                 throw new IllegalArgumentException();

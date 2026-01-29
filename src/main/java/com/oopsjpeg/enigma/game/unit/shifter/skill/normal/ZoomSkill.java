@@ -31,7 +31,7 @@ public class ZoomSkill extends Skill {
         MessageChannel channel = message.getChannel().block();
 
         if (!(getUnit().getForm() instanceof NormalForm))
-            return Util.sendFailure(channel, "**" + getName() + "** can only be used in **Normal Form**.");
+            return Util.sendFailure(channel, "**" + getName() + "** can only be used in **Normal** form.");
 
         return super.execute(message, args);
     }
@@ -43,7 +43,7 @@ public class ZoomSkill extends Skill {
 
     @Override
     public String getDescription() {
-        return "Your next 2 attacks this turn deal __" + DAMAGE + "__ + __" + DAMAGE_SP_RATIO + " Skill Power__. The second attack reduces Beast Form's cooldown.";
+        return "Your next 2 attacks this turn deal __" + DAMAGE + "__ + __" + DAMAGE_SP_RATIO + " Skill Power__. The second attack reduces Beast form's cooldown.";
     }
 
     @Override

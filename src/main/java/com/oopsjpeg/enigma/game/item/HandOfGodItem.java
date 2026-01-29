@@ -16,12 +16,12 @@ public class HandOfGodItem extends Item {
     @Override
     public Stats getStats() {
         return new Stats()
-                .put(StatType.SKILL_POWER, 45)
+                .put(StatType.SKILL_POWER, 60)
                 .put(StatType.CRIT_CHANCE, 0.4f);
     }
 
     @Override
-    public String getDescription() {
+    public String getLore() {
         return "\"And with this, may the realms be reforged in your image.\"";
     }
 

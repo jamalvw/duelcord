@@ -2,6 +2,8 @@ package com.oopsjpeg.enigma.game.action;
 
 import com.oopsjpeg.enigma.game.GameAction;
 import com.oopsjpeg.enigma.game.GameMember;
+import com.oopsjpeg.enigma.game.StatType;
+import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Item;
 import com.oopsjpeg.enigma.util.Util;
 
@@ -18,8 +20,13 @@ public class UseAction implements GameAction {
     @Override
     public String act(GameMember actor) {
         final List<String> output = new ArrayList<>();
+
         output.add(item.onUse(actor));
 
+        Stats stats = actor.getStats();
+
+        if (item.hasCooldown())
+            item.getCooldown().start(stats.getInt(StatType.COOLDOWN_REDUCTION));
         if (item.removeOnUse())
             actor.getItems().remove(item);
 

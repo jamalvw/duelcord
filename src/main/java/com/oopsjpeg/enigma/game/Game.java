@@ -1,12 +1,9 @@
 package com.oopsjpeg.enigma.game;
 
 import com.oopsjpeg.enigma.Enigma;
-import com.oopsjpeg.enigma.game.buff.SilencedDebuff;
+import com.oopsjpeg.enigma.game.buff.SilenceDebuff;
 import com.oopsjpeg.enigma.game.item.PotionItem;
-import com.oopsjpeg.enigma.game.object.Buff;
-import com.oopsjpeg.enigma.game.object.Distortion;
-import com.oopsjpeg.enigma.game.object.Items;
-import com.oopsjpeg.enigma.game.object.Skill;
+import com.oopsjpeg.enigma.game.object.*;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.listener.CommandListener;
 import com.oopsjpeg.enigma.storage.Player;
@@ -80,7 +77,7 @@ public class Game {
             // On turn end
             output.addAll(getCurrentMember().getData().stream().map(e -> e.onTurnEnd(getCurrentMember())).collect(Collectors.toList()));
             // On defend
-            if (turnCount >= 1 && getCurrentMember().hasEnergy() && !getCurrentMember().hasBuff(SilencedDebuff.class))
+            if (turnCount >= 1 && getCurrentMember().hasEnergy() && !getCurrentMember().hasBuff(SilenceDebuff.class))
                 output.add(getCurrentMember().defend());
             // Decrement buff timers
             // This used to also add to output, but updateStats() now checks for expired buffs.
@@ -179,35 +176,47 @@ public class Game {
             output.addAll(member.getData().stream().map(e -> e.onTurnStart(member)).collect(Collectors.toList()));
 
             member.addHealth(member.getStats().get(HEALTH_PER_TURN) * (member.isDefensive() ? 2 : 1));
-            member.giveGold(mode.handleGold(125 + (turnCount * 5)));
+            member.giveGold(mode.handleGold(140 + (turnCount * 6)));
             member.giveGold(member.getStats().getInt(GOLD_PER_TURN));
             member.setEnergy(member.getStats().getInt(MAX_ENERGY));
             member.setShield(0);
             member.setDefensive(false);
+
+            List<String> readiedCds = new ArrayList<>();
 
             // Count skill cooldowns
             List<Skill> skills = new ArrayList<>(Arrays.asList(unit.getSkills()));
             if (unit.hasForms())
                 skills.addAll(Arrays.asList(unit.getForm().getSkills()));
 
-            List<String> readiedSkills = skills.stream()
+            readiedCds.addAll(skills.stream()
                     .filter(Skill::hasCooldown)
-                    .filter(skill ->
-                    {
+                    .filter(skill -> {
                         Cooldown cooldown = skill.getCooldown();
                         return cooldown.count() && cooldown.tryNotify();
                     })
                     .map(skill -> "**`>" + skill.getName() + "`**")
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()));
+
+            // Count item cooldowns
+            readiedCds.addAll(member.getItems().stream()
+                    .filter(i -> i.canUse(member))
+                    .filter(Item::hasCooldown)
+                    .filter(item -> {
+                        Cooldown cd = item.getCooldown();
+                        return cd.count() && cd.tryNotify();
+                    })
+                    .map(item -> "**`" + item.getName() + "`**")
+                    .collect(Collectors.toList()));
 
             getCurrentMember().getBuffs().stream()
                     .filter(b -> !b.shouldCountOnTurnEnd())
                     .forEach(Buff::turn);
 
-            if (readiedSkills.size() == 1)
-                mainDisplay.add("> " + readiedSkills.get(0) + " is ready to use.");
-            else if (!readiedSkills.isEmpty())
-                mainDisplay.add("> " + Util.joinWithAnd(readiedSkills) + " are ready to use.");
+            if (readiedCds.size() == 1)
+                mainDisplay.add("> " + readiedCds.get(0) + " is ready to use.");
+            else if (!readiedCds.isEmpty())
+                mainDisplay.add("> " + Util.joinWithAnd(readiedCds) + " are ready to use.");
             // Low health warning
             if (member.getHealthPercentage() < 0.2f)
                 output.add(Emote.WARN + "**" + member.getUsername() + "** is critically low on health.");

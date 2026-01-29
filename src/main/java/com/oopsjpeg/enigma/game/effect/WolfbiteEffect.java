@@ -1,6 +1,7 @@
 package com.oopsjpeg.enigma.game.effect;
 
 import com.oopsjpeg.enigma.game.Event;
+import com.oopsjpeg.enigma.game.EventDispatcher;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.Priority;
 import com.oopsjpeg.enigma.game.event.DamageEvent;
@@ -31,6 +32,8 @@ public class WolfbiteEffect extends Effect {
             DamageEvent damage = new DamageEvent(getOwner(), e.getActor());
             damage.setIsDoT(true);
             damage.setDamage(getPower());
+            damage.setSource(getName());
+            e.getOutput().add(EventDispatcher.dispatch(damage));
         });
     }
 }

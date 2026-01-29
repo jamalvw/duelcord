@@ -283,11 +283,13 @@ public enum GameCommand implements Command {
             if (item == null)
                 return Util.sendFailure(channel, "Invalid item.");
             if (!member.getData().contains(item))
-                return Util.sendFailure(channel, "You don't have a(n) **" + item.getName() + "**.");
+                return Util.sendFailure(channel, "You don't have **" + item.getName() + "**.");
             if (!item.canUse(member))
                 return Util.sendFailure(channel, "**" + item.getName() + "** can't be used.");
+            if (item.hasCooldown() && !item.getCooldown().isDone())
+                return Util.sendFailure(channel, "**" + item.getName() + "** will be ready in **" + item.getCooldown().getCurrent() + "** turns.");
             if (member.getEnergy() < 25)
-                return Util.sendFailure(channel, "**`>" + getName() + "`** costs **" + 25 + "** energy. You have **" + member.getEnergy() + "**.");
+                return Util.sendFailure(channel, "**`>use " + getName() + "`** costs **" + 25 + "** energy. You have **" + member.getEnergy() + "**.");
 
             return channel.createMessage(member.act(new UseAction(item)));
         }

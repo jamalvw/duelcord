@@ -6,7 +6,7 @@ import com.oopsjpeg.enigma.game.Stats;
 import com.oopsjpeg.enigma.game.object.Buff;
 import com.oopsjpeg.enigma.game.unit.shifter.ShifterUnit;
 import com.oopsjpeg.enigma.game.unit.shifter.skill.beast.SlamSkill;
-import com.oopsjpeg.enigma.game.unit.shifter.skill.normal.LeapSkill;
+import com.oopsjpeg.enigma.game.unit.shifter.skill.normal.ZoomSkill;
 
 import static com.oopsjpeg.enigma.util.Util.percent;
 
@@ -23,11 +23,12 @@ public class LeapBuff extends Buff {
 
         if (unit.getFormChanger().isDone()) {
             SlamSkill slam = unit.getBeast().getSlam();
+            member.takeEnergy(25);
             return slam.act(member);
         }
 
-        LeapSkill leap = unit.getNormal().getLeap();
-        leap.getCooldown().count();
+        ZoomSkill zoom = unit.getNormal().getZoom();
+        zoom.getCooldown().count();
         return "";
     }
 

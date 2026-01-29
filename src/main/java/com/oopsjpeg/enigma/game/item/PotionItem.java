@@ -9,7 +9,7 @@ import com.oopsjpeg.enigma.util.Emote;
 
 public class PotionItem extends Item {
     private static final int COST = 50;
-    private static final int HEAL = 160;
+    private static final int HEAL = 140;
     private static final int TURNS = 2;
 
     public PotionItem(GameMember owner) {

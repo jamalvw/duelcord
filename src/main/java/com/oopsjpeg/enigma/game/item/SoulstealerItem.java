@@ -3,7 +3,7 @@ package com.oopsjpeg.enigma.game.item;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.StatType;
 import com.oopsjpeg.enigma.game.Stats;
-import com.oopsjpeg.enigma.game.effect.BloodWellEffect;
+import com.oopsjpeg.enigma.game.effect.TheCravingEffect;
 import com.oopsjpeg.enigma.game.object.Effect;
 import com.oopsjpeg.enigma.game.object.Item;
 import com.oopsjpeg.enigma.game.object.Items;
@@ -20,7 +20,7 @@ public class SoulstealerItem extends Item {
 
     @Override
     public Effect[] generateEffects() {
-        return new Effect[]{new BloodWellEffect(getOwner(), .2f, 50)};
+        return new Effect[]{new TheCravingEffect(getOwner(), 30, 50)};
     }
 
     @Override
@@ -32,6 +32,6 @@ public class SoulstealerItem extends Item {
 
     @Override
     public String getTip() {
-        return "Attacks shield";
+        return "Healing does damage";
     }
 }

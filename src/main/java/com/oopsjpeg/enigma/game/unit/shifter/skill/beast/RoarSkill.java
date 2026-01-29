@@ -42,6 +42,8 @@ public class RoarSkill extends Skill {
                     extendedDebuffs.add(debuff.getName());
                 });
 
+        output.add(Emote.SKILL + "**" + actor.getUsername() + "** used **Roar**!" + (extendedDebuffs.isEmpty() ? " ...But there were no debuffs to extend." : ""));
+
         if (extendedDebuffs.size() >= 2) {
             Stats stats = actor.getStats();
             DamageEvent e = new DamageEvent(actor, target);
@@ -61,7 +63,7 @@ public class RoarSkill extends Skill {
         MessageChannel channel = message.getChannel().block();
 
         if (!(getUnit().getForm() instanceof BeastForm))
-            return Util.sendFailure(channel, "**" + getName() + "** can only be used in **Beast Form**.");
+            return Util.sendFailure(channel, "**" + getName() + "** can only be used in **Beast** form.");
 
         return super.execute(message, args);
     }

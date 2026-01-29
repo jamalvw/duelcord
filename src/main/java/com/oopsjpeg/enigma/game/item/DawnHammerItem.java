@@ -22,8 +22,8 @@ public class DawnHammerItem extends Item {
     @Override
     public Effect[] generateEffects() {
         return new Effect[]{
-                new DivinityEffect(getOwner(), 50, .15f),
-                new RestingFaithEffect(getOwner(), 25)
+                new DivinityEffect(getOwner(), 30, .55f),
+                new RestingFaithEffect(getOwner(), 50)
         };
     }
 
@@ -31,7 +31,7 @@ public class DawnHammerItem extends Item {
     public Stats getStats() {
         return new Stats()
                 .put(StatType.ATTACK_POWER, 25)
-                .put(StatType.SKILL_POWER, 45);
+                .put(StatType.SKILL_POWER, 55);
     }
 
     @Override

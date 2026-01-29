@@ -5,7 +5,7 @@ import com.oopsjpeg.enigma.Enigma;
 import com.oopsjpeg.enigma.game.Game;
 import com.oopsjpeg.enigma.game.GameAction;
 import com.oopsjpeg.enigma.game.GameMember;
-import com.oopsjpeg.enigma.game.buff.SilencedDebuff;
+import com.oopsjpeg.enigma.game.buff.SilenceDebuff;
 import com.oopsjpeg.enigma.game.unit.Unit;
 import com.oopsjpeg.enigma.service.GameService;
 import com.oopsjpeg.enigma.service.PlayerService;
@@ -73,7 +73,7 @@ public abstract class Skill implements Command, GameAction {
 
         message.delete().subscribe();
 
-        if (actor.hasBuff(SilencedDebuff.class))
+        if (actor.hasBuff(SilenceDebuff.class))
             return Util.sendFailure(channel, "You can't use skills while silenced.");
 
         if (hasCooldown() && !cooldown.isDone())

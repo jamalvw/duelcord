@@ -49,7 +49,7 @@ public class LeapSkill extends Skill {
         MessageChannel channel = message.getChannel().block();
 
         if (!(getUnit().getForm() instanceof NormalForm))
-            return Util.sendFailure(channel, "**" + getName() + "** can only be used in **Normal Form**.");
+            return Util.sendFailure(channel, "**" + getName() + "** can only be used in **Normal** form.");
 
         return super.execute(message, args);
     }

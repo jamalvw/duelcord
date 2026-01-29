@@ -81,32 +81,32 @@ public class ShifterUnit extends Unit {
     @Override
     public String getDescription() {
         return "Every 3 turns, enter **Beast** form, increasing stats but losing __25__ energy."
-                + "\n\n**Normal Form**: Attacks deal 70% damage, but every other Attack or Skill deals __" + NORMAL_DAMAGE + "__ + __" + percent(NORMAL_DAMAGE_SP_RATIO) + " Skill Power__ bonus damage."
-                + "\n\n**Beast Form**: Attacks and Skills have a __" + percent(BEAST_WEAKEN_CHANCE) + "__ chance to __Weaken__ by __" + percent(BEAST_WEAKEN_AMOUNT) + "__.";
+                + "\n\n**Normal**: Attacks deal 70% damage, but every other Attack deals __" + NORMAL_DAMAGE + "__ + __" + percent(NORMAL_DAMAGE_SP_RATIO) + " Skill Power__ bonus damage."
+                + "\n**Beast**: Attacks and Skills have a __" + percent(BEAST_WEAKEN_CHANCE) + "__ chance to __Weaken__ by __" + percent(BEAST_WEAKEN_AMOUNT) + "__.";
     }
 
     @Override
     public String getSimpleDescription() {
         return "Every 3 turns, enter **Beast** form, increasing stats but losing __25__ energy."
-                + "\n\n**Normal Form**: Attacks deal less damage, but every other Attack or Skill deals bonus damage."
-                + "\n**Beast Form**: Attacks and Skills have a chance to __Weaken__.";
+                + "\n\n**Normal**: Attacks deal less damage, but every other Attack deals bonus damage."
+                + "\n**Beast**: Attacks and Skills have a chance to __Weaken__.";
     }
 
     @Override
     public Stats getStats() {
         if (formChanger.isDone())
             return new Stats()
-                    .put(MAX_ENERGY, 125)
+                    .put(MAX_ENERGY, 100)
                     .put(MAX_HEALTH, 1450)
-                    .put(ATTACK_POWER, 35)
+                    .put(ATTACK_POWER, 38)
                     .put(SKILL_POWER, 20)
                     .put(HEALTH_PER_TURN, 9);
         else
             return new Stats()
-                    .put(MAX_ENERGY, 150)
+                    .put(MAX_ENERGY, 125)
                     .put(MAX_HEALTH, 1205)
-                    .put(ATTACK_POWER, 15)
-                    .put(HEALTH_PER_TURN, 12);
+                    .put(ATTACK_POWER, 18)
+                    .put(HEALTH_PER_TURN, 9);
     }
 
     @Override

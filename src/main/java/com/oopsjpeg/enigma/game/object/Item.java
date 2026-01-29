@@ -4,6 +4,7 @@ import com.oopsjpeg.enigma.game.Build;
 import com.oopsjpeg.enigma.game.GameMember;
 import com.oopsjpeg.enigma.game.GameObject;
 import com.oopsjpeg.enigma.game.Stats;
+import com.oopsjpeg.enigma.util.Cooldown;
 import com.oopsjpeg.enigma.util.Util;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
@@ -19,11 +20,17 @@ public abstract class Item extends GameObject {
     private final int cost;
     private final String name;
     private final List<Effect> effects = new ArrayList<>();
+    private final Cooldown cooldown;
 
     public Item(GameMember owner, int cost, String name) {
+        this(owner, cost, name, 0);
+    }
+
+    public Item(GameMember owner, int cost, String name, int cooldown) {
         this.owner = owner;
         this.cost = cost;
         this.name = name;
+        this.cooldown = cooldown > 0 ? new Cooldown(cooldown) : null;
 
         effects.addAll(Arrays.asList(generateEffects()));
     }
@@ -52,6 +59,14 @@ public abstract class Item extends GameObject {
         return new Effect[0];
     }
 
+    public Cooldown getCooldown() {
+        return cooldown;
+    }
+
+    public boolean hasCooldown() {
+        return cooldown != null;
+    }
+
     public Stats getStats() {
         return new Stats();
     }
@@ -62,6 +77,19 @@ public abstract class Item extends GameObject {
 
     public boolean hasDescription() {
         return getDescription() != null && !getDescription().isEmpty();
+    }
+
+    public String getLore() {
+        return null;
+    }
+
+    public boolean hasLore() {
+        return getLore() != null && !getLore().isEmpty();
+    }
+
+    @Override
+    public String getStatus(GameMember member) {
+        return !hasCooldown() ? null : getName() + ": " + (!hasCooldown() ? "Ready" : (cooldown.isDone() ? "Ready" : "in " + cooldown.getCurrent() + " turn" + (cooldown.getCurrent() > 1 ? "s" : "")));
     }
 
     public String getTip() {
@@ -123,9 +151,10 @@ public abstract class Item extends GameObject {
                 .color(Color.CYAN)
                 .title(getName() + " (" + getCost() + "g)")
                 .description(Util.joinNonEmpty("\n\n",
+                        hasDescription() ? getDescription() : null,
                         Util.formatStats(getStats()),
                         Util.formatEffects(getEffects()),
-                        hasDescription() ? "*" + getDescription() + "*" : null));
+                        hasLore() ? "*" + getLore() + "*" : null));
 
         if (hasBuild())
             builder.footer("Builds from " + Arrays.stream(getBuild()).map(Items::getName).collect(Collectors.joining(" + ")), null);

@@ -24,7 +24,7 @@ public class ShadowReaverItem extends Item {
     }
 
     @Override
-    public String getDescription() {
+    public String getLore() {
         return "The people spoke of his peaceful posture—well mannered, and foolhardy. But night must always fall.";
     }
 

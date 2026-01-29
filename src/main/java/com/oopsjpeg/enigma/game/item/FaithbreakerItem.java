@@ -30,7 +30,7 @@ public class FaithbreakerItem extends Item {
     }
 
     @Override
-    public String getDescription() {
+    public String getLore() {
         return "Thus, their instruments of faith became the weapons of Gods.";
     }
 

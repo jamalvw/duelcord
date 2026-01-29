@@ -62,7 +62,7 @@ public class SlamSkill extends Skill {
         MessageChannel channel = message.getChannel().block();
 
         if (!(getUnit().getForm() instanceof BeastForm))
-            return Util.sendFailure(channel, "**" + getName() + "** can only be used in **Beast Form**.");
+            return Util.sendFailure(channel, "**" + getName() + "** can only be used in **Beast** form.");
 
         return super.execute(message, args);
     }
